@@ -1,0 +1,74 @@
+{
+  "id": "daggerheart_tg",
+  "title": "Daggerheart",
+  "description": "Daggerheart system for Foundry VTT.",
+  "version": "0.01a",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 13
+  },
+  "authors": [{
+    "name": "Gunar Seidler Bastos"
+  }],
+  "esmodules": ["daggerheart_tg.js"],
+  "styles": ["styles/system-styles.css"],
+  "packs": [
+    {
+      "name": "adversaries",
+      "label": "Adversaries",
+      "type": "Actor"
+    },
+    {
+      "name": "items",
+      "label": "Items",
+      "type": "Item"
+    },
+    {
+      "name": "classes",
+      "label": "Classes",
+      "type": "Item"
+    },
+    {
+      "name": "domains",
+      "label": "Domains",
+      "type": "Item"
+    },
+    {
+      "name": "ancestry",
+      "label": "Ancestry",
+      "type": "Item"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "Player": {},
+      "Adversary": {},
+      "Environment": {}
+    },
+    "Item": {
+      "Weapon": {},
+      "Spell": {},
+      "Armor": {},
+      "Class": {},
+      "Subclass": {},
+      "Domain": {},
+      "DomainCard": {},
+      "Ancestry": {},
+      "Community": {},
+      "CommonItem": {},
+      "Consumable": {}
+    }
+  },
+  "socket": false,
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  }
+}
