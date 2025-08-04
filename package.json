@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "preinstall": "python -c \"import sys; exit(0 if sys.version_info >= (3,10) else 1)\" || (echo Python 3.10+ required && exit 1)"
+  },
+  "engines": {
+    "python": ">=3.10.0"
+  },
   "devDependencies": {
     "less": "^4.4.0"
   }
