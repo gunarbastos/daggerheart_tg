@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Foundry VTT" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/../../Program Files/Foundry Virtual Tabletop/resources/app" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../Program Files/Foundry Virtual Tabletop/resources/app" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
