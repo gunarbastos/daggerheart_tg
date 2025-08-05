@@ -2,9 +2,9 @@ name: Validate and Build (CI)
 
 on:
   push:
-    branches: [develop]
+    branches: [stable]
   pull_request:
-    branches: [develop]
+    branches: [stable]
 
 jobs:
   validate:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install NodeJS (for less)
         uses: actions/setup-node@v4
