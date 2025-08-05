@@ -1,5 +1,6 @@
 import {InventoryItemDataModel} from "../../common";
 import {FeatureDataModel} from "./featureDataModel";
+import {MaterialDataModel} from "./materiaDataModel";
 
 export class ArmorDataModel extends InventoryItemDataModel {
 
@@ -15,7 +16,9 @@ export class ArmorDataModel extends InventoryItemDataModel {
             baseScore: new fields.NumberField({required: true}),
             baseMajorThreshold: new fields.NumberField({required: true}),
             baseSevereThreshold: new fields.NumberField({required: true}),
-            features: new fields.EmbeddedCollectionField(FeatureDataModel)
+            features: new fields.EmbeddedCollectionField(FeatureDataModel),
+            materiaSlots: new fields.NumberField({required: true, initial: 0, min: 0}),
+            equippedMaterias: new fields.EmbeddedCollectionField(MaterialDataModel),
         }
     }
 }

@@ -21,7 +21,7 @@ export class SubClassDataModel extends BaseDataModel {
     }
 
     #class = null;
-    get domainCards() {
+    get class() {
         if(!this.#class) { this.#class = Utils.getCachedDocument(this.classUUID); }
         return this.#class;
     }

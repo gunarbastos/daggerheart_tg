@@ -6,7 +6,7 @@ import {
     ChangeRollEffectDataModel,
     ConsumeResourceEffectDataModel,
     DamageEffectDataModel,
-    DamageResistanceEffectType,
+    DamageResistanceEffectDataModel,
     HealEffectDataModel,
     RemoveConditionEffectDataModel, RestoreResourceEffectDataModel
 } from "../dataModel/item/effect";
@@ -18,7 +18,7 @@ import {
     CommonItemSheet,
     CommunitySheet,
     ConsumableSheet, DomainCardSheet,
-    DomainSheet, FeatureSheet, SpellSheet, WeaponSheet
+    DomainSheet, FeatureSheet, MagicItemSheet, MateriaSheet, SpellSheet, WeaponSheet
 } from "../sheet/item";
 
 const _levelUpOptions = {
@@ -85,6 +85,8 @@ const _rawConstants = {
         DOMAIN: "domain",
         DOMAIN_CARD: "domainCard",
         FEATURE: "feature",
+        MAGIC_ITEM: "magicItem",
+        MATERIA: "materia",
         SPELL: "spell",
         SUBCLASS: "subclass",
         WEAPON: "weapon"
@@ -205,7 +207,7 @@ const _rawConstants = {
                 ChangeRollEffectDataModel,
                 ConsumeResourceEffectDataModel,
                 DamageEffectDataModel,
-                DamageResistanceEffectType,
+                DamageResistanceEffectDataModel,
                 HealEffectDataModel,
                 RemoveConditionEffectDataModel,
                 RestoreResourceEffectDataModel
@@ -228,6 +230,8 @@ _rawConstants.SHEETS.ITEMS.push({class: ConsumableSheet, label: LANG.ITEM_TYPES.
 _rawConstants.SHEETS.ITEMS.push({class: DomainSheet, label: LANG.ITEM_TYPES.DOMAIN, types: [_rawConstants.ITEM_TYPES.DOMAIN], default: true});
 _rawConstants.SHEETS.ITEMS.push({class: DomainCardSheet, label: LANG.ITEM_TYPES.DOMAIN_CARD, types: [_rawConstants.ITEM_TYPES.DOMAIN_CARD], default: true});
 _rawConstants.SHEETS.ITEMS.push({class: FeatureSheet, label: LANG.ITEM_TYPES.FEATURE, types: [_rawConstants.ITEM_TYPES.FEATURE], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: MagicItemSheet, label: LANG.ITEM_TYPES.MAGIC_ITEM, types: [_rawConstants.ITEM_TYPES.MAGIC_ITEM], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: MateriaSheet, label: LANG.ITEM_TYPES.MATERIA, types: [_rawConstants.ITEM_TYPES.MATERIA], default: true});
 _rawConstants.SHEETS.ITEMS.push({class: SpellSheet, label: LANG.ITEM_TYPES.SPELL, types: [_rawConstants.ITEM_TYPES.SPELL], default: true});
 _rawConstants.SHEETS.ITEMS.push({class: WeaponSheet, label: LANG.ITEM_TYPES.WEAPON, types: [_rawConstants.ITEM_TYPES.WEAPON], default: true});
 

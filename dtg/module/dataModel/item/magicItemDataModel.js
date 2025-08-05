@@ -1,8 +1,7 @@
-import {BaseDataModel} from "../../common";
+import {InventoryItemDataModel} from "../../common";
 import {FeatureDataModel} from "./featureDataModel";
 
-export class AncestryDataModel extends BaseDataModel {
-
+export class MagicItemDataModel extends InventoryItemDataModel {
     /** @inheritDoc */
     static _enableV10Validation = true;
 
@@ -12,7 +11,7 @@ export class AncestryDataModel extends BaseDataModel {
         const base = super.defineSchema();
         return {
             ...base,
-            features: new fields.EmbeddedCollectionField(FeatureDataModel)
+            features: new fields.EmbeddedCollectionField(FeatureDataModel),
         }
     }
 }

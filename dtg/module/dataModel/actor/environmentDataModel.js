@@ -13,7 +13,6 @@ export class EnvironmentDataModel extends BaseDataModel {
         return {
             tier: new fields.NumberField({required: true, integer: true, min: 1, initial: 1, max: 4}),
             type: new fields.StringField({required: true, blank: false, choices : CONSTANTS.CHOICES.ENVIRONMENT}),
-            description: new fields.HTMLField({required: true, blank: false}),
             impulses: new fields.StringField({required: true, blank: false}),
             difficulty: new fields.NumberField({required: true, integer: true, min: 1, initial: 1}),
             potentialAdversariesUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()), //UUIDs of adversary type Actors

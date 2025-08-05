@@ -1,5 +1,6 @@
 import {InventoryItemDataModel} from "../../common";
 import {FeatureDataModel} from "./featureDataModel";
+import {MaterialDataModel} from "./materiaDataModel";
 
 export class ConsumableDataModel extends InventoryItemDataModel {
 
@@ -14,7 +15,9 @@ export class ConsumableDataModel extends InventoryItemDataModel {
             ...base,
             stackable: new fields.BooleanField({required: true, initial: true}),
             quantity: new fields.NumberField({required: true, min: 0, initial: 1}),
-            features: new fields.EmbeddedCollectionField(FeatureDataModel)
+            features: new fields.EmbeddedCollectionField(FeatureDataModel),
+            materiaSlots: new fields.NumberField({required: true, initial: 0, min: 0}),
+            equippedMaterias: new fields.EmbeddedCollectionField(MaterialDataModel),
         }
     }
 }

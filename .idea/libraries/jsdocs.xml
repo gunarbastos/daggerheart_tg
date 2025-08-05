@@ -1,12 +1,12 @@
 <component name="libraryTable">
-  <library name="system-types.js" type="javaScript">
+  <library name="jsdocs" type="javaScript">
     <properties>
       <sourceFilesUrls>
-        <item url="file://$PROJECT_DIR$/system-types.js" />
+        <item url="file://$PROJECT_DIR$/jsdocs" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/system-types.js" />
+      <root url="file://$PROJECT_DIR$/jsdocs" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

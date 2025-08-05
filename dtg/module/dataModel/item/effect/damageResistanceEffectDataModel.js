@@ -1,7 +1,7 @@
 import {EffectDataModel} from "../effectDataModel";
 import {CONSTANTS} from "../../../common";
 
-export class DamageResistanceEffectType extends EffectDataModel {
+export class DamageResistanceEffectDataModel extends EffectDataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;

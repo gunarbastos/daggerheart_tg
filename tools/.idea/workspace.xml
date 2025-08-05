@@ -5,120 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b46537d5-41ec-4430-bf0a-69bd752f0afb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../.github/workflows/ci.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.github/workflows/release.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/daggerheart_tg.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/asset/font/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/asset/icon/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/asset/uiElement/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/lang/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/less/app/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/less/chat/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/less/common/variables.less" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/less/main.less" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/less/sheet/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/main.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/main.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/app/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/InventoryItemDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/baseDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/borrowedPowerDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/experienceDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/hooks.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/language.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/polimorphicDataType.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/resourceDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/targetDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/common/utils.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/actor/adversaryDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/actor/environmentDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/actor/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/actor/playerDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/ancestryDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/armorDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/classDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/commonItemDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/communityDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/consumableDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/domainCardDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/domainDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/applyConditionEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/changeRollEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/consumeResourceEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/damageEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/damageResistanceEffectType.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/healEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/removeConditionEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effect/restoreResourceEffectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/effectDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/featureDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/spellDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/subClassDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/weaponDataModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/actor/combatActorDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/actor/dtgActorDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/actor/environmentDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/actor/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/actor/playerDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/classDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/domainCardDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/domainDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/dtgItemDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/featureItem.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/inventoryItemDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/document/item/subclassDocument.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/actor/adversarySheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/actor/environmentSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/actor/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/actor/playerSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/ancestrySheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/armorSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/classSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/commonItemSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/communitySheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/consumableSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/domainCardSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/domainSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/featureSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/spellSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/module/sheet/item/weaponSheet.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/pack/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/system.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/template/app/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/template/chat/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/template/common/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../dtg/template/sheet/ph" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../system-types.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/tools.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli_handlers_patch.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli_patch.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/build.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/indexes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/lessc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/local_deploy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/release.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/types.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/validate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/less/common/variables.less" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/less/common/variables.less" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/module/common/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/common/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/tools.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/tools.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tasks/indexes.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/indexes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tasks/lessc.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/lessc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tasks/types.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/types.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +37,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "stable",
+    "git-widget-placeholder": "develop",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Git/daggerheart_tg/tools",
     "node.js.detected.package.eslint": "true",
@@ -169,6 +65,7 @@
       <updated>1754305743611</updated>
       <workItem from="1754305744956" duration="34000" />
       <workItem from="1754306689134" duration="1655000" />
+      <workItem from="1754332558735" duration="9084000" />
     </task>
     <servers />
   </component>

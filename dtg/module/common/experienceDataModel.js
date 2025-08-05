@@ -1,4 +1,6 @@
-export class ExperienceDataModel extends foundry.abstract.TypeDataModel {
+import {BaseDataModel} from "./baseDataModel";
+
+export class ExperienceDataModel extends BaseDataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;

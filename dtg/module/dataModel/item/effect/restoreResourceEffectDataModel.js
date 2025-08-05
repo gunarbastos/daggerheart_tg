@@ -16,7 +16,7 @@ export class RestoreResourceEffectDataModel extends EffectDataModel {
             ...base,
             type: new fields.StringField({required: true, initial: this._internalType}),
             resource: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.RESOURCES}),
-            quantity: new fields.NumberField({required: true, min: 1, initial: 1})
+            quantity: new fields.StringField({required: true, blank: false})
         }
     }
 }
