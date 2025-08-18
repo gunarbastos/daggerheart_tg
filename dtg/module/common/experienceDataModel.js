@@ -1,6 +1,8 @@
-import {BaseDataModel} from "./baseDataModel";
+console.log(`Loaded: ${import.meta.url}`);
 
-export class ExperienceDataModel extends BaseDataModel {
+import {EmbedBaseDataModel} from "./baseDataModel.js";
+
+export class ExperienceDataModel extends EmbedBaseDataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;
@@ -9,7 +11,7 @@ export class ExperienceDataModel extends BaseDataModel {
     static defineSchema() {
         const fields = foundry.data.fields;
         return {
-            description: new fields.HTMLField({required: true, blank: false}),
+            description: new fields.HTMLField({required: true, blank: true, initial: ""}),
             bonus: new fields.NumberField({required: true, initial: 2}),
         }
     }

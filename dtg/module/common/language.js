@@ -1,4 +1,4 @@
-import {Utils} from "./utils";
+console.log(`Loaded: ${import.meta.url}`);
 
 const _rawLang = {
     TRAITS: {
@@ -77,6 +77,4 @@ const _rawLang = {
     }
 }
 
-//game global variable is a runtime only global variable. So to avoid this annoying warning, I'm ignoring it
-// noinspection JSUnresolvedVariable
-export const LANG = Utils.localizeLangTree(_rawLang, game.i18n.lang);
+export const _DO_NOT_USE_LANG = _rawLang;

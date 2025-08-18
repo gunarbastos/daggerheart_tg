@@ -1,7 +1,9 @@
-import {FeatureDataModel} from "../dataModel/item";
-import {CONSTANTS} from "./constants";
+console.log(`Loaded: ${import.meta.url}`);
 
-export class BorrowedPowerDataModel extends foundry.abstract.TypeDataModel {
+import {EmbedFeatureDataModel} from "../dataModel/item/featureDataModel.js";
+import {CONSTANTS} from "./constants.js";
+
+export class BorrowedPowerDataModel extends foundry.abstract.DataModel {
     /** @inheritDoc */
     static _enableV10Validation = true;
 
@@ -9,7 +11,7 @@ export class BorrowedPowerDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
         const fields = foundry.data.fields;
         return {
-            feature: new fields.EmbeddedDataField(FeatureDataModel),
+            feature: new fields.EmbeddedDataField(EmbedFeatureDataModel),
             usesLeft: new fields.NumberField({required: false, min: 0}),
             expiresOnRest: new fields.StringField({required: false, choices: CONSTANTS.CHOICES.REST_TYPE})
         }

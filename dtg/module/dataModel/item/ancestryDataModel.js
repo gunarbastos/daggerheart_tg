@@ -1,5 +1,7 @@
-import {BaseDataModel} from "../../common";
-import {FeatureDataModel} from "./featureDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {BaseDataModel} from "../../common/index.js";
+import {EmbedFeatureDataModel} from "./featureDataModel.js";
 
 export class AncestryDataModel extends BaseDataModel {
 
@@ -12,7 +14,7 @@ export class AncestryDataModel extends BaseDataModel {
         const base = super.defineSchema();
         return {
             ...base,
-            features: new fields.EmbeddedCollectionField(FeatureDataModel)
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] })
         }
     }
 }

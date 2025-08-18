@@ -1,6 +1,8 @@
-import { CONSTANTS } from './index';
+console.log(`Loaded: ${import.meta.url}`);
 
-export class TargetDataModel extends foundry.abstract.TypeDataModel {
+import { CONSTANTS } from './constants.js';
+
+export class TargetDataModel extends foundry.abstract.DataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;
@@ -9,9 +11,9 @@ export class TargetDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
         const fields = foundry.data.fields;
         return {
-            type: new fields.StringField({required: true, choices: CONSTANTS.TARGETS_VALUES}),
+            type: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.TARGETS, initial: CONSTANTS.DEFAULTS.TARGETS}),
             numberOfTargets: new fields.StringField({required: false}),
-            range: new fields.StringField({required: true}),
+            range: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.RANGE, initial: CONSTANTS.DEFAULTS.RANGE}),
         }
     }
 }

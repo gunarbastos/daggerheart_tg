@@ -1,4 +1,6 @@
-export class BaseResourceDataModel extends foundry.abstract.TypeDataModel {
+console.log(`Loaded: ${import.meta.url}`);
+
+export class BaseResourceDataModel extends foundry.abstract.DataModel {
     isOverflowing = false;
 
     changeValue(amount = 1, overflows = false) {

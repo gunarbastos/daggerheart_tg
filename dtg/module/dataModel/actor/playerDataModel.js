@@ -1,5 +1,14 @@
-import {CONSTANTS, ResourceDataModel, ExperienceDataModel, BaseDataModel, Utils} from "../../common";
-import {FeatureDataModel} from "../item";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {
+    CONSTANTS,
+    ResourceDataModel,
+    ExperienceDataModel,
+    BaseDataModel,
+    Utils,
+    BorrowedPowerDataModel
+} from "../../common/index.js";
+import {EmbedFeatureDataModel} from "../item/index.js";
 
 export class PlayerDataModel extends BaseDataModel {
 
@@ -26,23 +35,23 @@ export class PlayerDataModel extends BaseDataModel {
             ancestryUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type Ancestry
             communityUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type community
             traits: new fields.SchemaField({
-                agility: new fields.NumberField({ required: true, integer: true, min: -1, initial: 1 }),
-                strength: new fields.NumberField({ required: true, integer: true, min: -1, initial: 1 }),
-                finesse: new fields.NumberField({ required: true, integer: true, min: -1, initial: 1 }),
-                knowledge: new fields.NumberField({ required: true, integer: true, min: -1, initial: 1 }),
-                presence: new fields.NumberField({ required: true, integer: true, min: -1, initial: 1 }),
-                instinct: new fields.NumberField({ required: true, integer: true, min: -1, initial: 1 }),
+                agility: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+                strength: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+                finesse: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+                knowledge: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+                presence: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+                instinct: new fields.NumberField({ required: true, integer: true, initial: 0 }),
             }),
-            experiences: new fields.EmbeddedCollectionField(ExperienceDataModel), //Change Array(Embed to EmbeddedCollectionField
+            experiences: new fields.ArrayField(new fields.EmbeddedDataField(ExperienceDataModel), {initial: []}),
             playerClassesUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type Class
             playerSubclasses: new fields.ArrayField(/** @type {any} */new fields.SchemaField({
                 UUID: new fields.DocumentUUIDField(),
-                masteryLevel: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.SUBCLASS_MASTERY_LEVEL}),
+                masteryLevel: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.SUBCLASS_MASTERY_LEVEL, initial: CONSTANTS.DEFAULTS.SUBCLASS_MASTERY_LEVEL}),
             })),
             domainCardsUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type DomainCard
             equippedDomainCardsUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type DomainCard
             levelUpOptionsTaken: new fields.ObjectField({}), //same structure of CONSTANTS.LEVEL_UP_OPTIONS, but holds integers as values, representing the # of times the option was taken
-            borrowedPowers: new fields.EmbeddedCollectionField(FeatureDataModel)
+            borrowedPowers: new fields.ArrayField(new fields.EmbeddedDataField(BorrowedPowerDataModel),{ initial: [] })
         }
     }
 

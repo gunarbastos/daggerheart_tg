@@ -1,0 +1,13 @@
+<div>
+    <header class="sheet-header img-name">
+        <img src="{{source.img}}" data-action="editImage" data-edit="img" alt="{{localize "DOCUMENT.FIELDS.img.label"}}">
+        {{formInput fields.name value=source.name placeholder=(localize "DOCUMENT.FIELDS.name.label")
+                    aria=(object label=(localize "DOCUMENT.FIELDS.name.label"))}}
+    </header>
+
+    <div class="form-group">
+        <div class="form-fields">
+            {{formInput systemFields.description value=system.description enriched=descriptionHTML compact=false toggled=false}}
+        </div>
+    </div>
+</div>

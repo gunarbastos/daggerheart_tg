@@ -1,5 +1,7 @@
-import {InventoryItemDataModel} from "../../common";
-import {FeatureDataModel} from "./featureDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {InventoryItemDataModel} from "../../common/index.js";
+import {EmbedFeatureDataModel} from "./featureDataModel.js";
 
 export class MagicItemDataModel extends InventoryItemDataModel {
     /** @inheritDoc */
@@ -11,7 +13,7 @@ export class MagicItemDataModel extends InventoryItemDataModel {
         const base = super.defineSchema();
         return {
             ...base,
-            features: new fields.EmbeddedCollectionField(FeatureDataModel),
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
         }
     }
 }

@@ -1,5 +1,22 @@
-class CommonItem extends foundry.app.sheets.ActorSheetV2 {
+import {CONSTANTS, Utils} from "../../common/index.js";
 
+console.log(`Loaded: ${import.meta.url}`);
+
+import {DtgItemSheet} from "./dtgItemSheet.js";
+
+export class CommonItemSheet extends DtgItemSheet {
+    static get PARTS() { return super.PARTS; }
+
+    static get DEFAULT_OPTIONS() {
+        const base = super.DEFAULT_OPTIONS;
+        return {
+            ...base,
+            classes: Utils.unique([...base.classes ?? [], `${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ITEM_TYPES.COMMON_ITEM}`]),
+
+        };
+    }
+
+    static get DOCTYPE() {
+        return CONSTANTS.ITEM_TYPES.COMMON_ITEM;
+    }
 }
-
-export const CommonItemSheet = foundry.applications.api.HandlebarsApplicationMixin(CommonItem);

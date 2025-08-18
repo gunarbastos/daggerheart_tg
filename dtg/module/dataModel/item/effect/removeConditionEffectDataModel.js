@@ -1,4 +1,6 @@
-import {EffectDataModel} from "../effectDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {EffectDataModel} from "../effectDataModel.js";
 
 export class RemoveConditionEffectDataModel extends EffectDataModel {
 
@@ -14,7 +16,7 @@ export class RemoveConditionEffectDataModel extends EffectDataModel {
         return {
             ...base,
             type: new fields.StringField({required: true, initial: this._internalType}),
-            condition: new fields.StringField({required: true, blank: false})
+            condition: new fields.StringField({required: true, blank: true, initial: ""})
         }
     }
 }

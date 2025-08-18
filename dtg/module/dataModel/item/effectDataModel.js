@@ -1,6 +1,8 @@
-import {TargetDataModel} from "../../common";
+console.log(`Loaded: ${import.meta.url}`);
 
-export class EffectDataModel extends foundry.abstract.TypeDataModel {
+import {TargetDataModel} from "../../common/index.js";
+
+export class EffectDataModel extends foundry.abstract.DataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;

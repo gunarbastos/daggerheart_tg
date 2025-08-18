@@ -1,6 +1,7 @@
-import { Utils } from './';
-import {EffectDataModel} from "../dataModel/item";
-import {LANG} from './language.js'
+console.log(`Loaded: ${import.meta.url}`);
+
+import {EffectDataModel} from "../dataModel/item/effectDataModel.js";
+import {_DO_NOT_USE_LANG} from './language.js'
 import {
     ApplyConditionEffectDataModel,
     ChangeRollEffectDataModel,
@@ -8,59 +9,97 @@ import {
     DamageEffectDataModel,
     DamageResistanceEffectDataModel,
     HealEffectDataModel,
-    RemoveConditionEffectDataModel, RestoreResourceEffectDataModel
-} from "../dataModel/item/effect";
-import {AdversarySheet, EnvironmentSheet, PlayerSheet} from "../sheet/actor";
+    RemoveConditionEffectDataModel,
+    RestoreResourceEffectDataModel
+} from "../dataModel/item/effect/index.js";
+import {
+    AdversarySheet,
+    EnvironmentSheet,
+    PlayerSheet
+} from "../sheet/actor/index.js";
 import {
     AncestrySheet,
     ArmorSheet,
     ClassSheet,
     CommonItemSheet,
     CommunitySheet,
-    ConsumableSheet, DomainCardSheet,
-    DomainSheet, FeatureSheet, MagicItemSheet, MateriaSheet, SpellSheet, WeaponSheet
-} from "../sheet/item";
+    ConsumableSheet,
+    DomainCardSheet,
+    DomainSheet,
+    FeatureSheet,
+    MagicItemSheet,
+    MateriaSheet,
+    SpellSheet,
+    SubclassSheet,
+    WeaponSheet
+} from "../sheet/item/index.js";
+import {
+    AdversaryDataModel,
+    EnvironmentDataModel,
+    PlayerDataModel
+} from "../dataModel/actor/index.js";
+import {
+    AncestryDataModel,
+    ArmorDataModel,
+    ClassDataModel,
+    CommonItemDataModel,
+    CommunityDataModel,
+    ConsumableDataModel,
+    DomainCardDataModel,
+    DomainDataModel,
+    FeatureDataModel,
+    MagicItemDataModel,
+    MateriaDataModel,
+    SpellDataModel,
+    SubClassDataModel,
+    WeaponDataModel
+} from "../dataModel/item/index.js";
+
+let _rawConstants = {
+    LANG: {..._DO_NOT_USE_LANG},
+}
 
 const _levelUpOptions = {
     tier2:{
-        trait: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 3, points_required_for_activation: 1},
-        hp: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 2, points_required_for_activation: 1},
-        stress: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 2, points_required_for_activation: 1},
-        experience: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        extraCard: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        evasion: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
+        trait: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.TRAIT, times_available: 3, points_required_for_activation: 1},
+        hp: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.HP, times_available: 2, points_required_for_activation: 1},
+        stress: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.STRESS, times_available: 2, points_required_for_activation: 1},
+        experience: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.EXPERIENCE, times_available: 1, points_required_for_activation: 1},
+        extraCard: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.DOMAIN_CARD, times_available: 1, points_required_for_activation: 1},
+        evasion: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.EVASION, times_available: 1, points_required_for_activation: 1},
     },
     tier3:{
-        trait: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 3, points_required_for_activation: 1},
-        hp: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 2, points_required_for_activation: 1},
-        stress: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 2, points_required_for_activation: 1},
-        experience: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        extraCard: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        evasion: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        subclass: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        proficiency: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 2},
-        multiclass: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 2},
+        trait: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.TRAIT, times_available: 3, points_required_for_activation: 1},
+        hp: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.HP, times_available: 2, points_required_for_activation: 1},
+        stress: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.STRESS, times_available: 2, points_required_for_activation: 1},
+        experience: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.EXPERIENCE, times_available: 1, points_required_for_activation: 1},
+        extraCard: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.DOMAIN_CARD, times_available: 1, points_required_for_activation: 1},
+        evasion: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.EVASION, times_available: 1, points_required_for_activation: 1},
+        subclass: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.SUBCLASS, times_available: 1, points_required_for_activation: 1},
+        proficiency: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.PROFICIENCY, times_available: 1, points_required_for_activation: 2},
+        multiclass: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.MULTICLASS, times_available: 1, points_required_for_activation: 2},
     },
     tier4:{
-        trait: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 3, points_required_for_activation: 1},
-        hp: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 2, points_required_for_activation: 1},
-        stress: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 2, points_required_for_activation: 1},
-        experience: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        extraCard: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        evasion: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        subclass: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 1},
-        proficiency: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 2},
-        multiclass: {label: LANG.LEVEL_UP_OPTIONS.OPTION_1.name, times_available: 1, points_required_for_activation: 2},
+        trait: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.TRAIT, times_available: 3, points_required_for_activation: 1},
+        hp: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.HP, times_available: 2, points_required_for_activation: 1},
+        stress: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.STRESS, times_available: 2, points_required_for_activation: 1},
+        experience: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.EXPERIENCE, times_available: 1, points_required_for_activation: 1},
+        extraCard: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.DOMAIN_CARD, times_available: 1, points_required_for_activation: 1},
+        evasion: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.EVASION, times_available: 1, points_required_for_activation: 1},
+        subclass: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.SUBCLASS, times_available: 1, points_required_for_activation: 1},
+        proficiency: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.PROFICIENCY, times_available: 1, points_required_for_activation: 2},
+        multiclass: {label: _rawConstants.LANG.LEVEL_UP_OPTIONS.MULTICLASS, times_available: 1, points_required_for_activation: 2},
     },
 };
 
-const _rawConstants = {
+_rawConstants = {
+    ..._rawConstants,
+
     //Raw Constants
     SYSTEM_ID: "dtg",
     CORE_ID: "core",
 
     //Dynamically Built
-    LANG: {...LANG},
     CHOICES: {}, //Built Dynamically
 
     //Sheets (dynamically at the end)
@@ -69,27 +108,36 @@ const _rawConstants = {
         ITEMS: [],
     },
 
+    DATA_MODELS: {
+        ACTORS: {},
+        ITEMS: {},
+    },
+
     //Enums
+    ROLL_RESULTS: {
+        HOPE: "hope",
+        FEAR: "fear",
+    },
     ACTOR_TYPES: {
-        ADVERSARY: "adversary",
-        ENVIRONMENT: "environment",
-        PLAYER: "player"
+        ADVERSARY: "Adversary",
+        ENVIRONMENT: "Environment",
+        PLAYER: "Player"
     },
     ITEM_TYPES: {
-        ANCESTRY: "ancestry",
-        ARMOR: "armor",
-        CLASS: "class",
-        COMMON_ITEM: "commonItem",
-        COMMUNITY: "community",
-        CONSUMABLE: "consumable",
-        DOMAIN: "domain",
-        DOMAIN_CARD: "domainCard",
-        FEATURE: "feature",
-        MAGIC_ITEM: "magicItem",
-        MATERIA: "materia",
-        SPELL: "spell",
-        SUBCLASS: "subclass",
-        WEAPON: "weapon"
+        ANCESTRY: "Ancestry",
+        ARMOR: "Armor",
+        CLASS: "Class",
+        COMMON_ITEM: "CommonItem",
+        COMMUNITY: "Community",
+        CONSUMABLE: "Consumable",
+        DOMAIN: "Domain",
+        DOMAIN_CARD: "DomainCard",
+        FEATURE: "Feature",
+        MAGIC_ITEM: "MagicItem",
+        MATERIA: "Materia",
+        SPELL: "Spell",
+        SUBCLASS: "Subclass",
+        WEAPON: "Weapon"
     },
     ADVERSARY_TYPES: {
         BRUISER: 'Bruiser',
@@ -155,11 +203,14 @@ const _rawConstants = {
     },
 
     //Defaults
+    DEFAULTS: {},
     LEVEL_UP_OPTIONS: {..._levelUpOptions},
 
     //Structures
     SETTINGS: {
         SETTING_NAME: {
+            SCOPE: "user", //user || world
+            USER_CAN_CONFIG: true, // true/false
             NAME: "setting_name",
             DEFAULT_VALUE: "setting_value",
         },
@@ -217,23 +268,48 @@ const _rawConstants = {
 }
 
 //Sheets
-_rawConstants.SHEETS.ACTORS.push({class: AdversarySheet, label: LANG.ACTOR_TYPES.ADVERSARY, types: [_rawConstants.ACTOR_TYPES.ADVERSARY], default: true});
-_rawConstants.SHEETS.ACTORS.push({class: EnvironmentSheet, label: LANG.ACTOR_TYPES.ENVIRONMENT, types: [_rawConstants.ACTOR_TYPES.ENVIRONMENT], default: true});
-_rawConstants.SHEETS.ACTORS.push({class: PlayerSheet, label: LANG.ACTOR_TYPES.PLAYER, types: [_rawConstants.ACTOR_TYPES.PLAYER], default: true});
+_rawConstants.SHEETS.ACTORS.push({class: AdversarySheet, label: _rawConstants.LANG.ACTOR_TYPES.ADVERSARY, types: [_rawConstants.ACTOR_TYPES.ADVERSARY], default: true});
+_rawConstants.SHEETS.ACTORS.push({class: EnvironmentSheet, label: _rawConstants.LANG.ACTOR_TYPES.ENVIRONMENT, types: [_rawConstants.ACTOR_TYPES.ENVIRONMENT], default: true});
+_rawConstants.SHEETS.ACTORS.push({class: PlayerSheet, label: _rawConstants.LANG.ACTOR_TYPES.PLAYER, types: [_rawConstants.ACTOR_TYPES.PLAYER], default: true});
 
-_rawConstants.SHEETS.ITEMS.push({class: AncestrySheet, label: LANG.ITEM_TYPES.ANCESTRY, types: [_rawConstants.ITEM_TYPES.ANCESTRY], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: ArmorSheet, label: LANG.ITEM_TYPES.ARMOR, types: [_rawConstants.ITEM_TYPES.ARMOR], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: ClassSheet, label: LANG.ITEM_TYPES.CLASS, types: [_rawConstants.ITEM_TYPES.CLASS], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: CommonItemSheet, label: LANG.ITEM_TYPES.COMMON_ITEM, types: [_rawConstants.ITEM_TYPES.COMMON_ITEM], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: CommunitySheet, label: LANG.ITEM_TYPES.COMMUNITY, types: [_rawConstants.ITEM_TYPES.COMMUNITY], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: ConsumableSheet, label: LANG.ITEM_TYPES.CONSUMABLE, types: [_rawConstants.ITEM_TYPES.CONSUMABLE], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: DomainSheet, label: LANG.ITEM_TYPES.DOMAIN, types: [_rawConstants.ITEM_TYPES.DOMAIN], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: DomainCardSheet, label: LANG.ITEM_TYPES.DOMAIN_CARD, types: [_rawConstants.ITEM_TYPES.DOMAIN_CARD], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: FeatureSheet, label: LANG.ITEM_TYPES.FEATURE, types: [_rawConstants.ITEM_TYPES.FEATURE], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: MagicItemSheet, label: LANG.ITEM_TYPES.MAGIC_ITEM, types: [_rawConstants.ITEM_TYPES.MAGIC_ITEM], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: MateriaSheet, label: LANG.ITEM_TYPES.MATERIA, types: [_rawConstants.ITEM_TYPES.MATERIA], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: SpellSheet, label: LANG.ITEM_TYPES.SPELL, types: [_rawConstants.ITEM_TYPES.SPELL], default: true});
-_rawConstants.SHEETS.ITEMS.push({class: WeaponSheet, label: LANG.ITEM_TYPES.WEAPON, types: [_rawConstants.ITEM_TYPES.WEAPON], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: AncestrySheet, label: _rawConstants.LANG.ITEM_TYPES.ANCESTRY, types: [_rawConstants.ITEM_TYPES.ANCESTRY], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: ArmorSheet, label: _rawConstants.LANG.ITEM_TYPES.ARMOR, types: [_rawConstants.ITEM_TYPES.ARMOR], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: ClassSheet, label: _rawConstants.LANG.ITEM_TYPES.CLASS, types: [_rawConstants.ITEM_TYPES.CLASS], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: CommonItemSheet, label: _rawConstants.LANG.ITEM_TYPES.COMMON_ITEM, types: [_rawConstants.ITEM_TYPES.COMMON_ITEM], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: CommunitySheet, label: _rawConstants.LANG.ITEM_TYPES.COMMUNITY, types: [_rawConstants.ITEM_TYPES.COMMUNITY], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: ConsumableSheet, label: _rawConstants.LANG.ITEM_TYPES.CONSUMABLE, types: [_rawConstants.ITEM_TYPES.CONSUMABLE], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: DomainSheet, label: _rawConstants.LANG.ITEM_TYPES.DOMAIN, types: [_rawConstants.ITEM_TYPES.DOMAIN], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: DomainCardSheet, label: _rawConstants.LANG.ITEM_TYPES.DOMAIN_CARD, types: [_rawConstants.ITEM_TYPES.DOMAIN_CARD], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: FeatureSheet, label: _rawConstants.LANG.ITEM_TYPES.FEATURE, types: [_rawConstants.ITEM_TYPES.FEATURE], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: MagicItemSheet, label: _rawConstants.LANG.ITEM_TYPES.MAGIC_ITEM, types: [_rawConstants.ITEM_TYPES.MAGIC_ITEM], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: MateriaSheet, label: _rawConstants.LANG.ITEM_TYPES.MATERIA, types: [_rawConstants.ITEM_TYPES.MATERIA], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: SpellSheet, label: _rawConstants.LANG.ITEM_TYPES.SPELL, types: [_rawConstants.ITEM_TYPES.SPELL], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: SubclassSheet, label: _rawConstants.LANG.ITEM_TYPES.SUBCLASS, types: [_rawConstants.ITEM_TYPES.SUBCLASS], default: true});
+_rawConstants.SHEETS.ITEMS.push({class: WeaponSheet, label: _rawConstants.LANG.ITEM_TYPES.WEAPON, types: [_rawConstants.ITEM_TYPES.WEAPON], default: true});
+
+//Data Models
+_rawConstants.DATA_MODELS.ACTORS = {
+    [_rawConstants.ACTOR_TYPES.ADVERSARY]: AdversaryDataModel,
+    [_rawConstants.ACTOR_TYPES.ENVIRONMENT]: EnvironmentDataModel,
+    [_rawConstants.ACTOR_TYPES.PLAYER]: PlayerDataModel,
+};
+
+_rawConstants.DATA_MODELS.ITEMS = {
+    [_rawConstants.ITEM_TYPES.ANCESTRY]: AncestryDataModel,
+    [_rawConstants.ITEM_TYPES.ARMOR]: ArmorDataModel,
+    [_rawConstants.ITEM_TYPES.CLASS]: ClassDataModel,
+    [_rawConstants.ITEM_TYPES.COMMON_ITEM]: CommonItemDataModel,
+    [_rawConstants.ITEM_TYPES.COMMUNITY]: CommunityDataModel,
+    [_rawConstants.ITEM_TYPES.CONSUMABLE]: ConsumableDataModel,
+    [_rawConstants.ITEM_TYPES.DOMAIN]: DomainDataModel,
+    [_rawConstants.ITEM_TYPES.DOMAIN_CARD]: DomainCardDataModel,
+    [_rawConstants.ITEM_TYPES.FEATURE]: FeatureDataModel,
+    [_rawConstants.ITEM_TYPES.MAGIC_ITEM]: MagicItemDataModel,
+    [_rawConstants.ITEM_TYPES.MATERIA]: MateriaDataModel,
+    [_rawConstants.ITEM_TYPES.SPELL]: SpellDataModel,
+    [_rawConstants.ITEM_TYPES.SUBCLASS]: SubClassDataModel,
+    [_rawConstants.ITEM_TYPES.WEAPON]: WeaponDataModel,
+};
 
 //Choices
 _rawConstants.CHOICES.ADVERSARY = Object.values(_rawConstants.ADVERSARY_TYPES);
@@ -247,10 +323,19 @@ _rawConstants.CHOICES.REST_TYPE = Object.values(_rawConstants.REST_TYPE);
 _rawConstants.CHOICES.TARGETS = Object.values(_rawConstants.TARGETS);
 _rawConstants.CHOICES.RANGE = Object.values(_rawConstants.RANGE);
 
+//Defaults
+_rawConstants.DEFAULTS.RESOURCES = _rawConstants.RESOURCE_TYPES.HP;
+_rawConstants.DEFAULTS.TARGETS = _rawConstants.TARGETS.ENEMIES;
+_rawConstants.DEFAULTS.RANGE = _rawConstants.RANGE.MELEE;
+_rawConstants.DEFAULTS.TRAITS = _rawConstants.TRAITS.STRENGTH;
+_rawConstants.DEFAULTS.DAMAGE_TYPES = _rawConstants.DAMAGE_TYPES.PHYSICAL;
+_rawConstants.DEFAULTS.ENVIRONMENT = _rawConstants.ENVIRONMENT_TYPES.EXPLORATION;
+_rawConstants.DEFAULTS.SUBCLASS_MASTERY_LEVEL = _rawConstants.SUBCLASS_MASTERY_LEVEL.FOUNDATION;
+
 //Polymorphic Type
 _rawConstants.POLYMORPHIC_TYPES.EFFECTS.MAP = _rawConstants.POLYMORPHIC_TYPES.EFFECTS.CLASSES.reduce((map, cls) => {
     map[cls._internalType] = cls;
     return map;
 }, {});
 
-export const CONSTANTS = Utils.deepFreeze(_rawConstants);
+export const CONSTANTS = _rawConstants;

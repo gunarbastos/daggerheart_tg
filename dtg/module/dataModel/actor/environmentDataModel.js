@@ -1,5 +1,7 @@
-import {CONSTANTS, BaseDataModel, Utils} from '../../common';
-import { FeatureDataModel } from "../item";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {CONSTANTS, BaseDataModel} from '../../common/index.js';
+import {EmbedFeatureDataModel} from "../item/index.js";
 
 export class EnvironmentDataModel extends BaseDataModel {
 
@@ -10,13 +12,15 @@ export class EnvironmentDataModel extends BaseDataModel {
     /** @inheritDoc */
     static defineSchema() {
         const fields = foundry.data.fields;
+        const base = super.defineSchema();
         return {
+            ...base,
             tier: new fields.NumberField({required: true, integer: true, min: 1, initial: 1, max: 4}),
-            type: new fields.StringField({required: true, blank: false, choices : CONSTANTS.CHOICES.ENVIRONMENT}),
-            impulses: new fields.StringField({required: true, blank: false}),
+            type: new fields.StringField({required: true, blank: false, choices : CONSTANTS.CHOICES.ENVIRONMENT, initial: CONSTANTS.DEFAULTS.ENVIRONMENT}),
+            impulses: new fields.StringField({required: true, blank: true, initial: ""}),
             difficulty: new fields.NumberField({required: true, integer: true, min: 1, initial: 1}),
             potentialAdversariesUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()), //UUIDs of adversary type Actors
-            features: new fields.EmbeddedCollectionField(FeatureDataModel)
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] })
         }
     }
 

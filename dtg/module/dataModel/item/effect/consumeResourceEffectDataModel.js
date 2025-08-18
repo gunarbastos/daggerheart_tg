@@ -1,5 +1,7 @@
-import {EffectDataModel} from "../effectDataModel";
-import {CONSTANTS} from "../../../common";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {EffectDataModel} from "../effectDataModel.js";
+import {CONSTANTS} from "../../../common/index.js";
 
 export class ConsumeResourceEffectDataModel extends EffectDataModel {
 
@@ -15,7 +17,7 @@ export class ConsumeResourceEffectDataModel extends EffectDataModel {
         return {
             ...base,
             type: new fields.StringField({required: true, initial: this._internalType}),
-            resource: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.RESOURCES}),
+            resource: new fields.StringField({required: true, choices: CONSTANTS.CHOICES.RESOURCES, initial: CONSTANTS.DEFAULTS.RESOURCES}),
             quantity: new fields.NumberField({required: true, min: 1, initial: 1})
         }
     }

@@ -1,5 +1,7 @@
-import { CONSTANTS, ResourceDataModel, ExperienceDataModel, BaseDataModel } from "../../common";
-import { FeatureDataModel } from "../item";
+console.log(`Loaded: ${import.meta.url}`);
+
+import { CONSTANTS, ResourceDataModel, ExperienceDataModel, BaseDataModel } from "../../common/index.js";
+import { EmbedFeatureDataModel } from "../item/index.js";
 
 export class AdversaryDataModel extends BaseDataModel {
 
@@ -16,7 +18,7 @@ export class AdversaryDataModel extends BaseDataModel {
                 hp: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 0, default: 0})),
                 stress: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 0, default: 0})),
             }),
-            experiences: new fields.EmbeddedCollectionField(ExperienceDataModel),
+            experiences: new fields.EmbeddedDataField(ExperienceDataModel),
             tier: new fields.NumberField({required: true, integer: true, min: 1, initial: 1, max: 4}),
             type: new fields.StringField({required: false, blank: true, choices: CONSTANTS.CHOICES.ADVERSARY}),
             tactics: new fields.StringField({required: false, blank: true}),
@@ -25,11 +27,11 @@ export class AdversaryDataModel extends BaseDataModel {
             severeDamageThreshold: new fields.NumberField({required: true, integer: true, min: 1, initial: 1}),
             attackModifier: new fields.NumberField({required: true, integer: true, min: 1, initial: 1}),
             standardAttack: new fields.SchemaField({
-                name: new fields.StringField({required: true, blank: false}),
-                range: new fields.StringField({required: true, blank: false}),
-                damage: new fields.StringField({required: true, blank: false})
+                name: new fields.StringField({required: true, blank: false, initial: "Attack"}),
+                range: new fields.StringField({required: true, blank: false, choices: CONSTANTS.CHOICES.RANGE, initial: CONSTANTS.DEFAULTS.RANGE}),
+                damage: new fields.StringField({required: true, blank: false, initial: "0"})
             }),
-            features: new fields.EmbeddedCollectionField(FeatureDataModel)
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] })
         }
     }
 }

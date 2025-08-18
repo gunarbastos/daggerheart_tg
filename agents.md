@@ -31,7 +31,7 @@
 **Capabilities**:
 - Write all system code in **plain JavaScript** (no TypeScript)
 - Follow Foundry VTT v13 AppV2 architecture and practices
-- Place utility functions as `static` methods inside the `Utils` class under `/dtg/module/common/Utils.js` when possible
+- Place utility functions as `static` methods inside the `Utils` class under `/dtg/module/common/utils.js` when possible
 - Do not write standalone functions — all functions should be `static` inside a class
 - Never use the `CONSTANTS` module in static class fields or top-level module code
     - It may only be accessed in runtime code (functions/methods) executed after `CONSTANTS` is fully loaded

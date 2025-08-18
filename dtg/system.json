@@ -1,5 +1,5 @@
 {
-  "id": "daggerheart_tg",
+  "id": "dtg",
   "title": "Daggerheart",
   "description": "Daggerheart system for Foundry VTT.",
   "version": "0.01a",
@@ -7,11 +7,17 @@
     "minimum": 13,
     "verified": 13
   },
-  "authors": [{
-    "name": "Gunar Seidler Bastos"
-  }],
-  "esmodules": ["daggerheart_tg.js"],
-  "styles": ["styles/system-styles.css"],
+  "authors": [
+    {
+      "name": "Gunar Seidler Bastos"
+    }
+  ],
+  "esmodules": [
+    "main.js"
+  ],
+  "styles": [
+    "main.css"
+  ],
   "packs": [
     {
       "name": "adversaries",
@@ -44,26 +50,39 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json"
     }
   ],
   "documentTypes": {
     "Actor": {
-      "Player": {},
       "Adversary": {},
-      "Environment": {}
+      "Environment": {},
+      "Player": {}
     },
     "Item": {
-      "Weapon": {},
-      "Spell": {},
+      "Ancestry": {},
       "Armor": {},
       "Class": {},
-      "Subclass": {},
+      "CommonItem": {},
+      "Community": {},
+      "Consumable": {},
       "Domain": {},
       "DomainCard": {},
-      "Ancestry": {},
-      "Community": {},
-      "CommonItem": {},
-      "Consumable": {}
+      "Feature": {},
+      "MagicItem": {},
+      "Materia": {},
+      "Spell": {},
+      "Subclass": {},
+      "Weapon": {}
     }
   },
   "socket": false,

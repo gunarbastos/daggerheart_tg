@@ -1,5 +1,7 @@
-import {BaseDataModel, Utils} from "../../common";
-import {FeatureDataModel} from "./featureDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {BaseDataModel, Utils} from "../../common/index.js";
+import {EmbedFeatureDataModel} from "./featureDataModel.js";
 
 export class DomainCardDataModel extends BaseDataModel {
 
@@ -13,9 +15,9 @@ export class DomainCardDataModel extends BaseDataModel {
         return {
             ...base,
             domainUUID: new fields.DocumentUUIDField(), //UUID of Item type Domain
-            level: new fields.NumberField({required: true, min: 1, max: 10}),
-            recallCost: new fields.NumberField({required: true, min: 0}),
-            features: new fields.EmbeddedCollectionField(FeatureDataModel),
+            level: new fields.NumberField({required: true, min: 1, max: 10, initial: 1}),
+            recallCost: new fields.NumberField({required: true, min: 0, initial: 0}),
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
         }
     }
 

@@ -1,20 +1,30 @@
-import {CONSTANTS} from "./constants";
+console.log(`Loaded: ${import.meta.url}`);
 
 const _document_cache = new Map();
 
 export class Utils {
 
-    static registerSheets(collection, sheetList) {
-        for (const sheetId in collection.sheetClasses[CONSTANTS.CORE_ID]) {
-            collection.unregisterSheet(CONSTANTS.CORE_ID, collection.sheetClasses[CONSTANTS.CORE_ID][sheetId].cls);
-        }
-        for(const sheet of sheetList){
-            collection.registerSheet(CONSTANTS.SYSTEM_ID, sheet.class, {
-                types: sheet.types,
-                label: sheet.label,
-                makeDefault: sheet.default,
-            });
-        }
+    static JSON(object) {
+        return JSON.stringify(object, null, 2);
+    }
+
+    static log(...data){
+        console.log("DTG | ", ...data);
+    }
+
+    static warn(...data){
+        console.warn("DTG | ", ...data);
+    }
+
+    static localize(text, lang = (game?.i18n?.lang ?? "en")) {
+        if (typeof text === "string") return text;
+        if (text && typeof text === "object" && !Array.isArray(text) && Object.prototype.hasOwnProperty.call(text, "en") && typeof text.en === "string") return text.en;
+        return JSON.stringify(text);
+    }
+    static unique(arr) { return Array.from(new Set(arr ?? [])); }
+
+    static mergeObjects(base, extra, options = {}) {
+        return foundry.utils.mergeObject(foundry.utils.deepClone(base), extra ?? {}, { inplace: false, recursive: true, ...options });
     }
 
     static getCachedDocument(uuid) {
@@ -31,29 +41,16 @@ export class Utils {
     }
 
     static localizeLangTree(source, langCode, fallback = 'en') {
-        const result = {};
-
         for (const [key, value] of Object.entries(source)) {
-            if (typeof value === 'string') {
-                // Already a localized string
-                result[key] = value;
-            } else if (
-                value &&
-                typeof value === 'object' &&
-                Utils.isLanguageMap(value)
-            ) {
-                // It's a localizable node
-                result[key] = value[langCode] || value[fallback] || `[MISSING:${key}]`;
+            if (typeof value === 'string') continue;
+            if (value && typeof value === 'object' && Utils.isLanguageMap(value)) {
+                source[key] = value[langCode] || value[fallback] || `[MISSING:${key}]`;
             } else if (value && typeof value === 'object') {
-                // Nested object (e.g., TRAITS)
-                result[key] = Utils.localizeLangTree(value, langCode, fallback);
-            } else {
-                // Not recognized
-                result[key] = `[INVALID:${key}]`;
+                Utils.localizeLangTree(value, langCode, fallback);
             }
         }
 
-        return result;
+        return source;
     }
 
     static isLanguageMap(obj) {
@@ -289,6 +286,19 @@ export class Utils {
     }
 
     /*
+     * Format Helper: Prints an object as string
+     */
+    static hbsJSON(...args) {
+        args.pop();
+        return JSON.stringify(args, null, 2);
+    }
+
+    static absolute(...args) {
+        args.pop();
+        return Math.abs(args.pop());
+    }
+
+    /*
      * Registers helper functions into Handlebars
      */
     static registerCommonHelpers() {
@@ -301,6 +311,7 @@ export class Utils {
         Utils.registerHandlebarHelper('relativeTime', this.relativeTimeHelper);
         Utils.registerHandlebarHelper('ifAll', this.ifAllHelper);
         Utils.registerHandlebarHelper('ifAny', this.ifAnyHelper);
-
+        Utils.registerHandlebarHelper('json', this.hbsJSON);
+        Utils.registerHandlebarHelper('absolute', this.absolute)
     }
 }

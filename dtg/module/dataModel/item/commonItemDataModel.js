@@ -1,4 +1,6 @@
-import {InventoryItemDataModel} from "../../common";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {InventoryItemDataModel} from "../../common/index.js";
 
 export class CommonItemDataModel extends InventoryItemDataModel {
 

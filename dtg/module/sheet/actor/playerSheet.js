@@ -1,5 +1,18 @@
-class Player extends foundry.app.sheets.ActorSheetV2 {
+import {CONSTANTS, Utils} from "../../common/index.js";
 
+console.log(`Loaded: ${import.meta.url}`);
+
+import {DtgActorSheet} from "./dtgActorSheet.js";
+
+export class PlayerSheet extends DtgActorSheet {
+    static get PARTS() { return super.PARTS; }
+
+    static get DEFAULT_OPTIONS() {
+        const base = super.DEFAULT_OPTIONS;
+        return {
+            ...base,
+            classes: Utils.unique([...base.classes ?? [], `${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.PLAYER}`]),
+
+        };
+    }
 }
-
-export const PlayerSheet = foundry.applications.api.HandlebarsApplicationMixin(Player);

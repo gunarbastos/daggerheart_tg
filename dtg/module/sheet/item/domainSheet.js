@@ -1,5 +1,22 @@
-class Domain extends foundry.app.sheets.ActorSheetV2 {
+import {CONSTANTS, Utils} from "../../common/index.js";
 
+console.log(`Loaded: ${import.meta.url}`);
+
+import {DtgItemSheet} from "./dtgItemSheet.js";
+
+export class DomainSheet extends DtgItemSheet {
+    static get PARTS() { return super.PARTS; }
+
+    static get DEFAULT_OPTIONS() {
+        const base = super.DEFAULT_OPTIONS;
+        return {
+            ...base,
+            classes: Utils.unique([...base.classes ?? [], `${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ITEM_TYPES.DOMAIN}`]),
+
+        };
+    }
+
+    static get DOCTYPE() {
+        return CONSTANTS.ITEM_TYPES.DOMAIN;
+    }
 }
-
-export const DomainSheet = foundry.applications.api.HandlebarsApplicationMixin(Domain);

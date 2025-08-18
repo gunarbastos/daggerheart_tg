@@ -1,4 +1,6 @@
-import {EffectDataModel} from "../effectDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {EffectDataModel} from "../effectDataModel.js";
 
 export class HealEffectDataModel extends EffectDataModel {
 
@@ -14,7 +16,7 @@ export class HealEffectDataModel extends EffectDataModel {
         return {
             ...base,
             type: new fields.StringField({required: true, initial: this._internalType}),
-            amount: new fields.StringField({required: true, blank: false}),
+            amount: new fields.StringField({required: true, blank: false, initial: "0"}),
         }
     }
 }

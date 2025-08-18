@@ -1,5 +1,7 @@
-import {BaseDataModel, CONSTANTS} from "../../common";
-import {FeatureDataModel} from "./featureDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {BaseDataModel} from "../../common/index.js";
+import {EmbedFeatureDataModel} from "./featureDataModel.js";
 
 export class ClassDataModel extends BaseDataModel {
 
@@ -13,11 +15,11 @@ export class ClassDataModel extends BaseDataModel {
         return {
             ...base,
             domainsUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()), //UUIDs of Items type Domain
-            startingEvasion: new fields.NumberField({required: true, min: 1}),
-            startingHitPoints: new fields.NumberField({required: true, min: 1}),
+            startingEvasion: new fields.NumberField({required: true, min: 1, initial: 1}),
+            startingHitPoints: new fields.NumberField({required: true, min: 1, initial: 1}),
             classItemsOptions: new fields.ArrayField(/** @type any */ new fields.ArrayField(/** @type any */ new fields.SchemaField({itemsUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField())}))), //2 level array of Sets of UUIDs of Items type Weapon, Armor, Consumable or CommonItem
-            features: new fields.EmbeddedCollectionField(FeatureDataModel),
-            hopeFeatures: new fields.EmbeddedCollectionField(FeatureDataModel),
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
+            hopeFeatures: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
             subclassesUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()),//UUIDs of Item type Subclasses
         }
     }

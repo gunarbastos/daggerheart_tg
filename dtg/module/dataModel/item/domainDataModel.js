@@ -1,4 +1,6 @@
-import {BaseDataModel, CONSTANTS} from "../../common";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {BaseDataModel} from "../../common/index.js";
 
 export class DomainDataModel extends BaseDataModel {
 

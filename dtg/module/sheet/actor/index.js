@@ -1,6 +1,9 @@
 // File generated automatically.
-// Last Updated: 31/07/2025 22:07:21.549 UTC-3
+// Last Updated: 16/08/2025 15:31:25.090 UTC-3
 
-export { AdversarySheet } from './adversarySheet.js';
-export { EnvironmentSheet } from './environmentSheet.js';
-export { PlayerSheet } from './playerSheet.js';
+console.log(`Loaded: ${import.meta.url}`);
+
+export {AdversarySheet} from './adversarySheet.js';
+export {DtgActorSheet} from './dtgActorSheet.js';
+export {EnvironmentSheet} from './environmentSheet.js';
+export {PlayerSheet} from './playerSheet.js';

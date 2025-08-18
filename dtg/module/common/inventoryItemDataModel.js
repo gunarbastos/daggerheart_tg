@@ -1,4 +1,6 @@
-import {BaseDataModel} from "./baseDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {BaseDataModel} from "./baseDataModel.js";
 
 export class InventoryItemDataModel extends BaseDataModel {
 

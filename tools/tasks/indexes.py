@@ -36,7 +36,9 @@ def generate_indexes_internal(directory: Path):
     offset_hours = offset.total_seconds() / 3600
     index_file = directory / "index.js"
     created_file = not index_file.exists()
-    index_file.write_text("// File generated automatically.\n// Last Updated: " + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n" + "\n".join(exports) + "\n", encoding="utf-8")
+    index_file.write_text("// File generated automatically.\n// Last Updated: " + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n" + "console.log(`Loaded: ${import.meta.url}`);\n\n" + "\n".join(exports) + "\n", encoding="utf-8")
+    #index_file.write_text("// File generated automatically.\n// Last Updated: " + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n" + "\n".join(exports) + "\n", encoding="utf-8")
+    #index_file.write_text("baba yaga", encoding="utf-8")
     if created_file:
         print(f"adding {index_file} to git")
         os.system(f"git add {index_file}")

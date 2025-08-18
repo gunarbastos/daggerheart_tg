@@ -1,6 +1,7 @@
+console.log(`Loaded: ${import.meta.url}`);
+
 export class PolymorphicEmbeddedField extends foundry.data.fields.EmbeddedDataField {
     constructor(base, mapping, options = {}) {
-        // mapping: { damage: DamageEffectDataModel, consume: ConsumeResourceEffectDataModel }
         super(base, options);
         this.mapping = mapping;
     }

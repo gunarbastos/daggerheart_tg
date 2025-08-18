@@ -1,5 +1,21 @@
-class Feature extends foundry.app.sheets.ActorSheetV2 {
+import {CONSTANTS, Utils} from "../../common/index.js";
 
+console.log(`Loaded: ${import.meta.url}`);
+
+import {DtgItemSheet} from "./dtgItemSheet.js";
+
+export class FeatureSheet extends DtgItemSheet {
+    static get PARTS() { return super.PARTS; }
+
+    static get DEFAULT_OPTIONS() {
+        const base = super.DEFAULT_OPTIONS;
+        return {
+            ...base,
+            classes: Utils.unique([...base.classes ?? [], `${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ITEM_TYPES.FEATURE}`]),
+        };
+    }
+
+    static get DOCTYPE() {
+        return CONSTANTS.ITEM_TYPES.FEATURE;
+    }
 }
-
-export const FeatureSheet = foundry.applications.api.HandlebarsApplicationMixin(Feature);

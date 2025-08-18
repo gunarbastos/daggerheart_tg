@@ -1,5 +1,7 @@
-import {EffectDataModel} from "../effectDataModel";
-import {CONSTANTS} from "../../../common";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {EffectDataModel} from "../effectDataModel.js";
+import {CONSTANTS} from "../../../common/index.js";
 
 export class ChangeRollEffectDataModel extends EffectDataModel {
 

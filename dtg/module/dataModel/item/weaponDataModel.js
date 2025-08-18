@@ -1,5 +1,7 @@
-import {CONSTANTS, InventoryItemDataModel} from "../../common";
-import {FeatureDataModel, MaterialDataModel} from "./";
+import {CONSTANTS, InventoryItemDataModel} from "../../common/index.js";console.log(`Loaded: ${import.meta.url}`);
+
+
+import {EmbedFeatureDataModel} from "./featureDataModel.js";
 
 export class WeaponDataModel extends InventoryItemDataModel {
 
@@ -12,13 +14,19 @@ export class WeaponDataModel extends InventoryItemDataModel {
         const base = super.defineSchema();
         return {
             ...base,
-            trait: new fields.StringField({required: true, blank: false, choices: CONSTANTS.CHOICES.TRAITS}),
-            range: new fields.StringField({required: true, blank: false, choices: CONSTANTS.CHOICES.RANGE}),
-            damage: new fields.StringField({required: true, blank: false}),
-            burden: new fields.NumberField({required: true, integer: true}),
-            features: new fields.EmbeddedCollectionField(FeatureDataModel),
+            trait: new fields.StringField({required: true, blank: false, choices: CONSTANTS.CHOICES.TRAITS, initial: CONSTANTS.DEFAULTS.TRAITS}),
+            range: new fields.StringField({required: true, blank: false, choices: CONSTANTS.CHOICES.RANGE, initial: CONSTANTS.DEFAULTS.RANGE}),
+            damage: new fields.StringField({required: true, blank: false, initial: "0"}),
+            burden: new fields.NumberField({required: true, integer: true, initial: 1}),
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
             materiaSlots: new fields.NumberField({required: true, initial: 0, min: 0}),
-            equippedMaterias: new fields.EmbeddedCollectionField(MaterialDataModel),
+            equippedMateriasUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()), //UUIDs of adversary type Actors
         }
+    }
+
+    #equippedMaterias = null;
+    get equippedMaterias() {
+        if(!this.#equippedMaterias) { this.#equippedMaterias = this._buildCacheMap(this.equippedMateriasUUIDs); }
+        return this.#equippedMaterias;
     }
 }

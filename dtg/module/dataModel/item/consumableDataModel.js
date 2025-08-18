@@ -1,6 +1,7 @@
-import {InventoryItemDataModel} from "../../common";
-import {FeatureDataModel} from "./featureDataModel";
-import {MaterialDataModel} from "./materiaDataModel";
+console.log(`Loaded: ${import.meta.url}`);
+
+import {InventoryItemDataModel} from "../../common/index.js";
+import {EmbedFeatureDataModel} from "./featureDataModel.js";
 
 export class ConsumableDataModel extends InventoryItemDataModel {
 
@@ -15,9 +16,15 @@ export class ConsumableDataModel extends InventoryItemDataModel {
             ...base,
             stackable: new fields.BooleanField({required: true, initial: true}),
             quantity: new fields.NumberField({required: true, min: 0, initial: 1}),
-            features: new fields.EmbeddedCollectionField(FeatureDataModel),
+            features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
             materiaSlots: new fields.NumberField({required: true, initial: 0, min: 0}),
-            equippedMaterias: new fields.EmbeddedCollectionField(MaterialDataModel),
+            equippedMateriasUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()),
         }
+    }
+
+    #equippedMaterias = null;
+    get equippedMaterias() {
+        if(!this.#equippedMaterias) { this.#equippedMaterias = this._buildCacheMap(this.equippedMateriasUUIDs); }
+        return this.#equippedMaterias;
     }
 }
