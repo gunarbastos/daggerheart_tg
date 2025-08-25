@@ -13,6 +13,7 @@ export class MagicItemDataModel extends InventoryItemDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            activatable: new fields.BooleanField({required: true, initial: true}),
             features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
         }
     }

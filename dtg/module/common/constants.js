@@ -113,6 +113,9 @@ _rawConstants = {
         ITEMS: {},
     },
 
+    TEMPLATES: {
+    },
+
     //Enums
     ROLL_RESULTS: {
         HOPE: "hope",
@@ -201,6 +204,10 @@ _rawConstants = {
         FAR: "Far",
         VERY_FAR: "Very Far",
     },
+    WEAPON_SLOT: {
+        PRIMARY: 'Primary',
+        SECONDARY: 'Secondary',
+    },
 
     //Defaults
     DEFAULTS: {},
@@ -208,12 +215,64 @@ _rawConstants = {
 
     //Structures
     SETTINGS: {
-        SETTING_NAME: {
-            SCOPE: "user", //user || world
-            USER_CAN_CONFIG: true, // true/false
-            NAME: "setting_name",
-            DEFAULT_VALUE: "setting_value",
+        FEAR_MAXIMUM: {
+            name: "Fear: Maximum",
+            hint: "Maximum size of the GM fear pool.",
+            scope: "world",
+            config: true,
+            type: Number,
+            default: 12,
+            range: { min: 0 },
         },
+        FEAR_CURRENT: {
+            name: "Fear: Current",
+            hint: "Current GM fear points (temporary: editable for testing).",
+            scope: "world",
+            config: false,
+            type: Number,
+            default: 0,
+            range: { min: 0 },
+        },
+        FEAR_ASSISTANT_CAN_EDIT: {
+            name: "Fear: Allow Assistant to Edit Fear",
+            hint: "Determines if players with Assistant role can edit fear value.",
+            scope: "world",
+            config: true,
+            type: Boolean,
+            default: true,
+        },
+        FEAR_PLAYERS_CAN_SEE: {
+            name: "Fear: Allow Players to See Fear",
+            hint: "Determines if players can open the Fear app.",
+            scope: "world",
+            config: true,
+            type: Boolean,
+            default: true,
+        },
+        FEAR_WINDOW_POSITION: {
+            scope: "client",
+            //config: false,
+            type: Object,
+            default: {},
+            name: "Fear: FEAR_WINDOW_POSITION",
+            hint: "FEAR_WINDOW_POSITION",
+            config: true,
+        },
+        FEAR_WINDOW_IS_OPEN: {
+            scope: "client",
+            //config: false,
+            type: Boolean,
+            default: true,
+            name: "Fear: FEAR_WINDOW_IS_OPEN",
+            hint: "FEAR_WINDOW_IS_OPEN",
+            config: true,
+        },
+        /*FEAR_WINDOW_LAYOUT: {
+            scope: "client",
+            config: false,
+            type: String,
+            default: "numbers",
+        },*/
     },
 
     APPS: {
@@ -322,6 +381,7 @@ _rawConstants.CHOICES.DAMAGE_TYPES = Object.values(_rawConstants.DAMAGE_TYPES);
 _rawConstants.CHOICES.REST_TYPE = Object.values(_rawConstants.REST_TYPE);
 _rawConstants.CHOICES.TARGETS = Object.values(_rawConstants.TARGETS);
 _rawConstants.CHOICES.RANGE = Object.values(_rawConstants.RANGE);
+_rawConstants.CHOICES.WEAPON_SLOT = Object.values(_rawConstants.WEAPON_SLOT);
 
 //Defaults
 _rawConstants.DEFAULTS.RESOURCES = _rawConstants.RESOURCE_TYPES.HP;
@@ -331,6 +391,17 @@ _rawConstants.DEFAULTS.TRAITS = _rawConstants.TRAITS.STRENGTH;
 _rawConstants.DEFAULTS.DAMAGE_TYPES = _rawConstants.DAMAGE_TYPES.PHYSICAL;
 _rawConstants.DEFAULTS.ENVIRONMENT = _rawConstants.ENVIRONMENT_TYPES.EXPLORATION;
 _rawConstants.DEFAULTS.SUBCLASS_MASTERY_LEVEL = _rawConstants.SUBCLASS_MASTERY_LEVEL.FOUNDATION;
+_rawConstants.DEFAULTS.WEAPON_SLOT = _rawConstants.WEAPON_SLOT.PRIMARY;
+
+//Templates to preload
+_rawConstants.TEMPLATES.ROOT_DIR = `systems/${_rawConstants.SYSTEM_ID}/template`;
+_rawConstants.TEMPLATES.DUALITY_DICE_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/dualityDiceRoll.hbs` };
+_rawConstants.TEMPLATES.DUALITY_DICE_ROLL_DETAILS =  { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/partials/dualityDiceRollDetails.hbs`, PRELOAD: true, ALIAS: "dualityDiceRollDetails" };
+
+//Set property "id" for each and all Settings
+for(const [settingKey, settingValue] of Object.entries(_rawConstants.SETTINGS)) {
+    settingValue.id = settingKey;
+}
 
 //Polymorphic Type
 _rawConstants.POLYMORPHIC_TYPES.EFFECTS.MAP = _rawConstants.POLYMORPHIC_TYPES.EFFECTS.CLASSES.reduce((map, cls) => {

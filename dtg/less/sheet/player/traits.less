@@ -1,0 +1,83 @@
+.part-traits {
+  display: grid;
+
+  .part-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  // Center the row of cards; allow horizontal scroll if viewport is too narrow
+  .traits-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    padding-bottom: 4px; // keeps scrollbar from hugging the border if it appears
+
+    align-items: center;       // vertical
+    // let it fill the available body height so centering is visible
+    min-height: 0;
+  }
+
+  // Exactly six fixed-width columns; grid shrinks to content so centering works
+  .traits-grid {
+    --trait-card-w: 100px;
+    --trait-card-h: 150px;
+
+    display: grid;
+    grid-template-columns: repeat(6, var(--trait-card-w));
+    gap: 12px;
+    inline-size: max-content; // makes the grid width equal to its columns (no full stretch)
+  }
+
+  // Card layout: label (top, centered) -> big input -> roll button */
+  .trait-card {
+    width: var(--trait-card-w);
+    height: var(--trait-card-h);
+    border: 1px solid var(--color-border, #8882);
+    border-radius: 10px;
+    padding: 8px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    align-items: start;
+    justify-items: center;
+    background: var(--color-bg-panel, transparent);
+  }
+
+  .trait-label {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .trait-input {
+    width: 100%;
+    height: 100%;
+    min-height: 48px;     // gives it presence
+    padding: 6px 8px;
+    text-align: center;
+    font-size: 3.6rem;
+    font-weight: 700;
+    border-radius: 8px;
+    background: var(--color-bg-input, #0000);
+    border: 0;
+  }
+
+  .trait-roll-btn {
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--color-border, #8882);
+    border-radius: 8px;
+    background: var(--color-bg-button, #0000);
+    cursor: pointer;
+    width: 100%;
+  }
+
+  // Safety: avoid overflowing the panel on very small widths
+  @media (max-width: 640px) {
+    .traits-grid {
+      --trait-card-w: 90px;
+      --trait-card-h: 140px;
+    }
+  }
+}

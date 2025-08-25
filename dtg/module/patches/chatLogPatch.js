@@ -30,23 +30,7 @@ export class ChatLogPatch {
                         fearFormula: args.fear ?? "1d12",
                         bonus: args.bonus,
                         advDisad: args.advDisad ?? "",      // "ADVANTAGE" | "DISADVANTAGE" | ""
-                        grantsHopeFear: true,
-                        postToChat: false,
-                    });
-
-                    const speaker = ChatMessage.getSpeaker({
-                        token: canvas.tokens?.controlled?.[0] ?? null,
-                        actor: canvas.tokens?.controlled?.[0]?.actor ?? game.user.character ?? null
-                    });
-
-                    // Minimal output (replace with your template if you prefer)
-                    const content = await foundry.applications.handlebars.renderTemplate(roll.template, {
-                        roll: roll
-                    });
-
-                    return ChatMessage.create({
-                        speaker,
-                        content: content
+                        grantsHopeFear: true
                     });
                 }
             } catch (err) {

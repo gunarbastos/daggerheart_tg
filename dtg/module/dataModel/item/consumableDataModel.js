@@ -15,6 +15,7 @@ export class ConsumableDataModel extends InventoryItemDataModel {
         return {
             ...base,
             stackable: new fields.BooleanField({required: true, initial: true}),
+            consumable: new fields.BooleanField({required: true, initial: true}),
             quantity: new fields.NumberField({required: true, min: 0, initial: 1}),
             features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
             materiaSlots: new fields.NumberField({required: true, initial: 0, min: 0}),

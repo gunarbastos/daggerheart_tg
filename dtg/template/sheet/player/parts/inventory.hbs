@@ -1,0 +1,174 @@
+<section class="dtg-part part-inventory" data-part-id="inventory" data-drop-scope="inventory" aria-label="Inventory">
+    <div class="inv-panel inv-equipped">
+        <div class="panel-header">
+            <span class="panel-title">Equipped</span>
+            <span class="panel-line" aria-hidden="true"></span>
+        </div>
+        <div class="panel-body">
+            <div class="equip-grid">
+                {{#if equippedItems.primaryWeapon}}
+                <div class="equip-col equip-primary">
+                        <div class="line name">{{equippedItems.primaryWeapon.name}}</div>
+                        <div class="line">
+                            {{equippedItems.primaryWeapon.system.trait}}
+                            <button type="button" class="icon-btn ei-btn" data-action="rollDuality" data-trait="{{equippedItems.primaryWeapon.system.trait}}">
+                                <img src="systems/dtg/asset/icon/Duality_Small.png" width="20" height="20" alt="" />
+                            </button>
+                        </div>
+                        <div class="line">
+                            {{equippedItems.primaryWeapon.system.damage}} {{equippedItems.primaryWeapon.system.damageType}}
+                            <button type="button" class="icon-btn ei-btn" data-action="rollDamage" data-formula="{{equippedItems.primaryWeapon.system.damage}}" data-type="{{equippedItems.primaryWeapon.system.damageType}}">
+                                <img src="systems/dtg/asset/icon/Duality_Small.png" width="20" height="20" alt="" />
+                            </button>
+                        </div>
+                    <div class="line">{{#if (eq equippedItems.primaryWeapon.system.burden 1)}}One Handed{{else}}Two Handed{{/if}} {{equippedItems.primaryWeapon.system.range}}</div>
+                </div>
+                {{/if}}
+
+                {{#if equippedItems.secondaryWeapon}}
+                <div class="equip-col equip-secondary">
+                        <div class="line name">{{equippedItems.secondaryWeapon.name}}</div>
+                        <div class="line">
+                            {{equippedItems.secondaryWeapon.system.trait}}
+                            <button type="button" class="icon-btn ei-btn" data-action="rollDuality" data-trait="{{equippedItems.secondaryWeapon.system.trait}}">
+                                <img src="systems/dtg/asset/icon/Duality_Small.png" width="20" height="20" alt="" />
+                            </button>
+                        </div>
+                        <div class="line">
+                            {{equippedItems.secondaryWeapon.system.damage}} {{equippedItems.secondaryWeapon.system.damageType}}
+                            <button type="button" class="icon-btn ei-btn" data-action="rollDamage" data-formula="{{equippedItems.secondaryWeapon.system.damage}}" data-type="{{equippedItems.secondaryWeapon.system.damageType}}">
+                                <img src="systems/dtg/asset/icon/Duality_Small.png" width="20" height="20" alt="" />
+                            </button>
+                        </div>
+                        <div class="line">{{#if (eq equippedItems.secondaryWeapon.system.burden 1)}}One Handed{{else}}Two Handed{{/if}} {{equippedItems.secondaryWeapon.system.range}}</div>
+                </div>
+                {{/if}}
+
+                {{#if equippedItems.armor}}
+                <div class="equip-col equip-armor">
+                        <div class="line name">{{equippedItems.armor.name}}</div>
+                        <div class="line">Slots: {{equippedItems.armor.system.baseScore}}</div>
+                        <div class="line">DT: {{equippedItems.armor.system.baseMajorThreshold}} / {{equippedItems.armor.system.baseSevereThreshold}}</div>
+                </div>
+                {{/if}}
+
+                <div class="equip-col equip-cards">
+                    <div class="cards-strip">
+                        {{#if equippedItems.cards.length}}
+                            {{#each equippedItems.cards as |card|}}
+                                <article class="card">
+                                    <div class="card-name">{{card.name}}</div>
+                                    <div class="card-desc">{{card.system.description}}</div>
+                                </article>
+                            {{/each}}
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="inv-currency">
+        <div class="currency-box">
+            <ul class="currency-list">
+                <li class="curr">
+                    <div class="curr-head"><i class="bi bi-coin"></i><span>Coins</span></div>
+                    <input type="number" class="curr-input" inputmode="numeric"
+                           name="system.currency.coins" value="{{system.currency.coins}}"
+                           min="0" step="1" />
+                </li>
+
+                <li class="curr">
+                    <div class="curr-head"><i class="bi bi-cash-coin"></i><span>Handfuls</span></div>
+                    <input type="number" class="curr-input" inputmode="numeric"
+                           name="system.currency.handfuls" value="{{system.currency.handfuls}}"
+                           min="0" step="1" />
+                </li>
+
+                <li class="curr">
+                    <div class="curr-head"><i class="bi bi-piggy-bank-fill"></i><span>Bags</span></div>
+                    <input type="number" class="curr-input" inputmode="numeric"
+                           name="system.currency.bags" value="{{system.currency.bags}}"
+                           min="0" step="1" />
+                </li>
+
+                <li class="curr">
+                    <div class="curr-head"><i class="bi bi-bank2"></i><span>Chests</span></div>
+                    <input type="number" class="curr-input" inputmode="numeric"
+                           name="system.currency.chests" value="{{system.currency.chests}}"
+                           min="0" step="1" />
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="inv-panel inv-backpack">
+        <div class="panel-header">
+            <span class="panel-title">Backpack</span>
+            <span class="panel-line" aria-hidden="true"></span>
+            <div class="filter-bar" role="toolbar" aria-label="Filter item types">
+                {{#each itemTypes as |type|}}
+                    <button type="button" class="filter-btn" data-action="filterItems" data-filter="{{type.name}}" aria-pressed="{{type.active}}">{{#if type.active}}<i class="bi bi-check-lg"></i> {{/if}}{{type.name}}</button>
+                {{/each}}
+            </div>
+        </div>
+
+        <ul class="item-list" data-list="backpack">
+            {{#if backpackItems.length}}
+                {{#each backpackItems as |backpackItem|}}
+                    <li class="item-row" data-item-id="{{backpackItem.id}}" data-item-type="{{backpackItem.item.type}}" data-item-kind="{{backpackItem.kind}}">
+                        <div class="item-main">
+                            <span class="item-name" data-action="openItem">{{backpackItem.item.name}}</span>
+                            <span class="item-type">{{backpackItem.item.type}}</span>
+                        </div>
+
+                        <div class="item-meta">
+                            {{#if (or (eq backpackItem.item.system.quantity 0) backpackItem.item.system.quantity)}}
+                                <div class="qty-ctrl">
+                                    <input type="number" class="qty-input" inputmode="numeric"
+                                           value="{{backpackItem.item.system.quantity}}" min="0"/>
+                                </div>
+                            {{/if}}
+                        </div>
+
+                        <div class="item-actions">
+                            <button type="button"
+                                    class="icon-btn bi bi-arrow-up-right-square"
+                                    data-action="openItem" title="Open"></button>
+                            {{#if backpackItem.equipable}}
+                                <button type="button"
+                                        class="icon-btn bi{{#if backpackItem.equipped}} bi-person-fill{{else}} bi-backpack3-fill{{/if}}"
+                                        data-action="{{#if backpackItem.equipped}}unequipItem{{else}}equipItem{{/if}}"
+                                        aria-pressed="{{backpackItem.equipped}}" title="Equip/Unequip"></button>
+                            {{/if}}
+                            {{#if backpackItem.item.system.activatable}}
+                                <button type="button"
+                                        class="icon-btn bi bi-magic"
+                                        data-action="activateItem"
+                                        title="Activate"></button>
+                            {{/if}}
+                            {{#if backpackItem.item.system.consumable}}
+                                <button type="button"
+                                        class="icon-btn bi bi-cup-straw"
+                                        data-action="consumeItem"
+                                        title="Consume"></button>
+                            {{/if}}
+                            {{#if backpackItem.item.system.attachable}}
+                                <button type="button"
+                                        class="icon-btn bi bi-cpu-fill"
+                                        data-action="attachItem"
+                                        title="Attach"></button>
+                            {{/if}}
+                            <button type="button"
+                                    class="icon-btn danger bi bi-trash-fill"
+                                    data-action="deleteItem"
+                                    title="Remove"></button>
+                        </div>
+                    </li>
+                {{/each}}
+            {{else}}
+                <li class="empty">Drop Feature or Inventory items here.</li>
+            {{/if}}
+        </ul>
+    </div>
+</section>

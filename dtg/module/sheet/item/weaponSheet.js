@@ -19,4 +19,15 @@ export class WeaponSheet extends DtgItemSheet {
     static get DOCTYPE() {
         return CONSTANTS.ITEM_TYPES.WEAPON;
     }
+
+    async _prepareContext(options) {
+        const base = await super._prepareContext(options);
+        return {
+            ...base,
+            TRAIT_CHOICES: Object.fromEntries(CONSTANTS.CHOICES.TRAITS.map(v => [v, v])),
+            SLOT_CHOICES: Object.fromEntries(CONSTANTS.CHOICES.WEAPON_SLOT.map(v => [v, v])),
+            RANGE_CHOICES: Object.fromEntries(CONSTANTS.CHOICES.RANGE.map(v => [v, v])),
+            DAMAGETYPE_CHOICES: Object.fromEntries(CONSTANTS.CHOICES.DAMAGE_TYPES.map(v => [v, v])),
+        };
+    }
 }

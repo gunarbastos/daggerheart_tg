@@ -14,6 +14,7 @@ export class ArmorDataModel extends InventoryItemDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            equipable: new fields.BooleanField({required: true, initial: true}),
             baseScore: new fields.NumberField({required: true, integer: true, initial: 0}),
             baseMajorThreshold: new fields.NumberField({required: true, integer: true, min: 1, initial: 1}),
             baseSevereThreshold: new fields.NumberField({required: true, integer: true, min: 1, initial: 1}),

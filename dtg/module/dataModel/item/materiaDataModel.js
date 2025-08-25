@@ -14,9 +14,9 @@ export class MateriaDataModel extends InventoryItemDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            attachable: new fields.BooleanField({required: true, initial: true}),
             accepts: new fields.StringField({required: true, blank: true, initial: ""}),
             features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
         }
     }
-
 }

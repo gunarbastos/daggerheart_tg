@@ -14,6 +14,10 @@ export class InventoryItemDataModel extends BaseDataModel {
         return {
             ...base,
             stackable: new fields.BooleanField({required: true, initial: false}),
+            equipable: new fields.BooleanField({required: true, initial: false}),
+            consumable: new fields.BooleanField({required: true, initial: false}),
+            activatable: new fields.BooleanField({required: true, initial: false}),
+            attachable: new fields.BooleanField({required: true, initial: false}),
         }
     }
 }

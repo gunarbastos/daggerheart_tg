@@ -21,7 +21,7 @@ export class DtgItemSheet extends foundry.applications.api.HandlebarsApplication
         if(!(doctype === "")) {
             doctype = doctype.charAt(0).toLowerCase() + doctype.slice(1);
         }
-        return `systems/${CONSTANTS.SYSTEM_ID}/template/${doctype}.hbs`;
+        return `systems/${CONSTANTS.SYSTEM_ID}/template/sheet/${doctype}.hbs`;
     }
 
     static get DEFAULT_OPTIONS() {
@@ -51,7 +51,6 @@ export class DtgItemSheet extends foundry.applications.api.HandlebarsApplication
     }
 
     async render(opts = {}) {
-        //checking before render if file exists
         if (this.constructor._hasSpecific === undefined) {
             const specPath = this.constructor.SPECIFIC_PATH;
             this.constructor._hasSpecific = await this.templateExists(specPath);
@@ -61,10 +60,11 @@ export class DtgItemSheet extends foundry.applications.api.HandlebarsApplication
 
     _configureRenderOptions(options) {
         super._configureRenderOptions(options);
-        // DOM order = visual order (CSS grid will place them)
         options.parts = ["base"];
         if (this.constructor._hasSpecific) {options.parts.push("specific");}
-        options.parts.push("debug");
+        if(game.user && game.user.isGM) {
+            options.parts.push("debug");
+        }
     }
 
     get title(){
@@ -72,12 +72,12 @@ export class DtgItemSheet extends foundry.applications.api.HandlebarsApplication
     }
 
     async _prepareContext(options) {
-        const ctx = await super._prepareContext(options);
+        const base = await super._prepareContext(options);
         return {
-            ...ctx,
+            ...base,
             system: this.document.system,
             systemFields: this.document.system.schema.fields,
-            debug: false
+            CONSTANTS: CONSTANTS,
         };
     }
 

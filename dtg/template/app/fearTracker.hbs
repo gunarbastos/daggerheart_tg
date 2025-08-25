@@ -1,0 +1,6 @@
+<div class="fear-header">
+    {{#if renderButtons}}<a class="top-right-btn" data-action="togglePlayersVisibility" title="{{hint}}" aria-label="{{hint}}"><i class="bi {{icon}}"></i></a>{{/if}}
+    {{#if renderButtons}}<a class="fear-btn button" data-action="removeFear">−</a>{{/if}}
+    <h1 class="fear-value">{{current}} / {{max}}</h1>
+    {{#if renderButtons}}<a class="fear-btn button" data-action="addFear">+</a>{{/if}}
+</div>

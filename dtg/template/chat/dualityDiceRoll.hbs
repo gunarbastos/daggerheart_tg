@@ -3,69 +3,11 @@
         <div class="dice-formula">{{roll.formula}}</div>
         <div class="dice-tooltip">
             <div class="wrapper">
-                <!--<section class="tooltip-part">
-                    <div class="dice">
-                        <header class="part-header flexrow">
-                            <span class="part-formula">Hope: {{roll.hopeDie.formula}}</span>
-                            <span class="part-total">{{roll.hope}}</span>
-                        </header>
-                        <ol class="dice-rolls">
-                            {{#each roll.hopeDie.terms as |term|}}
-                                {{#each term.results as |result|}}
-                                    <li class="roll die d{{term.faces}}">{{{result.result}}}</li>
-                                {{/each}}
-                            {{/each}}
-                        </ol>
-                    </div>
-                </section>
-                <section class="tooltip-part">
-                    <div class="dice">
-                        <header class="part-header flexrow">
-                            <span class="part-formula">Fear: {{roll.fearDie.formula}}</span>
-                            <span class="part-total">{{roll.fear}}</span>
-                        </header>
-                        <ol class="dice-rolls">
-                            {{#each roll.fearDie.terms as |term|}}
-                                {{#each term.results as |result|}}
-                                    <li class="roll die d{{term.faces}}">{{{result.result}}}</li>
-                                {{/each}}
-                            {{/each}}
-                        </ol>
-                    </div>
-                </section>-->
                 {{#each roll.base}}
-                    <section class="tooltip-part">
-                        <div class="dice">
-                            <header class="part-header flexrow">
-                                <span class="part-formula">{{capitalize this.description}}: {{this.roll.formula}}</span>
-                                <span class="part-total">{{absolute this.total}}</span>
-                            </header>
-                            <ol class="dice-rolls">
-                                {{#each this.roll.terms as |term|}}
-                                    {{#each term.results as |result|}}
-                                        <li class="roll die{{#if term.faces}} d{{term.faces}}{{/if}}{{#unless result.active}} discarded{{/unless}}">{{{result.result}}}</li>
-                                    {{/each}}
-                                {{/each}}
-                            </ol>
-                        </div>
-                    </section>
+                    {{> "dualityDiceRollDetails" details=this}}
                 {{/each}}
                 {{#each roll.bonus}}
-                    <section class="tooltip-part">
-                        <div class="dice">
-                            <header class="part-header flexrow">
-                                <span class="part-formula">{{#if this.description}}{{capitalize this.description}}{{else}}Bonus{{/if}}</span>
-                                <span class="part-total">{{absolute this.total}}</span>
-                            </header>
-                            <ol class="dice-rolls">
-                                {{#each this.roll.terms as |term|}}
-                                    {{#each term.results as |result|}}
-                                        <li class="roll die{{#if term.faces}} d{{term.faces}}{{/if}}{{#unless result.active}} discarded{{/unless}}">{{{result.result}}}</li>
-                                    {{/each}}
-                                {{/each}}
-                            </ol>
-                        </div>
-                    </section>
+                    {{> "dualityDiceRollDetails" details=this}}
                 {{/each}}
             </div>
         </div>

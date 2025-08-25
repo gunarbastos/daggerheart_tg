@@ -33,7 +33,6 @@ export class DtgEngine {
         try {
             _roll = await (new Roll(`${strFormula}`)).evaluate();
             for(const term of _roll.terms){
-                console.log(term);
                 if(term.options?.flavor){
                     _flavor += ` ${term.options?.flavor}`;
                     if(term.number && term.faces){
@@ -44,7 +43,6 @@ export class DtgEngine {
                 } else if(term.operator) {
                     _flavor += ` ${term.operator}`;
                 }
-                //_flavor += ` ${term.options?.flavor ?? term.operator ?? ""}`.trim();
             }
             _flavor = _flavor.trim();
         } catch(err) {
@@ -148,12 +146,11 @@ export class DtgEngine {
         return out;
     }
 
-    static async dualityRoll({ hopeFormula = "1d12", fearFormula = "1d12", bonus = [], grantsHopeFear = true, advDisad = "", postToChat = true }) {
+    static async dualityRoll({ hopeFormula = "1d12", fearFormula = "1d12", bonus = [], grantsHopeFear = true, advDisad = "" }) {
         let d6roll = undefined;
         const dualityDice = await this.dualityDice({hopeFormula, fearFormula});
-        //Utils.log(`dualityDice ${JSON.stringify(dualityDice)}`);
 
-        const roll = {
+        const result = {
             hope: dualityDice.hope,
             fear: dualityDice.fear,
             state: dualityDice.state,
@@ -165,7 +162,6 @@ export class DtgEngine {
         const consideredBonus = await this.#normalizeBonuses(bonus);
         if((advDisad === CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE) || (advDisad === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE)){
             d6roll = await (new Roll(`1d6`)).evaluate();
-            //Utils.log(`d6roll ${d6roll.total}`);
             consideredBonus.push(
                 {
                     roll: d6roll,
@@ -173,41 +169,114 @@ export class DtgEngine {
                     total: d6roll.total * (advDisad === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE ? -1 : 1)
                 });
         }
-        //Utils.log(`consideredBonus ${JSON.stringify(consideredBonus)}`);
 
         let totalBonus = 0;
         consideredBonus.forEach((entry) => { totalBonus += entry.total; });
-        //Utils.log(`totalBonus ${totalBonus}`);
 
         let total = dualityDice.hope + dualityDice.fear + totalBonus;
-        //Utils.log(`total ${total}`);
 
-        roll.template = `systems/${CONSTANTS.SYSTEM_ID}/template/chat/dualityDiceRoll.hbs`;
-        roll.totalBonus = totalBonus;
-        roll.total = total;
-        roll.bonus = consideredBonus;
-        roll.formula = `${hopeFormula} + ${fearFormula}`;
-        roll.isCritical = dualityDice.hope === dualityDice.fear;
+        result.template = `systems/${CONSTANTS.SYSTEM_ID}/template/chat/dualityDiceRoll.hbs`;
+        result.totalBonus = totalBonus;
+        result.total = total;
+        result.bonus = consideredBonus;
+        result.formula = `${hopeFormula} + ${fearFormula}`;
+        result.isCritical = dualityDice.hope === dualityDice.fear;
         if(totalBonus > 0){
-            roll.formula += ` + ${totalBonus - (d6roll?.total ?? 0)}`;
+            result.formula += ` + ${totalBonus - (d6roll?.total ?? 0)}`;
         }
         if(d6roll){
-            roll.formula += ` with ${advDisad}(${d6roll.total})`;
+            result.formula += ` with ${advDisad}(${d6roll.total})`;
         }
 
-        //Utils.log('roll', Utils.JSON(roll));
+        await this.#postToChat(result);
 
-        if(postToChat) {
-            const content = await foundry.applications.handlebars.renderTemplate(roll.template, {
-                roll: roll
-            });
+        return result;
+    }
 
-            await ChatMessage.create({
-                content
-            });
+    static async damageRoll(formula, type) {
+        Utils.log('damageRoll', formula, type);
+        const roll = await (new Roll(formula)).evaluate();
+        Utils.log('damageRoll', 'roll', roll);
+
+        const result = {
+            formula: formula,
+            roll: roll,
+            type: type,
+            template: `systems/${CONSTANTS.SYSTEM_ID}/template/chat/damageRoll.hbs`,
+        }
+        Utils.log('damageRoll', 'result', result);
+
+        await this.#postToChat(result);
+
+        return result;
+    }
+
+    static async #postToChat(roll){
+        const sender = ChatMessage.getSpeaker({
+            token: canvas.tokens?.controlled?.[0] ?? null,
+            actor: canvas.tokens?.controlled?.[0]?.actor ?? game.user.character ?? null
+        });
+
+        const content = await foundry.applications.handlebars.renderTemplate(roll.template, {
+            roll: roll
+        });
+
+        return ChatMessage.create({
+            sender,
+            content: content
+        });
+    }
+
+    static async adversaryRoll({baseDice = "1d20", bonus = [], critOnAndAbove = 20, advDisad = ""} = {}){
+        const roll = await (new Roll(baseDice)).evaluate();
+
+
+        const result = {
+            baseDice: baseDice,
+            roll: roll,
+            validRoll: roll,
+            advDisad: advDisad,
+            template: `systems/${CONSTANTS.SYSTEM_ID}/template/chat/adversaryRoll.hbs`,
         }
 
-        return roll;
+        const consideredBonus = await this.#normalizeBonuses(bonus);
+        if((advDisad === CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE) || (advDisad === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE)){
+            const advDisadRoll = await (new Roll(baseDice)).evaluate();
+            result.advDisadRoll = advDisadRoll;
+            switch (advDisad){
+                case CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE:
+                    if(advDisadRoll.total > roll.total){
+                        result.validRoll = advDisadRoll;
+                    }
+                    break;
+                case CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE:
+                    if(advDisadRoll.total < roll.total){
+                        result.validRoll = advDisadRoll;
+                    }
+                    break;
+            }
+        }
+
+        let totalBonus = 0;
+        consideredBonus.forEach((entry) => { totalBonus += entry.total; });
+
+        let formula = baseDice;
+        if (totalBonus < 0){
+            formula += ` - ${totalBonus}`;
+        } else if(totalBonus > 0){
+            formula += ` + ${totalBonus}`;
+        }
+
+        let total = result.validRoll.total + totalBonus;
+        result.totalBonus = totalBonus;
+        result.total = total;
+        result.bonus = consideredBonus;
+        result.formula = formula;
+        result.isCritical = result.validRoll.total >= critOnAndAbove;
+
+        await this.#postToChat(result);
+
+        return result;
     }
 
 }

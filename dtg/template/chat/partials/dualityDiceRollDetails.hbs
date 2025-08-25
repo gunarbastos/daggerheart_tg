@@ -1,0 +1,15 @@
+<section class="tooltip-part">
+    <div class="dice">
+        <header class="part-header flexrow">
+            <span class="part-formula">{{capitalize details.description}}: {{details.roll.formula}}</span>
+            <span class="part-total">{{absolute details.total}}</span>
+        </header>
+        <ol class="dice-rolls">
+            {{#each details.roll.terms as |term|}}
+                {{#each term.results as |result|}}
+                    <li class="roll die{{#if term.faces}} d{{term.faces}}{{/if}}{{#unless result.active}} discarded{{/unless}}">{{{result.result}}}</li>
+                {{/each}}
+            {{/each}}
+        </ol>
+    </div>
+</section>

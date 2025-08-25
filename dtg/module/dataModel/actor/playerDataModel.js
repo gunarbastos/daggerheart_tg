@@ -26,9 +26,10 @@ export class PlayerDataModel extends BaseDataModel {
                 stress: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 6, default: 6})),
                 armor: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 0, default: 0, overflows: true})),
                 hope: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 6, default: 2})),
-                scars: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 6, default: 0})),
             }),
+            scars: new fields.NumberField({ required: true, integer: true, min: 0, initial: 0 }),
             level: new fields.NumberField({ required: true, integer: true, min: 1, initial: 1, max: 10 }),
+            evasion: new fields.NumberField({ required: true, integer: true, min: 0, initial: 0 }),
             majorDamageThreshold: new fields.NumberField({ required: true, integer: true, min: 1, initial: 1 }),
             severeDamageThreshold: new fields.NumberField({ required: true, integer: true, min: 1, initial: 1 }),
             proficiency: new fields.NumberField({ required: true, integer: true, min: 1, initial: 1 }),
@@ -51,7 +52,13 @@ export class PlayerDataModel extends BaseDataModel {
             domainCardsUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type DomainCard
             equippedDomainCardsUUIDs: new fields.SetField(/** @type {any} */new fields.DocumentUUIDField()), //UUID of Item type DomainCard
             levelUpOptionsTaken: new fields.ObjectField({}), //same structure of CONSTANTS.LEVEL_UP_OPTIONS, but holds integers as values, representing the # of times the option was taken
-            borrowedPowers: new fields.ArrayField(new fields.EmbeddedDataField(BorrowedPowerDataModel),{ initial: [] })
+            borrowedPowers: new fields.ArrayField(new fields.EmbeddedDataField(BorrowedPowerDataModel),{ initial: [] }),
+            currency: new fields.SchemaField({
+                coins: new fields.NumberField({required: true, integer: true, min: 0, initial: 0}),
+                handfuls: new fields.NumberField({required: true, integer: true, min: 0, initial: 0}),
+                bags: new fields.NumberField({required: true, integer: true, min: 0, initial: 0}),
+                chests: new fields.NumberField({required: true, integer: true, min: 0, initial: 0}),
+            }),
         }
     }
 

@@ -1,0 +1,107 @@
+<section class="dtg-part part-character-info" data-part-id="characterInfo">
+
+    {{!-- Left column: image + level --}}
+    <div class="ci-left">
+        <div class="ci-image">
+            <img class="profile-img"
+                 src="{{source.img}}"
+                 alt="{{source.name}}"
+                 data-edit="img" />
+        </div>
+
+        <div class="ci-level">
+            <label class="ci-label" for="pc-level">Level</label>
+            <!--<span class="ci-value">{{system.level}}</span>-->
+            <input id="pc-level"
+                   class="ci-input"
+                   type="number"
+                   name="system.level"
+                   value="{{system.level}}"
+                   placeholder="0" />
+        </div>
+    </div>
+
+    {{!-- Main column: name/class + ancestry/origin (2x2 grid) --}}
+    <div class="ci-main">
+        <div class="ci-column">
+            <div class="ci-field">
+                <label class="ci-label" for="pc-name">Name</label>
+                <input id="pc-name"
+                       class="ci-input"
+                       type="text"
+                       name="name"
+                       value="{{source.name}}"
+                       placeholder="Unnamed Hero" />
+            </div>
+
+            <div class="ci-field">
+                <label class="ci-label">Class</label>
+                <span class="ci-input ci-placeholder">{{!-- system.class.name --}} Class</span>
+            </div>
+        </div>
+
+        <div class="ci-column">
+            <div class="ci-field">
+                <label class="ci-label">Ancestry</label>
+                <span class="ci-input ci-placeholder">{{!-- system.ancestry.name --}} Ancestry</span>
+            </div>
+
+            <div class="ci-field">
+                <label class="ci-label">Origin</label>
+                <span class="ci-input ci-placeholder">{{!-- system.origin.name --}} Origin</span>
+            </div>
+        </div>
+    </div>
+
+    {{!-- Right column: settings (top-right) + flags --}}
+    <div class="ci-side">
+        <div class="ci-side-top">
+            <button type="button"
+                    class="ci-settings-btn"
+                    data-action="notYetImplemented"
+                    title="Settings">
+                <i class="bi bi-gear-fill" aria-hidden="true"></i>
+                <span class="visually-hidden">Settings</span>
+            </button>
+        </div>
+
+        <div class="ci-flags" aria-label="Flags">
+            <button type="button"
+                    class="flag-btn{{#if flagRollModAdv}} isShiny{{/if}}"
+                    title="Advantage"
+                    data-action="setFlag"
+                    data-name="rollMod"
+                    data-value="{{CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE}}"
+                    data-toggle="true">
+                <img src="systems/dtg/asset/icon/advantage.png"
+                     width="24" height="24"
+                     alt="Advantage" />
+            </button>
+
+            <button type="button"
+                    class="flag-btn{{#if flagRollModDis}} isShiny{{/if}}"
+                    title="Disadvantage"
+                    data-action="setFlag"
+                    data-name="rollMod"
+                    data-value="{{CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE}}"
+                    data-toggle="true">
+                <img src="systems/dtg/asset/icon/disadvantage.png"
+                     width="24" height="24"
+                     alt="Disadvantage" />
+            </button>
+        </div>
+    </div>
+
+    {{!-- Bottom center: proficiency --}}
+    <div class="ci-proficiency">
+        <!--Proficiency: {{system.proficiency}}-->
+        <label class="ci-label" for="pc-proficiency">Proficiency</label>
+        <input id="pc-proficiency"
+               class="ci-input"
+               type="number"
+               name="system.proficiency"
+               value="{{system.proficiency}}"
+               placeholder="0" />
+    </div>
+
+</section>

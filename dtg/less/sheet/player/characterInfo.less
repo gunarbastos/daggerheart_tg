@@ -1,0 +1,203 @@
+.part-character-info {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "left main side"
+    "left main side"
+    "left foot side";
+  gap: 12px;
+  align-items: stretch;
+  padding: 8px 8px 12px 8px;
+  border-bottom: 1px solid var(--color-border, #8882);
+
+  .ci-left {
+    grid-area: left;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .ci-main  { grid-area: main; }
+  .ci-side  { grid-area: side; }
+  .ci-proficiency {
+    grid-area: foot;
+    justify-self: center;
+    font-weight: 600;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--color-bg-input, #0000);
+
+    .ci-input {
+      width: 30px;
+      text-align: center;
+      border: 0;
+      border-bottom: 1px solid var(--color-border, #8882);
+      background: var(--color-bg-input, #0000);
+    }
+  }
+
+  // Left column
+  .ci-image {
+    margin: 0;
+
+    .profile-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--color-border, #8882);
+      display: block;
+    }
+  }
+
+  .ci-level {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;  // label at top
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid var(--color-border, #8882);
+    border-radius: 8px;
+
+    .ci-label {
+      align-self: flex-start;     // stick to the top-left of the card
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.8;
+      width: 100%;
+    }
+
+    .ci-input {
+      flex: 1;                    // occupy remaining height
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 3.6rem;          // “as big as the rest of it”
+      line-height: 1;
+      text-align: center;
+
+      padding: 4px 6px;
+      border: 0;
+      background: var(--color-bg-input, #0000);
+    }
+  }
+
+  // Main column (2x2)
+  .ci-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    //grid-template-rows: 1fr;
+    gap: 10px;
+    min-width: 0;          // allow the grid to use full available width
+
+    .ci-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .ci-column {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .ci-field {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 8px;
+
+      .ci-label {
+        font-size: 12px;
+        opacity: 0.8;
+        margin: 0;
+      }
+      .ci-input {
+        padding: 4px 6px;
+        border: 0;
+        border-bottom: 1px solid var(--color-border, #8882);;
+        border-radius: 6px;
+        background: var(--color-bg-input, #0000);
+      }
+      .ci-value {
+        padding: 4px 6px;
+        border: 1px dashed var(--color-border, #8882);
+        border-radius: 6px;
+        min-height: 26px;
+        display: inline-flex;
+        align-items: center;
+        width: 100%;
+      }
+      .ci-placeholder:empty::after {
+        content: "—";
+        opacity: 0.5;
+      }
+    }
+  }
+
+  // Side column (top-right)
+  .ci-side {
+    display: grid;
+    //grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;   // settings at top, spacer, flags at bottom
+    align-items: start;
+    justify-items: end;
+    gap: 8px;
+
+    .ci-settings-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ci-settings-btn i { font-size: 1rem; }
+
+    .ci-flags {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      align-self: end;
+
+      .flag-btn {
+        border: 1px solid var(--color-border, #8882);
+        border-radius: 6px;
+        padding: 2px;
+        background: var(--color-bg-button, #0000);
+        width: 28px;  // allows a small frame around 24x24 icon
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        img { display: block; }
+      }
+    }
+  }
+
+  // Responsive: stack side column under main on narrow widths
+  @media (max-width: 860px) {
+    grid-template-columns: 160px 1fr;
+    grid-template-areas:
+      "left main"
+      "side side"
+      "foot foot";
+
+    .ci-side {
+      justify-items: start;
+      .ci-flags {
+        justify-content: flex-start;
+        align-self: end;
+      }
+    }
+  }
+}

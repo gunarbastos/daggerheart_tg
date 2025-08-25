@@ -4,6 +4,14 @@ const _document_cache = new Map();
 
 export class Utils {
 
+    static deepClone(original, {strict=false}={}) {
+        return foundry.utils.deepClone(original, {strict: strict});
+    }
+
+    static getTemplateUrl(templateUrlFromProjectRoot){
+        return `${CONSTANTS.TEMPLATES_ROOT_DIR}/${templateUrlFromProjectRoot}`;
+    }
+
     static JSON(object) {
         return JSON.stringify(object, null, 2);
     }
@@ -24,7 +32,11 @@ export class Utils {
     static unique(arr) { return Array.from(new Set(arr ?? [])); }
 
     static mergeObjects(base, extra, options = {}) {
-        return foundry.utils.mergeObject(foundry.utils.deepClone(base), extra ?? {}, { inplace: false, recursive: true, ...options });
+        return foundry.utils.mergeObject(
+            foundry.utils.deepClone(base),
+            extra ?? {},
+            { inplace: false, recursive: true, ...options }
+        );
     }
 
     static getCachedDocument(uuid) {

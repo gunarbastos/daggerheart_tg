@@ -1,4 +1,3 @@
-
 console.log(`Loaded: ${import.meta.url}`);
 
 import {CONSTANTS} from "./constants.js";
@@ -8,8 +7,21 @@ import {ChatLogPatch} from "../patches/index.js";
 import {BaseDataModel} from "./baseDataModel.js";
 import {InventoryItemDataModel} from "./inventoryItemDataModel.js";
 import {_DO_NOT_USE_LANG} from "./language.js";
-import {DTGActorDocument} from "../document/actor/index.js";
-import {DTGItemDocument} from "../document/item/index.js";
+import {
+    DTGActorDocument,
+    AdversaryDocument,
+    EnvironmentDocument,
+    PlayerDocument} from "../document/actor/index.js";
+import {
+    ClassDocument,
+    DomainCardDocument,
+    DomainDocument,
+    DTGItemDocument, FeatureDocument,
+    FeatureItemDocument,
+    InventoryItemDocument,
+    SubclassDocument
+} from "../document/item/index.js";
+import {FearTrackerApp} from "../app/index.js";
 
 export class DTGHooks {
 
@@ -22,6 +34,7 @@ export class DTGHooks {
     static #registerInitHooks() {
         Hooks.once("init", DTGHooks.#onInit);
         Hooks.once("ready", DTGHooks.#onReady);
+        Hooks.on("getSceneControlButtons", DTGHooks.#getSceneControlButtons);
     }
 
     static #registerDocumentHooks() {
@@ -114,19 +127,99 @@ export class DTGHooks {
         DTGHooks.#registerSheets(actors, CONSTANTS.SHEETS.ACTORS);
         DTGHooks.#registerSheets(items, CONSTANTS.SHEETS.ITEMS);
 
-        //Hooks.on("chatMessage", DTGHooks.#onChatMessage);
+        DTGHooks.#registerSettings();
 
-        //DTGHooks.#registerSettings();
+        game.dtg.apps.fearTracker = new FearTrackerApp();
+
         Utils.log(`#onInit end`);
     }
     
-    static #onReady(){
+    static async #onReady(){
         Utils.log(`#onReady`);
         Utils.log(`registering handlebar helpers`);
         Utils.registerCommonHelpers();
 
+        Utils.log('registering Document Classes');
+        game.dtg.documents = {};
+        game.dtg.documents.FeatureItemDocument = FeatureItemDocument;
+        game.dtg.documents.FeatureDocument = FeatureDocument;
+        game.dtg.documents.InventoryItemDocument = InventoryItemDocument;
+        game.dtg.documents.ClassDocument = ClassDocument;
+        game.dtg.documents.DomainDocument = DomainDocument;
+        game.dtg.documents.DomainCardDocument = DomainCardDocument;
+        game.dtg.documents.SubclassDocument = SubclassDocument;
+
+        game.dtg.documents.PlayerDocument = PlayerDocument;
+        game.dtg.documents.AdversaryDocument = AdversaryDocument;
+        game.dtg.documents.EnvironmentDocument = EnvironmentDocument;
+
+
+        Utils.log('preloading templates');
+        for(const template of Object.values(CONSTANTS.TEMPLATES) ) {
+            if( typeof template !== 'object' || Array.isArray(template)) { continue; }
+            if(template.hasOwnProperty('PRELOAD') && template.PRELOAD === true) {
+                foundry.applications.handlebars.getTemplate(template.PATH).then( result => {
+                    Utils.log('preloaded ', template.PATH);
+                    if(template.hasOwnProperty('ALIAS')) {
+                        Handlebars.registerPartial(template.ALIAS, result);
+                        Utils.log(`Alias ${template.ALIAS} created for ${template.PATH}`);
+                    }
+                });
+            }
+        }
+
+        if(game.dtg.apps.fearTracker.userCanSee()) {
+            ui.controls.controls.dtg.tools.fearTracker = await DTGHooks.#getFearTrackerToolsEntry();
+            if(await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_WINDOW_IS_OPEN.id) === true)
+                await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
+        }
+
+        if(ui.controls.controls.dtg?.tools?.fearTracker ?? false){
+            ui.controls.controls.dtg.tools.fearTracker.active = game.dtg.apps.fearTracker.rendered;
+        }
+        ui.controls.render({force : true});
+
         //DTGHooks.#registerSheetHooks();
         Utils.log(`#onReady end`);
+    }
+
+    static async #getSceneControlButtons(controls = []){
+        if (!game?.user) return;
+
+        controls[CONSTANTS.SYSTEM_ID] = {
+            name: CONSTANTS.SYSTEM_ID,
+            title: CONSTANTS.SYSTEM_ID,
+            icon: "fas fa-dragon",     // pick any FA icon you like
+            tools: {
+                ph: {
+                    name: "placeholder",
+                    title: "placeholder",
+                    icon: "fas fa-search",
+                    button: true,
+                }
+            },
+            order: 0,
+        };
+
+        // Add the Fear Tracker toggle
+        /*const fearTracker = {
+            name: "fearTracker",
+            title: "Fear Tracker",
+            icon: "fas fa-skull",
+            toggle: true,
+            visible: game.user.hasRole(CONST.USER_ROLES.GAMEMASTER) || (await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_ASSISTANT_CAN_EDIT.id) && game.user.hasRole(CONST.USER_ROLES.ASSISTANT)) ||  await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.id),
+            active: game.dtg.apps.fearTracker.rendered,
+            onChange: (event, active) => {
+                const app = game.dtg.apps.fearTracker;
+                if (active) {
+                    app.render(true);
+                } else {
+                    app.close();
+                }
+            },
+        };
+        controls.dtg.tools.fearTracker = fearTracker;
+         */
     }
     //#endregion
 
@@ -165,46 +258,104 @@ export class DTGHooks {
 
     //#region Auxiliary Functions
     static #registerSettings(){
-        
+        Utils.log(`#registerSettings`);
+        for(const setting of Object.values(CONSTANTS.SETTINGS)) {
+            Utils.log(`registering setting`, setting.id);
+            const finalSetting = Utils.deepClone(setting);
+            delete finalSetting.id;
+            const hasMethod = typeof this[`${setting.id}OnChange`] === 'function';
+            if(hasMethod === true) {
+                finalSetting.onChange = this[`${setting.id}OnChange`];
+            }
+            game.settings.register(CONSTANTS.SYSTEM_ID, setting.id, finalSetting);
+        }
     }
 
-    static async #onChatMessage (_log, messageText, chatData) {
-        if (/^\/dd\b/i.test(messageText)) {
-            const options = {};
-            const roll = await DtgEngine.dualityRoll({...options, postToChat: false});
-            const content = await foundry.applications.handlebars.renderTemplate(roll.template, {
-                roll: roll
-            });
-
-            ChatLog.prototype.processMessage
-
-            await ChatMessage.create({
-                content
-            });
-
-            return false; // prevent default handling
+    static async FEAR_MAXIMUMOnChange(value){
+        const currFear = await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id);
+        if(currFear > value){
+            await game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, value);
         }
 
-        return true;
+        if(game.dtg.apps.fearTracker.rendered){
+            game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
+        }
+    }
+
+    static async FEAR_CURRENTOnChange(value){
+        const maxFear = await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_MAXIMUM.id);
+        if(value > maxFear){
+            await game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, maxFear);
+        }
+
+        if(game.dtg.apps.fearTracker.rendered){
+            await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
+        }
+    }
+
+    static async FEAR_ASSISTANT_CAN_EDITOnChange(value){
+        if(game.dtg.apps.fearTracker.rendered){
+            await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
+        }
+    }
+
+    static async FEAR_PLAYERS_CAN_SEEOnChange(value){
+        if(game.dtg.apps.fearTracker.userCanSee()){
+            ui.controls.controls.dtg.tools.fearTracker = await DTGHooks.#getFearTrackerToolsEntry();
+
+            if(game.dtg.apps.fearTracker.rendered){
+                await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
+            }
+        } else {
+            if(value === false) {
+                delete ui.controls.controls.dtg.tools.fearTracker;
+                if(game.dtg.apps.fearTracker.rendered){
+                    await game.dtg.apps.fearTracker.close({persistConfigs: false});
+                }
+            }
+            if(value === true){
+                ui.controls.controls.dtg.tools.fearTracker = await DTGHooks.#getFearTrackerToolsEntry();
+                if(game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_WINDOW_IS_OPEN.id) === true){
+                    await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
+                }
+            }
+        }
+
+        ui.controls.render();
+    }
+
+    static async #getFearTrackerToolsEntry(){
+        return  {
+            name: "fearTracker",
+            title: "Fear Tracker",
+            icon: "fas fa-skull",
+            toggle: true,
+            visible: game.dtg.apps.fearTracker.userCanSee(),
+            active: game.dtg.apps.fearTracker.rendered,
+            onChange: (event, active) => {
+                const app = game.dtg.apps.fearTracker;
+                if (active) {
+                    app.render({force: true}, {});
+                } else {
+                    app.close({});
+                }
+            },
+        }
     }
 
     static #registerSheets(collection, sheetList) {
-        console.log(`registerSheets start`);
         if(collection.sheetClasses && collection.sheetClasses[CONSTANTS.CORE_ID]){
-            console.log(`unregistering Sheets`);
             for (const sheetId in collection.sheetClasses[CONSTANTS.CORE_ID]) {
                 collection.unregisterSheet(CONSTANTS.CORE_ID, collection.sheetClasses[CONSTANTS.CORE_ID][sheetId].cls);
             }
         }
         for(const sheet of sheetList ?? []){
-            console.log(`registering Sheet ${sheet.class.name} for ${sheet.types} with label ${sheet.label}`);
             collection.registerSheet(CONSTANTS.SYSTEM_ID, sheet.class, {
                 types: sheet.types,
                 label: sheet.label.en,
                 makeDefault: sheet.default,
             });
         }
-        console.log(`registerSheets end`);
     }
     //#endregion
 }
