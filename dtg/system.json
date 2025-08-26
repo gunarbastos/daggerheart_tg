@@ -1,0 +1,82 @@
+{
+  "id": "dtg",
+  "title": "Daggerheart",
+  "description": "Daggerheart system for Foundry VTT.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 13
+  },
+  "authors": [
+    {
+      "name": "Gunar Seidler Bastos"
+    }
+  ],
+  "esmodules": [
+    "main.js"
+  ],
+  "styles": [
+    "asset/icon/bootstrap-icons/bootstrap-icons.css",
+    "main.css"
+  ],
+  "packs": [
+    { "name": "adversaries", "label": "Adversaries", "type": "Actor" },
+    { "name": "items", "label": "Items", "type": "Item" },
+    { "name": "classes", "label": "Classes", "type": "Item" },
+    { "name": "domains", "label": "Domains", "type": "Item" },
+    { "name": "ancestry", "label": "Ancestry", "type": "Item" }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "Adversary": {},
+      "Environment": {},
+      "Player": {}
+    },
+    "Item": {
+      "Ancestry": {},
+      "Armor": {},
+      "Class": {},
+      "CommonItem": {},
+      "Community": {},
+      "Consumable": {},
+      "Domain": {},
+      "DomainCard": {},
+      "Feature": {},
+      "MagicItem": {},
+      "Materia": {},
+      "Spell": {},
+      "Subclass": {},
+      "Weapon": {}
+    }
+  },
+  "socket": false,
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  
+  "url": "https://github.com/gunarbastos/daggerheart_tg",
+  "readme": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/README.md",
+  "changelog": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/CHANGELOG.md",  
+  "license": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/LICENSE",
+  
+  "manifest": "https://github.com/gunarbastos/daggerheart_tg/releases/latest/download/system.json",
+  "download": "https://github.com/gunarbastos/daggerheart_tg/releases/download/v0.1.0/dtg-v0.1.0.zip",
+}

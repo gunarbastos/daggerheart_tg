@@ -1,0 +1,79 @@
+<section class="dtg-part part-resources" data-part-id="resources" aria-label="Resources">
+    {{!-- Top-right floating evasion card --}}
+    <div class="res-evasion-card">
+        <div class="label">Evasion</div>
+        <!--<div class="value">{{system.evasion}}</div>-->
+        <input class="res-input evasion" type="number" step="1" inputmode="numeric"
+               name="system.evasion" value="{{system.evasion}}" />
+    </div>
+
+    <div class="resources-list">
+        {{!-- 1) HP --}}
+        <div class="res-line" data-res="hp">
+            <label class="res-label">HP</label>
+
+            {{!-- future: icon controls container --}}
+            <div class="res-controls" aria-hidden="true"></div>
+
+            <input class="res-input value" type="number" step="1" inputmode="numeric"
+                   name="system.resources.hp.value" value="{{system.resources.hp.value}}" />
+            <span class="sep">/</span>
+            <input class="res-input max" type="number" step="1" inputmode="numeric"
+                   name="system.resources.hp.max" value="{{system.resources.hp.max}}" />
+        </div>
+
+        {{!-- 2) Armor --}}
+        <div class="res-line" data-res="armor">
+            <label class="res-label">Armor</label>
+            <div class="res-controls" aria-hidden="true"></div>
+            <input class="res-input value" type="number" step="1" inputmode="numeric"
+                   name="system.resources.armor.value" value="{{system.resources.armor.value}}" />
+            <span class="sep">/</span>
+            <input class="res-input max" type="number" step="1" inputmode="numeric"
+                   name="system.resources.armor.max" value="{{system.resources.armor.max}}" />
+        </div>
+
+        {{!-- 3) Stress --}}
+        <div class="res-line" data-res="stress">
+            <label class="res-label">Stress</label>
+            <div class="res-controls" aria-hidden="true"></div>
+            <input class="res-input value" type="number" step="1" inputmode="numeric"
+                   name="system.resources.stress.value" value="{{system.resources.stress.value}}" />
+            <span class="sep">/</span>
+            <input class="res-input max" type="number" step="1" inputmode="numeric"
+                   name="system.resources.stress.max" value="{{system.resources.stress.max}}" />
+        </div>
+
+        {{!-- 4) Damage Thresholds: minor [majorDT]  major [severeDT]  severe --}}
+        <div class="res-line res-line--thresholds">
+            <div class="res-label">Damage Thresholds</div>
+            <div class="res-thresholds">
+                <span class="th-label">Minor</span>
+                <input class="res-input th-input" type="number" step="1" inputmode="numeric"
+                       name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" />
+                <span class="th-label">Major</span>
+                <input class="res-input th-input" type="number" step="1" inputmode="numeric"
+                       name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" />
+                <span class="th-label">Severe</span>
+            </div>
+        </div>
+
+        {{!-- 5) Hope + Scars (Scars sits before Hope max) --}}
+        <div class="res-line res-line--hope" data-res="hope">
+            <label class="res-label">Hope</label>
+            <div class="res-controls" aria-hidden="true"></div>
+
+            <input class="res-input value" type="number" step="1" inputmode="numeric"
+                   name="system.resources.hope.value" value="{{system.resources.hope.value}}" />
+            <span class="sep">/</span>
+            <input class="res-input max" type="number" step="1" inputmode="numeric"
+                   name="system.resources.hope.max" value="{{system.resources.hope.max}}" />
+            <span class="sep">|</span>
+            <label class="res-sub-label">Scars</label>
+            <input class="res-input scars" type="number" step="1" inputmode="numeric"
+                   name="system.scars" value="{{system.scars}}" />
+        </div>
+    </div>
+</section>
+
+

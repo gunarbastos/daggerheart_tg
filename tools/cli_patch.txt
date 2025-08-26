@@ -1,0 +1,7 @@
+### CLI patch
+    sub.add_parser("deploy", help="Copy to local Foundry system folder")
+    sub.add_parser("validate", help="Validate system before release")
+    p_rel = sub.add_parser("release", help="Release a version")
+    p_rel.add_argument("version", help="Version tag")
+    p_rel.add_argument("--gh", action="store_true", help="Trigger GitHub Actions")
+

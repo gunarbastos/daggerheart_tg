@@ -1,0 +1,22 @@
+<div class="dice-roll" data-action="expandRoll">
+    <div class="dice-result">
+        <div class="dice-formula">{{roll.formula}}</div>
+        <div class="dice-tooltip">
+            <div class="wrapper">
+                {{#each roll.base}}
+                    {{> "dualityDiceRollDetails" details=this}}
+                {{/each}}
+                {{#each roll.bonus}}
+                    {{> "dualityDiceRollDetails" details=this}}
+                {{/each}}
+            </div>
+        </div>
+        <h4 class="dice-total{{#if roll.isCritical}} max{{/if}}">
+            {{#if roll.isCritical}}
+                CRITICAL! Double {{roll.hope}}
+            {{else}}
+                {{roll.total}} with {{capitalize roll.state}}
+            {{/if}}
+        </h4>
+    </div>
+</div>

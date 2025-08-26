@@ -1,0 +1,9 @@
+    elif args.cmd == "deploy":
+        from .tasks.local_deploy import deploy_to_local_foundry
+        deploy_to_local_foundry()
+    elif args.cmd == "validate":
+        from .tasks.validate import validate_system
+        validate_system()
+    elif args.cmd == "release":
+        from .tasks.release import run_release
+        run_release(args.version, use_github_actions=args.gh)

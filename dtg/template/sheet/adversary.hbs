@@ -1,0 +1,16 @@
+<div>
+    HP: {{formInput systemFields.resources.fields.hp.fields.value value=system.resources.hp.value}} / {{formInput systemFields.resources.fields.hp.fields.max value=system.resources.hp.max}}
+    Stress: {{formInput systemFields.resources.fields.stress.fields.value value=system.resources.stress.value}} / {{formInput systemFields.resources.fields.stress.fields.max value=system.resources.stress.max}}
+    difficulty: {{formInput systemFields.difficulty value=system.difficulty}}
+    major Thresh: {{formInput systemFields.majorDamageThreshold value=system.majorDamageThreshold}}
+    severe Tresh: {{formInput systemFields.severeDamageThreshold value=system.severeDamageThreshold}}
+    atk mod: {{formInput systemFields.attackModifier value=system.attackModifier}}
+    std atk range:{{formInput systemFields.standardAttack.fields.range value=system.standardAttack.range choices=RANGE_CHOICES}}
+    std atk damage: {{formInput systemFields.standardAttack.fields.damage value=system.standardAttack.damage}}
+    std atk damage Type: {{formInput systemFields.standardAttack.fields.damageType value=system.standardAttack.damageType choices=DAMAGETYPE_CHOICES}}
+
+    <button data-action="adversaryRoll" data-bonus="{{system.attackModifier}}">ROLL STD TO HIT</button>
+    <button data-action="rollDamage" data-formula="{{system.standardAttack.damage}}" data-type="{{system.standardAttack.damageType}}">ROLL STD DAMAGE</button>
+    <button data-action="setFlag" data-name="rollMod" data-value="Advantage" data-toggle="true">{{#if flagRollModAdv}}!!{{/if}} ADV</button>
+    <button data-action="setFlag" data-name="rollMod" data-value="Disadvantage" data-toggle="true">{{#if flagRollModDis}}!!{{/if}} DIS</button>
+</div>

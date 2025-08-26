@@ -1,0 +1,32 @@
+.application.dtg.fear-tracker {
+  .fear-header {
+    display: grid;
+    grid-template-columns: minmax(28px, auto) 1fr minmax(28px, auto);
+    align-items: center;
+    padding: 0 5px;
+  }
+
+  .fear-btn {
+    display: inline-flex;      // override any block-y button defaults
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+
+    &[data-action="removeFear"] { justify-self: start; margin-left: 5px; }
+    &[data-action="addFear"]    { justify-self: end;   margin-right: 5px; }
+  }
+
+  .fear-value {
+    grid-column: 2;
+    text-align: center;
+    margin: 0;
+  }
+
+  .top-right-btn {
+    position: absolute; top: 3px; right: 3px; z-index: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; padding: 0;
+    min-height: 0;
+  }
+}

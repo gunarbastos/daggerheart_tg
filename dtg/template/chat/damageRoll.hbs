@@ -1,0 +1,24 @@
+<div class="dice-roll" data-action="expandRoll">
+    <div class="dice-result">
+        <div class="dice-formula">{{roll.formula}}</div>
+        <div class="dice-tooltip">
+            <div class="wrapper">
+                {{#each roll.roll.terms as |term|}}
+                    <section class="tooltip-part">
+                        <div class="dice">
+                            <header class="part-header flexrow">
+                                <span class="part-total">{{absolute this.total}}</span>
+                            </header>
+                            <ol class="dice-rolls">
+                                {{#each term.results as |result|}}
+                                    <li class="roll die{{#if term.faces}} d{{term.faces}}{{/if}}{{#unless result.active}} discarded{{/unless}}">{{{result.result}}}</li>
+                                {{/each}}
+                            </ol>
+                        </div>
+                    </section>
+                {{/each}}
+            </div>
+        </div>
+        <h4 class="dice-total">TOTAL {{roll.roll.total}}</h4>
+    </div>
+</div>
