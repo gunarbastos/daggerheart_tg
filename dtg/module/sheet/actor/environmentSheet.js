@@ -1,8 +1,7 @@
 import {CONSTANTS, Utils} from "../../common/index.js";
+import {DtgActorSheet} from "./dtgActorSheet.js";
 
 console.log(`Loaded: ${import.meta.url}`);
-
-import {DtgActorSheet} from "./dtgActorSheet.js";
 
 export class EnvironmentSheet extends DtgActorSheet {
     static get PARTS() { return super.PARTS; }

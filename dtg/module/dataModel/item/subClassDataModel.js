@@ -1,7 +1,7 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {BaseDataModel, CONSTANTS, Utils} from "../../common/index.js";
 import {EmbedFeatureDataModel} from "./featureDataModel.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class SubClassDataModel extends BaseDataModel {
 

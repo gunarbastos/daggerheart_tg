@@ -1,8 +1,7 @@
 import {CONSTANTS, Utils} from "../../common/index.js";
+import {DtgItemSheet} from "./dtgItemSheet.js";
 
 console.log(`Loaded: ${import.meta.url}`);
-
-import {DtgItemSheet} from "./dtgItemSheet.js";
 
 export class FeatureSheet extends DtgItemSheet {
     static get PARTS() { return super.PARTS; }

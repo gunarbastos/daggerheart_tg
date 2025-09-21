@@ -1,11 +1,11 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {
     BaseDataModel,
     CONSTANTS,
     EmbedBaseDataModel,
     PolymorphicEmbeddedField
 } from "../../common/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class FeatureDataModel extends BaseDataModel {
 
@@ -18,6 +18,7 @@ export class FeatureDataModel extends BaseDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            isGrantedToUser: new fields.BooleanField({required: true, initial: false}),
             effects: new fields.ArrayField(/** @type any*/ new PolymorphicEmbeddedField(
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.BASE,
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.MAP,
@@ -37,6 +38,7 @@ export class EmbedFeatureDataModel extends EmbedBaseDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            isGrantedToUser: new fields.BooleanField({required: true, initial: false}),
             effects: new fields.ArrayField(/** @type any*/ new PolymorphicEmbeddedField(
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.BASE,
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.MAP,

@@ -1,0 +1,51 @@
+.application.dtg.resource-manager {
+  .actor-select-button {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    height: 30px;
+    width: auto;
+    margin: 4px;
+    border: 2px solid var(--color-cool-3, #8882);
+    cursor: pointer;
+    padding: 5px;
+
+    &.selected {
+      --borderColor: var(--color-warm-1, #8882);
+      border: 2px solid var(--borderColor);
+    }
+  }
+
+  .actor-name {
+    margin-left: 5px;
+  }
+
+  .actor-selection {
+    width: 100%;
+    height: 35px;
+
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .resource-row {
+    display: grid;
+    grid-template-columns: 55px 1fr;
+  }
+
+  .resource-title {
+    align-content: center;
+    font-size: large;
+  }
+
+  .resource-line {
+    display: flex;
+  }
+
+  .resource-button {
+    cursor: pointer;
+    background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
+    border: 1px solid var(--color-warm-1, #8882);
+    margin: 2px;
+  }
+}

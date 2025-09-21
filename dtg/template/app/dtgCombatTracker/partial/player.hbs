@@ -1,0 +1,10 @@
+<div class="actor-card{{#if actor.isOwner}} owned{{/if}}" style="background-image: url('{{actor.img}}')">
+    <div class="actor-info">
+        <span class="actor-name">{{actor.name}}</span>
+        {{#each actor.resources as |resource|}}
+            <div class="actor-resource-row" id="{{../actor.uuid}}-{{resource.[0].resourceName}}" data-actor-uuid="{{../actor.uuid}}">
+                {{> resourceRow list=resource dataAction="setResource" classes="small-icon actor-resource-button"}}
+            </div>
+        {{/each}}
+    </div>
+</div>

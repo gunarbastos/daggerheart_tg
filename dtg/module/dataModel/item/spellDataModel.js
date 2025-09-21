@@ -1,7 +1,7 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {BaseDataModel} from "../../common/index.js";
 import {EmbedFeatureDataModel} from "./featureDataModel.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class SpellDataModel extends BaseDataModel {
 

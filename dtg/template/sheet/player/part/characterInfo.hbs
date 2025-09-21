@@ -6,18 +6,13 @@
             <img class="profile-img"
                  src="{{source.img}}"
                  alt="{{source.name}}"
+                 data-action="editImage"
                  data-edit="img" />
         </div>
 
         <div class="ci-level">
             <label class="ci-label" for="pc-level">Level</label>
-            <!--<span class="ci-value">{{system.level}}</span>-->
-            <input id="pc-level"
-                   class="ci-input"
-                   type="number"
-                   name="system.level"
-                   value="{{system.level}}"
-                   placeholder="0" />
+            {{#> numberField }} id="pc-level" class="ci-input" name="system.level" value="{{system.level}}" placeholder="0" {{/numberField}}
         </div>
     </div>
 
@@ -26,12 +21,7 @@
         <div class="ci-column">
             <div class="ci-field">
                 <label class="ci-label" for="pc-name">Name</label>
-                <input id="pc-name"
-                       class="ci-input"
-                       type="text"
-                       name="name"
-                       value="{{source.name}}"
-                       placeholder="Unnamed Hero" />
+                {{#> textField }} id="pc-name" class="ci-input"  name="name" value="{{source.name}}" placeholder="Unnamed Hero" {{/textField}}
             </div>
 
             <div class="ci-field">
@@ -94,14 +84,8 @@
 
     {{!-- Bottom center: proficiency --}}
     <div class="ci-proficiency">
-        <!--Proficiency: {{system.proficiency}}-->
         <label class="ci-label" for="pc-proficiency">Proficiency</label>
-        <input id="pc-proficiency"
-               class="ci-input"
-               type="number"
-               name="system.proficiency"
-               value="{{system.proficiency}}"
-               placeholder="0" />
+        {{#> numberField }} id="pc-proficiency" class="ci-input" name="system.proficiency" value="{{system.proficiency}}" placeholder="0" {{/numberField}}
     </div>
 
 </section>

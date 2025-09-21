@@ -1,0 +1,64 @@
+<section class="dtg-part part-resources" data-part-id="resources" aria-label="Resources">
+    {{!-- Top-right floating evasion card --}}
+    <div class="res-evasion-card">
+        <div class="label">Evasion</div>
+        {{#> numberField }} class="res-input evasion" name="system.evasion" value="{{system.evasion}}" {{/numberField}}
+    </div>
+
+    <div class="resources-list">
+        {{!-- 1) HP --}}
+        <div class="res-line" data-res="hp">
+            <label class="res-label">HP</label>
+            {{!-- future: icon controls container --}}
+            <div class="res-controls" aria-hidden="true"></div>
+            {{#> numberField }} class="res-input value" name="system.resources.hp.value" value="{{system.resources.hp.value}}" {{/numberField}}
+            <span class="sep">/</span>
+            {{#> numberField }} class="res-input max" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{/numberField}}
+        </div>
+
+        {{!-- 2) Armor --}}
+        <div class="res-line" data-res="armor">
+            <label class="res-label">Armor</label>
+            <div class="res-controls" aria-hidden="true"></div>
+            {{#> numberField }} class="res-input value" name="system.resources.armor.value" value="{{system.resources.armor.value}}" {{/numberField}}
+            <span class="sep">/</span>
+            {{#> numberField }} class="res-input max" name="system.resources.armor.max" value="{{system.resources.armor.max}}" {{/numberField}}
+        </div>
+
+        {{!-- 3) Stress --}}
+        <div class="res-line" data-res="stress">
+            <label class="res-label">Stress</label>
+            <div class="res-controls" aria-hidden="true"></div>
+            {{#> numberField }} class="res-input value" name="system.resources.stress.value" value="{{system.resources.stress.value}}" {{/numberField}}
+            <span class="sep">/</span>
+            {{#> numberField }} class="res-input max" name="system.resources.stress.max" value="{{system.resources.stress.max}}" {{/numberField}}
+        </div>
+
+        {{!-- 4) Damage Thresholds --}}
+        <div class="res-line res-line--thresholds">
+            <div class="res-label">Damage Thresholds</div>
+            <div class="res-thresholds">
+                <span class="th-label">Minor</span>
+                {{#> numberField }} class="res-input th-input" name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" {{/numberField}}
+                <span class="th-label">Major</span>
+                {{#> numberField }} class="res-input th-input" name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" {{/numberField}}
+                <span class="th-label">Severe</span>
+            </div>
+        </div>
+
+        {{!-- 5) Hope + Scars  --}}
+        <div class="res-line res-line--hope" data-res="hope">
+            <label class="res-label">Hope</label>
+            <div class="res-controls" aria-hidden="true"></div>
+
+            {{#> numberField }} class="res-input value" name="system.resources.hope.value" value="{{system.resources.hope.value}}" {{/numberField}}
+            <span class="sep">/</span>
+            {{#> numberField }} class="res-input max" name="system.resources.hope.max" value="{{system.resources.hope.max}}" {{/numberField}}
+            <span class="sep">|</span>
+            <label class="res-sub-label">Scars</label>
+            {{#> numberField }} class="res-input scars" name="system.scars" value="{{system.scars}}" {{/numberField}}
+        </div>
+    </div>
+</section>
+
+

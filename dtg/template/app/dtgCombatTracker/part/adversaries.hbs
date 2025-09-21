@@ -1,0 +1,10 @@
+<section class="actor-list">
+    {{#if inCombat}}
+        <div class="title">
+            <span>Adversaries</span><span class="line" aria-hidden="true"></span>
+        </div>
+        {{#each adversaries as |adversary|}}
+            {{> CTAdversary actor=adversary }}
+        {{/each}}
+    {{/if}}
+</section>

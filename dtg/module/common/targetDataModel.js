@@ -1,6 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import { CONSTANTS } from './constants.js';
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class TargetDataModel extends foundry.abstract.DataModel {
 

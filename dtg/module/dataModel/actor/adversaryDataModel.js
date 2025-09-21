@@ -1,7 +1,7 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import { CONSTANTS, ResourceDataModel, ExperienceDataModel, BaseDataModel } from "../../common/index.js";
 import { EmbedFeatureDataModel } from "../item/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class AdversaryDataModel extends BaseDataModel {
 

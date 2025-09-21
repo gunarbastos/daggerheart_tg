@@ -1,0 +1,13 @@
+{{#each list}}
+    <img
+            alt="{{this.resourceName}} {{this.value}}"
+            class="{{../classes}}"
+            {{#if this.canClick}}
+                data-action="{{../dataAction}}"
+            {{else}}
+                style="cursor: not-allowed;"
+            {{/if}}
+            data-resource="{{this.resourceName}}"
+            data-value="{{this.value}}"
+            src="{{this.img}}"/>
+{{/each}}

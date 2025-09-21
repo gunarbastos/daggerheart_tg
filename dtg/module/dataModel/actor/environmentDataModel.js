@@ -1,7 +1,7 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {CONSTANTS, BaseDataModel} from '../../common/index.js';
 import {EmbedFeatureDataModel} from "../item/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class EnvironmentDataModel extends BaseDataModel {
 

@@ -1,27 +1,181 @@
 console.log(`Loaded: ${import.meta.url}`);
 
-const _document_cache = new Map();
-
 export class Utils {
+
+    static _document_cache = new Map();
+
+    static getRangeDescriptor(distance){
+        let range = '';
+        for (const [key, value] of Object.entries(game.dtg.constants.RANGE_BANDS)) {
+            if(key === 'max' || Number(distance) <= Number(key)) {
+                range = value;
+                break;
+            }
+        }
+        return range;
+    }
+
+    static getListOfResources(maxValue, usedAmount, resourceName, iconUsed, iconAvailable, {canClick= true, invertValues = false} = {}){
+        const result = [];
+        for(let iter = 1; iter <= maxValue; iter++ ){
+            let imgFinal = '';
+            if(invertValues){
+                imgFinal = iter <= (maxValue - usedAmount) ? `${game.dtg.constants.ASSETS.ICON_DIR}/${iconAvailable}` : `${game.dtg.constants.ASSETS.ICON_DIR}/${iconUsed}`;
+            } else {
+                imgFinal = iter <= usedAmount ? `${game.dtg.constants.ASSETS.ICON_DIR}/${iconUsed}` : `${game.dtg.constants.ASSETS.ICON_DIR}/${iconAvailable}`
+            }
+            result.push({
+                img: imgFinal,
+                resourceName: resourceName,
+                value: invertValues ? iter : maxValue - iter,
+                canClick: canClick,
+            });
+        }
+        return result;
+    }
+
+    static getCheckIcon(value){
+        return value ? 'fa-regular fa-square-check' : 'fa-regular fa-square';
+    }
+
+    static actionNotYetImplemented(event) {
+        ui.notifications.warn("Not implemented yet.");
+    }
+
+    static filterByOwnership(collection, level = CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED, user = game.user) {
+        return collection.filter(doc => doc.testUserPermission(user, level));
+    }
+
+    static async fromUuid(uuid){
+        return await fromUuid(uuid);
+    }
+
+    static fromUuidSync(uuid){
+        return fromUuidSync(uuid);
+    }
+
+    static isBoxedPrimitive(value) {
+        if (value === null) return false;
+        if (typeof value !== "object") return false; // all boxed primitives are objects
+        const tag = Object.prototype.toString.call(value);
+        return tag === "[object String]"  ||
+            tag === "[object Number]"  ||
+            tag === "[object Boolean]" ||
+            tag === "[object BigInt]"  ||
+            tag === "[object Symbol]";
+    };
+
+    static getGameSetting(setting){
+        let value = game.settings.get(game.dtg.constants.SYSTEM_ID, setting.id);
+        if (Utils.isBoxedPrimitive(value)) {
+            ui.notifications.error(`Setting ${setting.id} is a boxed primitive.`);
+            value = undefined;
+        }
+        if((value === undefined || value === null) && setting.hasOwnProperty('default')) value = Utils.deepClone(setting.default);
+        return value;
+    }
+
+    static async setGameSetting(setting, value){
+        if (Utils.isBoxedPrimitive(value)) {
+            ui.notifications.error(`Value passed to setting ${setting.id} is a boxed primitive.`);
+            return;
+        }
+        await game.settings.set(game.dtg.constants.SYSTEM_ID, setting.id, value);
+    }
 
     static deepClone(original, {strict=false}={}) {
         return foundry.utils.deepClone(original, {strict: strict});
     }
 
     static getTemplateUrl(templateUrlFromProjectRoot){
-        return `${CONSTANTS.TEMPLATES_ROOT_DIR}/${templateUrlFromProjectRoot}`;
+        return `${game.dtg.constants.TEMPLATES.ROOT_DIR}/${templateUrlFromProjectRoot}`;
     }
 
     static JSON(object) {
         return JSON.stringify(object, null, 2);
     }
 
+    static #isLogOpts(value) {
+        return value && typeof value === "object" && (value.hasOwnProperty("showUiNotification") || value.hasOwnProperty("uiMessage"));
+    }
+
+    static #getFinalArgs(...data){
+        let opts = {};
+        if (data.length && Utils.#isLogOpts(data[0])) opts = data.shift();
+        else if (data.length && Utils.#isLogOpts(data[data.length - 1])) opts = data.pop();
+        return { opts: opts, args: data };
+    }
+
+    static #buildUiMessage(...data){
+        let messages = [];
+        for(const part of data){
+            messages.push(String(part));
+        }
+        let message = messages.join(' ').trim();
+        if(message.length > 100 ){
+            message = message.slice(0, 97) + "...";
+        }
+        return message;
+    }
+
     static log(...data){
-        console.log("DTG | ", ...data);
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.log("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.info(msg);
+        }
+    }
+
+    static info(...data){
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.info("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.info(msg);
+        }
     }
 
     static warn(...data){
-        console.warn("DTG | ", ...data);
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.warn("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.warn(msg);
+        }
+    }
+
+    static error(...data){
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.error("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.error(msg);
+        }
     }
 
     static localize(text, lang = (game?.i18n?.lang ?? "en")) {
@@ -40,16 +194,16 @@ export class Utils {
     }
 
     static getCachedDocument(uuid) {
-        if (!_document_cache.has(uuid)) { _document_cache.set(uuid, fromUuidSync(uuid)); }
-        return _document_cache.get(uuid);
+        if (!this._document_cache.has(uuid)) { this._document_cache.set(uuid, Utils.fromUuidSync(uuid)); }
+        return this._document_cache.get(uuid);
     }
 
     static invalidateDocument(uuid){
-        if(_document_cache.has(uuid)) { _document_cache.delete(uuid); }
+        if(this._document_cache.has(uuid)) { this._document_cache.delete(uuid); }
     }
 
     static invalidateEntireCache(){
-        _document_cache.clear();
+        this._document_cache.clear();
     }
 
     static localizeLangTree(source, langCode, fallback = 'en') {

@@ -37,6 +37,47 @@
   padding: 0;
   min-height: 0;
 }
+.application.dtg.resource-manager .actor-select-button {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  height: 30px;
+  width: auto;
+  margin: 4px;
+  border: 2px solid var(--color-cool-3, #8882);
+  cursor: pointer;
+  padding: 5px;
+}
+.application.dtg.resource-manager .actor-select-button.selected {
+  --borderColor: var(--color-warm-1, #8882);
+  border: 2px solid var(--borderColor);
+}
+.application.dtg.resource-manager .actor-name {
+  margin-left: 5px;
+}
+.application.dtg.resource-manager .actor-selection {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.application.dtg.resource-manager .resource-row {
+  display: grid;
+  grid-template-columns: 55px 1fr;
+}
+.application.dtg.resource-manager .resource-title {
+  align-content: center;
+  font-size: large;
+}
+.application.dtg.resource-manager .resource-line {
+  display: flex;
+}
+.application.dtg.resource-manager .resource-button {
+  cursor: pointer;
+  background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
+  border: 1px solid var(--color-warm-1, #8882);
+  margin: 2px;
+}
 .dtg-Player form,
 .dtg-Player .sheet-body {
   display: grid !important;
@@ -713,9 +754,135 @@
   border: 0;
 }
 .isShiny {
-  border: 1px solid #5ed6ff;
   box-shadow: 0 0 0 1px #5ed6ff inset, 0 0 10px 2px rgba(94, 214, 255, 0.75), 0 0 24px 8px rgba(94, 214, 255, 0.45);
   border-radius: 10px;
+}
+.shine {
+  box-shadow: 0 0 0 1px var(--borderColor) inset, 0 0 10px 2px rgb(from var(--borderColor) r g b / 0.45);
+}
+.small-icon {
+  height: 24px;
+  width: 24px;
+}
+.medium-small-icon {
+  height: 48px;
+  width: 48px;
+}
+.medium-icon {
+  height: 64px;
+  width: 64px;
+}
+.large-icon {
+  height: 128px;
+  width: 128px;
+}
+.dtg.combat-tracker {
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  gap: 5px;
+}
+.dtg.combat-tracker .window-content {
+  align-items: center;
+}
+.dtg.combat-tracker#combat-popout {
+  display: block;
+  height: auto;
+}
+.dtg.combat-tracker.active {
+  display: flex;
+}
+.dtg.combat-tracker .header {
+  margin-top: 5px;
+}
+.dtg.combat-tracker .spotlight {
+  width: 80%;
+  text-align: center;
+}
+.dtg.combat-tracker .spotlight .indicator {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dtg.combat-tracker .spotlight .with-gm {
+  background-color: darkred;
+  color: white;
+}
+.dtg.combat-tracker .spotlight .with-players {
+  background-color: darkgreen;
+  color: white;
+}
+.dtg.combat-tracker .spotlight .holder {
+  height: 100%;
+  width: 100%;
+}
+.dtg.combat-tracker .spotlight .toggle-button {
+  position: absolute;
+  right: 11%;
+}
+.dtg.combat-tracker .actor-list {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 5px;
+}
+.dtg.combat-tracker .actor-list .actor-card {
+  display: flex;
+  gap: 5px;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 5px;
+  border: 1px solid var(--color-warm-2, #8882);
+}
+.dtg.combat-tracker .actor-list .actor-card.owned {
+  border: 1px solid var(--color-warm-1, #8882);
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-img {
+  flex: none;
+  height: 50px;
+  width: 50px;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info {
+  display: flex;
+  flex-direction: column;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-name {
+  font-size: small;
+  font-weight: bolder;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-resource-row {
+  display: flex;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-resource-row .actor-resource-button {
+  cursor: pointer;
+  background: rgb(from var(--color-warm-1, #8882) r g b / 0.5);
+  border: 1px solid var(--color-warm-1, #8882);
+  margin: 2px;
+}
+.dtg.combat-tracker .footer {
+  width: 100%;
+  margin-top: auto;
+}
+.dtg.combat-tracker .footer button {
+  margin-bottom: 5px;
+  width: 100%;
+}
+.dtg.combat-tracker .title {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  font-size: small;
+  align-items: center;
+}
+.dtg.combat-tracker .title .line {
+  flex: 1 1 auto;
+  height: 5px;
+  background: var(--color-warm-3, #8882);
 }
 body {
   font-family: 'Segoe UI', sans-serif;

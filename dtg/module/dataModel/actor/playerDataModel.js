@@ -1,5 +1,3 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {
     CONSTANTS,
     ResourceDataModel,
@@ -9,6 +7,8 @@ import {
     BorrowedPowerDataModel
 } from "../../common/index.js";
 import {EmbedFeatureDataModel} from "../item/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class PlayerDataModel extends BaseDataModel {
 

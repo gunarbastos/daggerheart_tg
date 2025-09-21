@@ -73,30 +73,22 @@
             <ul class="currency-list">
                 <li class="curr">
                     <div class="curr-head"><i class="bi bi-coin"></i><span>Coins</span></div>
-                    <input type="number" class="curr-input" inputmode="numeric"
-                           name="system.currency.coins" value="{{system.currency.coins}}"
-                           min="0" step="1" />
+                    {{#> numberField }} class="curr-input" name="system.currency.coins" value="{{system.currency.coins}}" {{/numberField}}
                 </li>
 
                 <li class="curr">
                     <div class="curr-head"><i class="bi bi-cash-coin"></i><span>Handfuls</span></div>
-                    <input type="number" class="curr-input" inputmode="numeric"
-                           name="system.currency.handfuls" value="{{system.currency.handfuls}}"
-                           min="0" step="1" />
+                    {{#> numberField }} class="curr-input"  name="system.currency.handfuls" value="{{system.currency.handfuls}}" {{/numberField}}
                 </li>
 
                 <li class="curr">
                     <div class="curr-head"><i class="bi bi-piggy-bank-fill"></i><span>Bags</span></div>
-                    <input type="number" class="curr-input" inputmode="numeric"
-                           name="system.currency.bags" value="{{system.currency.bags}}"
-                           min="0" step="1" />
+                    {{#> numberField }} class="curr-input" name="system.currency.bags" value="{{system.currency.bags}}" {{/numberField}}
                 </li>
 
                 <li class="curr">
                     <div class="curr-head"><i class="bi bi-bank2"></i><span>Chests</span></div>
-                    <input type="number" class="curr-input" inputmode="numeric"
-                           name="system.currency.chests" value="{{system.currency.chests}}"
-                           min="0" step="1" />
+                    {{#> numberField }} class="curr-input" name="system.currency.chests" value="{{system.currency.chests}}" {{/numberField}}
                 </li>
             </ul>
         </div>
@@ -125,8 +117,7 @@
                         <div class="item-meta">
                             {{#if (or (eq backpackItem.item.system.quantity 0) backpackItem.item.system.quantity)}}
                                 <div class="qty-ctrl">
-                                    <input type="number" class="qty-input" inputmode="numeric"
-                                           value="{{backpackItem.item.system.quantity}}" min="0"/>
+                                    {{#> numberField }} class="qty-input" value="{{backpackItem.item.system.quantity}}" {{/numberField}}
                                 </div>
                             {{/if}}
                         </div>

@@ -1,6 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {EmbedBaseDataModel} from "./baseDataModel.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class ExperienceDataModel extends EmbedBaseDataModel {
 
