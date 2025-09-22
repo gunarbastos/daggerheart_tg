@@ -30,6 +30,7 @@ import {DTGCombatTracker, FearTrackerApp, ResourceManagerApp} from "../app/index
 import {DtgSockets} from "./sockets.js";
 import {DTGTokenDocument} from "../document/index.js";
 import {DTGRuler, DTGTokenRuler} from "./dtgRuler.js";
+import {DTGMeasuredTemplate} from "./dtgMeasuredTemplate.js";
 
 console.log(`Loaded: ${import.meta.url}`);
 
@@ -150,8 +151,7 @@ export class DTGHooks {
         CONFIG.Token.documentClass = DTGTokenDocument;
         CONFIG.Canvas.rulerClass = DTGRuler;
         CONFIG.Token.rulerClass = DTGTokenRuler;
-        //CONFIG.Drawing.hudClass.objectClass = foundry.canvas.placeables.Drawing
-
+        CONFIG.MeasuredTemplate.objectClass = DTGMeasuredTemplate;
         Utils.log(`#onInit end`);
     }
     

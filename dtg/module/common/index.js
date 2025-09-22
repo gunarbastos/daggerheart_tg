@@ -1,5 +1,5 @@
 // File generated automatically.
-// Last Updated: 21/09/2025 14:19:59.590 UTC-3
+// Last Updated: 21/09/2025 22:31:46.910 UTC-3
 
 console.log(`Loaded: ${import.meta.url}`);
 
@@ -7,6 +7,7 @@ export {BaseDataModel, EmbedBaseDataModel} from './baseDataModel.js';
 export {BorrowedPowerDataModel} from './borrowedPowerDataModel.js';
 export {CONSTANTS} from './constants.js';
 export {DtgEngine} from './dtgEngine.js';
+export {DTGMeasuredTemplate} from './dtgMeasuredTemplate.js';
 export {DTGRuler, DTGTokenRuler} from './dtgRuler.js';
 export {ExperienceDataModel} from './experienceDataModel.js';
 export {DTGHooks} from './hooks.js';
