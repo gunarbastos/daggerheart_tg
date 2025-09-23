@@ -129,7 +129,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                         resources: resources,
                         isOwner: player.isOwner,
                         shouldShow: !player.hidden || player.isOwner,
-                        shouldShowResource: player.isOwner,
+                        shouldShowResource: player.isOwner || ['all', 'allies'].includes(Utils.getGameSetting(CONSTANTS.SETTINGS.COMBATTRACKER_PLAYERS_SEE_NOT_OWNED_ACTORS_RESOURCES)),
                     });
                 }
                 break;
@@ -169,7 +169,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                         resources: resources,
                         hidden: adversary.hidden,
                         shouldShow: !adversary.hidden || adversary.isOwner,
-                        shouldShowResource: adversary.isOwner,
+                        shouldShowResource: adversary.isOwner || Utils.getGameSetting(CONSTANTS.SETTINGS.COMBATTRACKER_PLAYERS_SEE_NOT_OWNED_ACTORS_RESOURCES) === 'all',
                     });
                 }
                 break;

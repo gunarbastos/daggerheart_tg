@@ -366,6 +366,10 @@ export class DTGHooks {
         }
     }
 
+    static async COMBATTRACKER_PLAYERS_SEE_NOT_OWNED_ACTORS_RESOURCES(value){
+        await ui.combat.render({parts:['players', 'adversaries']});
+    }
+
     static async #getFearTrackerToolsEntry(){
         return  {
             name: "fearTracker",

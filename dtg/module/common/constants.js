@@ -385,6 +385,17 @@ _rawConstants = {
                 '5': [],
             }
         },
+        COMBATTRACKER_PLAYERS_SEE_NOT_OWNED_ACTORS_RESOURCES: {
+            scope: "world",
+            config: true,
+            type: String,
+            default: 'none',
+            choices: {
+                "none": "Only see it's own",
+                "allies": "It's own and other players",
+                "all": "See everyone's resources"
+            }
+        }
     },
 
     APPS: {
