@@ -136,6 +136,8 @@ export class Mixins {
             }
 
             //#region properties
+            static SETTINGS_PART_NAME = 'settings';
+
             static FLAG_NAMES = {
                 rollMod: 'rollMod',
                 hopeDie: 'hopeDie',
@@ -219,6 +221,18 @@ export class Mixins {
                 }
                 this.#selection.restore = false;
             }
+
+            _configureRenderOptions(options) {
+                super._configureRenderOptions(options);
+
+                if(options.parts.includes(this.constructor.SETTINGS_PART_NAME)) options.parts.splice(options.parts.indexOf(this.constructor.SETTINGS_PART_NAME), 1);
+            }
+
+            async _preFirstRender(context, options) {
+                super._configureRenderOptions(options);
+
+                if(options.parts.includes(this.constructor.SETTINGS_PART_NAME)) options.parts.splice(options.parts.indexOf(this.constructor.SETTINGS_PART_NAME), 1);
+            }
             //#endregion
 
             //#region actions
@@ -247,7 +261,13 @@ export class Mixins {
             }
 
             static async _actionOpenSettings(event) {
-                Utils.actionNotYetImplemented(event);
+                //Utils.log('_actionOpenSettings', this);
+                //Utils.log('_actionOpenSettings', this.constructor.PARTS);
+                if(this.constructor.PARTS && this.constructor.PARTS[this.constructor.SETTINGS_PART_NAME] && this.constructor.PARTS[this.constructor.SETTINGS_PART_NAME].template){
+                    await Utils.showSheetPartInDialog(this, this.constructor.SETTINGS_PART_NAME);
+                } else {
+                    Utils.error('_actionOpenSettings', 'settings not setup propertly for this sheet', this.constructor.SETTINGS_PART_NAME);
+                }
             }
 
             static async _actionSetFlag(event, {preventRender = false}) {

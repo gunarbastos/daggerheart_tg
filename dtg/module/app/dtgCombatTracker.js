@@ -31,6 +31,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
         const base = await super._prepareContext(options);
         return {
             ...base,
+            iconSetting: Utils.getGameSetting(CONSTANTS.SETTINGS.SMALL_ICONS_STYLE),
             inCombat: this._isSceneCombatActive()
         }
     }
@@ -71,7 +72,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                             player.actor.system.resources.hp.max,
                             usedHp,
                             "hp",
-                            CONSTANTS.ASSETS.ICONS.HP.USED,
+                            CONSTANTS.ASSETS.ICONS.HP.USED[context.iconSetting],
                             CONSTANTS.ASSETS.ICONS.HP.AVAILABLE
                         )]
                     );
@@ -81,7 +82,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                             player.actor.system.resources.armor.max,
                             usedArmor,
                             "armor",
-                            CONSTANTS.ASSETS.ICONS.ARMOR.USED,
+                            CONSTANTS.ASSETS.ICONS.ARMOR.USED[context.iconSetting],
                             CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE
                         )]
                     );
@@ -145,7 +146,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                             adversary.actor.system.resources.hp.max,
                             usedHp,
                             "hp",
-                            CONSTANTS.ASSETS.ICONS.HP.USED,
+                            CONSTANTS.ASSETS.ICONS.HP.USED[context.iconSetting],
                             CONSTANTS.ASSETS.ICONS.HP.AVAILABLE
                         )]
                     );
@@ -171,6 +172,7 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                 }
                 break;
             case 'footer':
+                part.canToggleCombat = game.user && game.user.isGM;
                 part.text = context.inCombat ? "End Combat" : "Start Combat";
                 break;
         }
@@ -240,16 +242,17 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
         let usedImage = '';
         let availableImage = '';
         let scarImage = '';
+        const iconSetting = Utils.getGameSetting(CONSTANTS.SETTINGS.SMALL_ICONS_STYLE);
 
         switch(resource){
             case CONSTANTS.RESOURCE_TYPES.HP:
                 value = token.actor.system.resources.hp.value;
-                usedImage = CONSTANTS.ASSETS.ICONS.HP.USED;
+                usedImage = CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting];
                 availableImage = CONSTANTS.ASSETS.ICONS.HP.AVAILABLE;
                 break;
             case CONSTANTS.RESOURCE_TYPES.ARMOR:
                 value = token.actor.system.resources.armor.value;
-                usedImage = CONSTANTS.ASSETS.ICONS.ARMOR.USED;
+                usedImage = CONSTANTS.ASSETS.ICONS.ARMOR.USED[iconSetting];
                 availableImage = CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE;
                 break;
             case CONSTANTS.RESOURCE_TYPES.STRESS:

@@ -31,6 +31,7 @@ import {DtgSockets} from "./sockets.js";
 import {DTGTokenDocument} from "../document/index.js";
 import {DTGRuler, DTGTokenRuler} from "./dtgRuler.js";
 import {DTGMeasuredTemplate} from "./dtgMeasuredTemplate.js";
+import {DTGRadioType} from "./types.js";
 
 console.log(`Loaded: ${import.meta.url}`);
 
@@ -76,9 +77,6 @@ export class DTGHooks {
         game.dtg.dualityDice = async (opts = {}) => await DtgEngine.dualityDice(opts);
         game.dtg.constants = CONSTANTS;
         game.dtg.apps ??= {};
-        /*game.dtg.apps = {
-            fearTracker: new FearTrackerApp(),
-        };*/
 
         Utils.log('registering Document Classes');
         game.dtg.documents = {};
@@ -182,6 +180,7 @@ export class DTGHooks {
         controls[CONSTANTS.SYSTEM_ID] = {
             name: CONSTANTS.SYSTEM_ID,
             title: CONSTANTS.SYSTEM_ID,
+            activeTool: 'doNothing',
             icon: "fas fa-dragon",
             tools: {
                 resourceManager: {
@@ -192,6 +191,7 @@ export class DTGHooks {
                     visible: true,
                     active: ResourceManagerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(ResourceManagerApp.SETTINGS_NAME.IS_OPENED) === true : false,
                     onChange: (event, active) => {
+                        Utils.log(`tool`, event, active);
                         const app = game.dtg.apps.resourceManager;
                         if (active) {
                             app.render({force: true}, {});
@@ -199,9 +199,23 @@ export class DTGHooks {
                             app.close({});
                         }
                     },
+                    //onToolChange
+                },
+                doNothing: {
+                    name: "doNothing",
+                    title: "gambiarra",
+                    icon: "fas fa-empty",
+                    visible: true,
+                    order: 66,
                 }
             },
-            order: 0,
+            order: 1,
+            onChange: (event, active) => {
+                Utils.log(`tool 2`, active);
+                if(active === true) {
+                    document.querySelector('[id=scene-controls-tools]').lastElementChild.outerHTML = '';
+                }
+            }
         };
     }
 
@@ -268,6 +282,9 @@ export class DTGHooks {
             Utils.log(`registering setting`, setting.id);
             const finalSetting = Utils.deepClone(setting);
             delete finalSetting.id;
+            if(finalSetting.customType === 'DTGRadioType'){
+                finalSetting.type = new DTGRadioType({...Utils.deepClone(setting)});
+            }
             const hasMethod = typeof this[`${setting.id}OnChange`] === 'function';
             if(hasMethod === true) {
                 finalSetting.onChange = this[`${setting.id}OnChange`];
@@ -333,6 +350,22 @@ export class DTGHooks {
         ui.combat.render({parts:['spotlight']});
     }
 
+    static async SMALL_ICONS_STYLEOnChange(value){
+        await ui.combat.render({parts:['players', 'adversaries']});
+    }
+
+    static async MEDIUM_ICONS_STYLEOnChange(value){
+        if(game.dtg.apps.resourceManager && game.dtg.apps.resourceManager.rendered)
+            await game.dtg.apps.resourceManager.render({parts:['hp', 'armor', 'stress', 'hope']});
+        for(const [key, value] of foundry.applications.instances){
+            for(const actor of CONSTANTS.SHEETS.ACTORS){
+                if(value instanceof actor.class){
+                    await value.render();
+                }
+            }
+        }
+    }
+
     static async #getFearTrackerToolsEntry(){
         return  {
             name: "fearTracker",
@@ -350,6 +383,7 @@ export class DTGHooks {
                     app.close({});
                 }
             },
+            order: 1,
         }
     }
 

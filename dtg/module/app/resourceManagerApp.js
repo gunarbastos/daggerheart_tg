@@ -9,7 +9,6 @@ export class ResourceManagerApp extends Mixins.DtgApp(foundry.applications.api.H
         const basePartPath = `${CONSTANTS.TEMPLATES.ROOT_DIR}/app/resourceManager/part`;
         return {
             selector: { template: `${basePartPath}/selector.hbs` },
-            //resources: { template: `${basePartPath}/resources.hbs` },
             hp: { template: `${basePartPath}/resources.hbs` },
             armor: { template: `${basePartPath}/resources.hbs` },
             stress: { template: `${basePartPath}/resources.hbs` },
@@ -83,6 +82,7 @@ export class ResourceManagerApp extends Mixins.DtgApp(foundry.applications.api.H
     async _prepareContext(options) {
         const base = await super._prepareContext(options);
         return {
+            iconSetting: Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE),
             ...base,
         }
     }
@@ -124,11 +124,11 @@ export class ResourceManagerApp extends Mixins.DtgApp(foundry.applications.api.H
                 switch(partId){
                     case 'hp':
                         const usedHp = selectedDocument.system.resources.hp.max - selectedDocument.system.resources.hp.value;
-                        part.resourceList = [...Utils.getListOfResources(selectedDocument.system.resources.hp.max, usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED, CONSTANTS.ASSETS.ICONS.HP.AVAILABLE)];
+                        part.resourceList = [...Utils.getListOfResources(selectedDocument.system.resources.hp.max, usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED[context.iconSetting], CONSTANTS.ASSETS.ICONS.HP.AVAILABLE)];
                         break;
                     case 'armor':
                         const usedArmor = selectedDocument.system.resources.armor.max - selectedDocument.system.resources.armor.value;
-                        part.resourceList = [...Utils.getListOfResources(selectedDocument.system.resources.armor.max, usedArmor, "armor", CONSTANTS.ASSETS.ICONS.ARMOR.USED, CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE)];
+                        part.resourceList = [...Utils.getListOfResources(selectedDocument.system.resources.armor.max, usedArmor, "armor", CONSTANTS.ASSETS.ICONS.ARMOR.USED[context.iconSetting], CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE)];
                         break;
                     case 'stress':
                         const usedStress = selectedDocument.system.resources.stress.max - selectedDocument.system.resources.stress.value;

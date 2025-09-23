@@ -24,7 +24,7 @@ export class PlayerSheet extends DtgActorSheet {
             quickAccess: {template:`${partsBasePath}/quickAccess.hbs`},
             inventory: {template:`${partsBasePath}/inventory.hbs`},
             roleplay: {template:`${partsBasePath}/roleplay.hbs`},
-            //settings: {template:`${partsBasePath}/settings.hbs`}, //probably should do this on an App
+            settings: {template:`${partsBasePath}/settings.hbs`},
         };
     }
 

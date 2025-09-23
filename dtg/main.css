@@ -884,6 +884,26 @@
   height: 5px;
   background: var(--color-warm-3, #8882);
 }
+.dtg.settings-page .settings-list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  gap: 0.2rem;
+  align-items: center;
+}
+.dtg.settings-page .settings-list .title {
+  text-align: right;
+}
+.dtg.settings-page .settings-item {
+  display: flex;
+}
+.dtg.settings-page .title {
+  font-weight: bolder;
+}
+.dtg.settings-page input {
+  border: 0;
+  border-bottom: 1px solid var(--color-border, #8882);
+}
 body {
   font-family: 'Segoe UI', sans-serif;
   font-size: 12px;

@@ -52,6 +52,7 @@ import {
     SubClassDataModel,
     WeaponDataModel
 } from "../dataModel/item/index.js";
+import {DTGRadioType} from "./types.js";
 
 console.log(`Loaded: ${import.meta.url}`);
 
@@ -128,11 +129,23 @@ _rawConstants = {
     ASSETS: {
         ICONS: {
             HP: {
-                USED: 'heart_marked.png',
+                USED: {
+                    '1': 'heart_marked.png',
+                    '2': 'heart_marked_2.png',
+                    '3': 'heart_marked_3.png',
+                    '4': 'heart_marked_4_2.png',
+                    '5': 'heart_marked_5.png',
+                },
                 AVAILABLE: 'heart_unmarked.png',
             },
             ARMOR: {
-                USED: 'armor_marked.png',
+                USED: {
+                    '1': 'armor_marked.png',
+                    '2': 'armor_marked_2.png',
+                    '3': 'armor_marked_3.png',
+                    '4': 'armor_marked_4_2.png',
+                    '5': 'armor_marked_5.png',
+                },
                 AVAILABLE: 'armor_unmarked.png',
             },
             STRESS: {
@@ -342,6 +355,36 @@ _rawConstants = {
             type: String,
             default: 'GM',
         },
+        SMALL_ICONS_STYLE: {
+            scope: "user",
+            config: true,
+            customType: 'DTGRadioType',
+            default: '5',
+            name: 'Style of Small Icons',
+            iconClass: 'small-icon',
+            items: {
+                '1': [],
+                '2': [],
+                '3': [],
+                '4': [],
+                '5': [],
+            }
+        },
+        MEDIUM_ICONS_STYLE: {
+            scope: "user",
+            config: true,
+            customType: 'DTGRadioType',
+            default: '3',
+            name: 'Style of Medium Icons',
+            iconClass: 'medium-small-icon',
+            items: {
+                '1': [],
+                '2': [],
+                '3': [],
+                '4': [],
+                '5': [],
+            }
+        },
     },
 
     APPS: {
@@ -490,6 +533,21 @@ _rawConstants.RANGE_BANDS = {
 //Set property "id" for each and all Settings
 for(const [settingKey, settingValue] of Object.entries(_rawConstants.SETTINGS)) {
     settingValue.id = settingKey;
+}
+
+for(const setting of [_rawConstants.SETTINGS.MEDIUM_ICONS_STYLE, _rawConstants.SETTINGS.SMALL_ICONS_STYLE]) {
+    console.log('setting', setting);
+    console.log('constant', _rawConstants.ASSETS.ICONS.HP.USED);
+    setting.items['1'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['1']}`);
+    setting.items['1'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['1']}`);
+    setting.items['2'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['2']}`);
+    setting.items['2'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['2']}`);
+    setting.items['3'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['3']}`);
+    setting.items['3'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['3']}`);
+    setting.items['4'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['4']}`);
+    setting.items['4'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['4']}`);
+    setting.items['5'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['5']}`);
+    setting.items['5'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['5']}`);
 }
 
 //Polymorphic Type

@@ -4,6 +4,69 @@ export class Utils {
 
     static _document_cache = new Map();
 
+    static async showSheetPartInDialog(sheet, partId, opts = {}) {
+        //Resolve the part from the class' static PARTS
+        const part = sheet.constructor.PARTS && sheet.constructor.PARTS[partId];
+        if (!part || !part.template) throw new Error(`Part "${partId}" not found or missing template.`);
+
+        //Build the same context the sheet would use for that part
+        const ctx = await sheet._prepareContext({ parts: [partId] });
+        const html = await foundry.applications.handlebars.renderTemplate(part.template, ctx);
+        const content = document.createElement("div");
+        content.innerHTML = html;
+        //content.className = "dtg settings-page";
+
+        //Modal dialog that submits via the sheet's own helpers
+        const dlg = new foundry.applications.api.DialogV2({
+            window: { title: opts.title || `${sheet.title} — Settings` },
+            modal: true,
+            content,
+            classes: ['dtg', 'settings-page'],
+            buttons: [
+                {
+                    action: "save",
+                    label: "Save",
+                    default: true,
+                    callback: async (_ev, button, dialog) => {
+                        const form = button.form;
+                        const fdx  = new foundry.applications.ux.FormDataExtended(form);
+
+                        //Build the same submit data
+                        const submitData = sheet._processFormData(null, form, fdx);
+
+                        //Compute the minimal change object vs the current document
+                        const before = sheet.document.toObject();
+                        const after  = foundry.utils.mergeObject(foundry.utils.deepClone(before), submitData, {
+                            insertKeys: true, overwrite: true, inplace: false
+                        });
+                        const changed = foundry.utils.diffObject(before, after); // minimal patch
+
+                        //Do nothing if nothing changed
+                        if (!Object.keys(changed).length) { dialog.close(); return; }
+
+                        //Update without triggering the sheet's global render
+                        await sheet._processSubmitData(
+                            new SubmitEvent("submit"),
+                            form,
+                            changed,
+                            { render: false, diff: true, skipRequester: true, appId: sheet.id } // suppress auto-rerender, still send diff
+                        );
+
+                        //Decide which parts to re-render (prefix match against your watch-map)
+                        const { requires, options } = sheet.constructor.requiresRender(changed);
+                        //const affected = sheet.RequiresRender(changed, sheet.constructor.PARTS);
+                        if(requires === true) await sheet.render(options);
+
+                        dialog.close();
+                    }
+                },
+                { action: "cancel", label: "Cancel" }
+            ]
+        });
+
+        await dlg.render({ force: true });
+    }
+
     static getRangeDescriptor(distance){
         let range = '';
         for (const [key, value] of Object.entries(game.dtg.constants.RANGE_BANDS)) {
