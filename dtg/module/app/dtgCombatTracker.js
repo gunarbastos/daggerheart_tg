@@ -168,6 +168,8 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                         isOwner: adversary.isOwner,
                         resources: resources,
                         hidden: adversary.hidden,
+                        shouldShow: !adversary.hidden || adversary.isOwner,
+                        shouldShowResource: adversary.isOwner,
                     });
                 }
                 break;
