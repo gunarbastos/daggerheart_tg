@@ -1,3 +1,151 @@
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.isShiny {
+  box-shadow: 0 0 0 1px #5ed6ff inset, 0 0 10px 2px rgba(94, 214, 255, 0.75), 0 0 24px 8px rgba(94, 214, 255, 0.45);
+  border-radius: 10px;
+}
+.shine {
+  box-shadow: 0 0 0 1px var(--borderColor) inset, 0 0 10px 2px rgb(from var(--borderColor) r g b / 0.45);
+}
+.small-icon {
+  height: 24px;
+  width: 24px;
+}
+.medium-smaller-icon {
+  height: 36px;
+  width: 36px;
+}
+.medium-small-icon {
+  height: 48px;
+  width: 48px;
+}
+.medium-icon {
+  height: 64px;
+  width: 64px;
+}
+.large-icon {
+  height: 128px;
+  width: 128px;
+}
+.dtg.combat-tracker {
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  gap: 5px;
+}
+.dtg.combat-tracker .window-content {
+  align-items: center;
+}
+.dtg.combat-tracker#combat-popout {
+  display: block;
+  height: auto;
+}
+.dtg.combat-tracker.active {
+  display: flex;
+}
+.dtg.combat-tracker .header {
+  margin-top: 5px;
+}
+.dtg.combat-tracker .spotlight {
+  width: 80%;
+  text-align: center;
+}
+.dtg.combat-tracker .spotlight .indicator {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.dtg.combat-tracker .spotlight .with-gm {
+  background-color: darkred;
+  color: white;
+}
+.dtg.combat-tracker .spotlight .with-players {
+  background-color: darkgreen;
+  color: white;
+}
+.dtg.combat-tracker .spotlight .holder {
+  height: 100%;
+  width: 100%;
+}
+.dtg.combat-tracker .spotlight .toggle-button {
+  position: absolute;
+  right: 5px;
+}
+.dtg.combat-tracker .actor-list {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 5px;
+}
+.dtg.combat-tracker .actor-list .actor-card {
+  display: flex;
+  gap: 5px;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 5px;
+  border: 1px solid var(--color-warm-2, #8882);
+  min-height: 85px;
+}
+.dtg.combat-tracker .actor-list .actor-card.owned {
+  border: 1px solid var(--color-warm-1, #8882);
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-img {
+  flex: none;
+  height: 50px;
+  width: 50px;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info {
+  display: flex;
+  flex-direction: column;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-name {
+  font-size: small;
+  font-weight: bolder;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-resource-row {
+  display: flex;
+}
+.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-resource-row .actor-resource-button {
+  cursor: pointer;
+  background: rgb(from var(--color-warm-1, #8882) r g b / 0.5);
+  border: 1px solid var(--color-warm-1, #8882);
+  margin: 2px;
+}
+.dtg.combat-tracker .footer {
+  width: 100%;
+  margin-top: auto;
+}
+.dtg.combat-tracker .footer button {
+  margin-bottom: 5px;
+  width: 100%;
+}
+.dtg.combat-tracker .title {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  font-size: small;
+  align-items: center;
+}
+.dtg.combat-tracker .title .line {
+  flex: 1 1 auto;
+  height: 5px;
+  background: var(--color-warm-3, #8882);
+}
 .application.dtg.fear-tracker .fear-header {
   display: grid;
   grid-template-columns: minmax(28px, auto) 1fr minmax(28px, auto);
@@ -77,46 +225,6 @@
   background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
   border: 1px solid var(--color-warm-1, #8882);
   margin: 2px;
-}
-.dtg-Player form,
-.dtg-Player .sheet-body {
-  display: grid !important;
-  grid-template-columns: minmax(200px, max-content) 1fr;
-  grid-template-rows: max-content max-content max-content 1fr max-content;
-  grid-auto-rows: auto;
-  column-gap: 12px;
-  row-gap: 0;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-}
-.dtg-Player .part-character-info {
-  grid-column: 1 / -1;
-}
-.dtg-Player .part-resources {
-  grid-column: 1;
-}
-.dtg-Player .part-traits {
-  grid-column: 2;
-}
-.dtg-Player .part-quick-access {
-  grid-column: 1 / -1;
-}
-.dtg-Player .part-inventory {
-  grid-column: 1 / -1;
-}
-.dtg-Player .part-roleplay {
-  grid-column: 1 / -1;
-}
-.dtg-Player .window-content {
-  display: flex;
-  flex-direction: column;
-}
-.dtg-Player form {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
 }
 .part-character-info {
   display: grid;
@@ -297,179 +405,6 @@
   .part-character-info .ci-side .ci-flags {
     justify-content: flex-start;
     align-self: end;
-  }
-}
-.part-resources {
-  position: relative;
-  min-width: 400px;
-  padding: 8px 12px 8px 0;
-}
-.part-resources .res-evasion-card {
-  position: absolute;
-  top: 8px;
-  right: 0;
-  width: 80px;
-  padding: 8px;
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 8px;
-  text-align: center;
-}
-.part-resources .res-evasion-card .label {
-  opacity: 0.85;
-  margin-bottom: 6px;
-}
-.part-resources .res-evasion-card .evasion {
-  font-weight: 800;
-  font-size: 1.4rem;
-  line-height: 1;
-}
-.part-resources .res-evasion-card .res-input {
-  width: 100%;
-  height: 100%;
-}
-.part-resources .resources-list {
-  display: grid;
-  gap: 10px;
-  justify-items: start;
-}
-.part-resources .res-line {
-  display: grid;
-  grid-template-columns: 40px 24px 30px 12px 30px;
-  gap: 8px;
-  align-items: center;
-  border: 0;
-  border-bottom: 1px solid var(--color-border, #8882);
-}
-.part-resources .res-label {
-  opacity: 0.9;
-  white-space: nowrap;
-}
-.part-resources .res-sub-label {
-  opacity: 0.9;
-  white-space: nowrap;
-  font-size: 12px;
-}
-.part-resources .res-controls {
-  width: 24px;
-  height: 24px;
-}
-.part-resources .sep {
-  opacity: 0.5;
-  text-align: center;
-}
-.part-resources .res-input {
-  padding: 3px 6px;
-  min-height: 24px;
-  width: 30px;
-  text-align: center;
-  border: 0;
-  background: var(--color-bg-input, #0000);
-}
-.part-resources .res-line--thresholds {
-  grid-template-columns: max-content 1fr;
-  column-gap: 12px;
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  justify-self: center;
-}
-.part-resources .res-line--thresholds .res-thresholds {
-  display: grid;
-  grid-template-columns: max-content 30px max-content 30px max-content;
-  gap: 8px;
-  align-items: center;
-}
-.part-resources .res-line--thresholds .res-thresholds .th-label {
-  opacity: 0.85;
-  white-space: nowrap;
-}
-.part-resources .res-line--thresholds .res-thresholds .th-input {
-  width: 30px;
-  border: 0;
-}
-.part-resources .res-line--hope {
-  grid-template-columns: max-content 24px 30px 12px 30px 12px max-content 30px;
-}
-.part-resources .res-line--hope .scars {
-  width: 30px;
-}
-@media (max-width: 720px) {
-  .part-resources .res-evasion-card {
-    position: static;
-    width: auto;
-    margin-bottom: 8px;
-  }
-  .part-resources .resources-list {
-    padding-right: 0;
-  }
-}
-.part-traits {
-  display: grid;
-}
-.part-traits .part-title {
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.part-traits .traits-wrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  align-items: center;
-  min-height: 0;
-}
-.part-traits .traits-grid {
-  --trait-card-w: 100px;
-  --trait-card-h: 150px;
-  display: grid;
-  grid-template-columns: repeat(6, var(--trait-card-w));
-  gap: 12px;
-  inline-size: max-content;
-}
-.part-traits .trait-card {
-  width: var(--trait-card-w);
-  height: var(--trait-card-h);
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 10px;
-  padding: 8px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-items: start;
-  justify-items: center;
-  background: var(--color-bg-panel, transparent);
-}
-.part-traits .trait-label {
-  text-align: center;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.part-traits .trait-input {
-  width: 100%;
-  height: 100%;
-  min-height: 48px;
-  padding: 6px 8px;
-  text-align: center;
-  font-size: 3.6rem;
-  font-weight: 700;
-  border-radius: 8px;
-  background: var(--color-bg-input, #0000);
-  border: 0;
-}
-.part-traits .trait-roll-btn {
-  margin-top: 8px;
-  padding: 4px 10px;
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 8px;
-  background: var(--color-bg-button, #0000);
-  cursor: pointer;
-  width: 100%;
-}
-@media (max-width: 640px) {
-  .part-traits .traits-grid {
-    --trait-card-w: 90px;
-    --trait-card-h: 140px;
   }
 }
 .part-inventory {
@@ -742,148 +677,380 @@
   border-radius: 8px;
   padding: 4px 6px;
 }
-.visually-hidden {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+.part-quick-access {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--color-bg-panel, transparent);
 }
-.isShiny {
-  box-shadow: 0 0 0 1px #5ed6ff inset, 0 0 10px 2px rgba(94, 214, 255, 0.75), 0 0 24px 8px rgba(94, 214, 255, 0.45);
-  border-radius: 10px;
+.part-quick-access .panel-body {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  gap: 10px;
+  --actions-gap: 12px;
+  --actions-item-h: 34px;
+  --actions-items-q: 6;
+  --actions-drift-per-item: 2px;
 }
-.shine {
-  box-shadow: 0 0 0 1px var(--borderColor) inset, 0 0 10px 2px rgb(from var(--borderColor) r g b / 0.45);
-}
-.small-icon {
-  height: 24px;
-  width: 24px;
-}
-.medium-small-icon {
-  height: 48px;
-  width: 48px;
-}
-.medium-icon {
-  height: 64px;
-  width: 64px;
-}
-.large-icon {
-  height: 128px;
-  width: 128px;
-}
-.dtg.combat-tracker {
-  height: 100%;
-  flex-direction: column;
-  align-items: center;
-  padding-left: 5px;
-  padding-right: 5px;
-  gap: 5px;
-}
-.dtg.combat-tracker .window-content {
-  align-items: center;
-}
-.dtg.combat-tracker#combat-popout {
-  display: block;
-  height: auto;
-}
-.dtg.combat-tracker.active {
+.part-quick-access .panel-body .actions-section {
   display: flex;
+  flex-direction: column;
 }
-.dtg.combat-tracker .header {
-  margin-top: 5px;
+.part-quick-access .panel-body .info-section {
+  display: flex;
+  flex-direction: column;
 }
-.dtg.combat-tracker .spotlight {
-  width: 80%;
+.part-quick-access .panel-body .info-section .section-body {
+  height: 100%;
+  padding: 5px;
+  border-right: 1px solid var(--color-border, #8882);
+}
+.part-quick-access .panel-body .section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  justify-content: flex-start;
+  width: 100%;
+}
+.part-quick-access .panel-body .section-header .section-title {
+  white-space: nowrap;
+}
+.part-quick-access .panel-body .section-header .section-line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--color-border, #8882);
+}
+.part-quick-access .panel-body .actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  grid-template-rows: repeat(var(--actions-items-q), max-content);
+  gap: var(--actions-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.part-quick-access .panel-body .actions .action {
+  display: flex;
+  height: fit-content;
+  align-items: center;
+  width: 260px;
+  padding: 1px 2px 1px 5px;
+  gap: 2px;
+}
+.part-quick-access .panel-body .actions .attack {
+  background-color: var(--color-warm-3, transparent);
+}
+.part-quick-access .panel-body .actions .borrowed-power {
+  background-color: var(--color-cool-3, transparent);
+}
+.part-quick-access .panel-body .actions .other-action {
+  background-color: var(--color-level-warning-bg, transparent);
+}
+.part-quick-access .panel-body .actions .action-name {
+  font-weight: bolder;
+  margin-right: auto;
+}
+.part-quick-access .panel-body .actions .roll-btn {
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 4px;
+  background: var(--color-bg-btn-minor-inactive, transparent);
+}
+.part-quick-access .panel-body .actions .roll-btn:hover {
+  background: var(--color-bg-btn-minor-active, transparent);
+}
+.part-quick-access .panel-body .info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  height: calc((var(--actions-item-h) + var(--actions-gap) - var(--actions-drift-per-item)) * var(--actions-items-q));
+}
+.part-quick-access .panel-body .info .experience {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.part-quick-access .panel-body .info .experience .typable {
+  border-bottom: 1px solid var(--color-border, #8882);
+}
+.part-quick-access .panel-body .info .experience .bonus {
+  width: 40px;
+  flex: none;
+}
+.part-resources {
+  position: relative;
+  min-width: 400px;
+  padding: 8px 12px 8px 8px;
+}
+.part-resources .res-evasion-card {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  width: 80px;
+  padding: 8px;
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 8px;
   text-align: center;
 }
-.dtg.combat-tracker .spotlight .indicator {
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.part-resources .res-evasion-card .label {
+  opacity: 0.85;
+  margin-bottom: 6px;
 }
-.dtg.combat-tracker .spotlight .with-gm {
-  background-color: darkred;
-  color: white;
+.part-resources .res-evasion-card .evasion {
+  font-weight: 800;
+  font-size: 1.4rem;
+  line-height: 1;
 }
-.dtg.combat-tracker .spotlight .with-players {
-  background-color: darkgreen;
-  color: white;
-}
-.dtg.combat-tracker .spotlight .holder {
+.part-resources .res-evasion-card .res-input {
+  width: 100%;
   height: 100%;
-  width: 100%;
 }
-.dtg.combat-tracker .spotlight .toggle-button {
-  position: absolute;
-  right: 11%;
+.part-resources .resources-list {
+  display: grid;
+  justify-items: start;
 }
-.dtg.combat-tracker .actor-list {
-  align-self: flex-start;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 5px;
+.part-resources .resource-row {
+  display: grid;
+  grid-template-columns: 45px 1fr;
 }
-.dtg.combat-tracker .actor-list .actor-card {
-  display: flex;
-  gap: 5px;
-  background-position: right;
-  background-repeat: no-repeat;
-  background-size: contain;
-  padding: 5px;
-  border: 1px solid var(--color-warm-2, #8882);
-  min-height: 85px;
+.part-resources .resource-title {
+  align-content: center;
 }
-.dtg.combat-tracker .actor-list .actor-card.owned {
-  border: 1px solid var(--color-warm-1, #8882);
-}
-.dtg.combat-tracker .actor-list .actor-card .actor-img {
-  flex: none;
-  height: 50px;
-  width: 50px;
-}
-.dtg.combat-tracker .actor-list .actor-card .actor-info {
-  display: flex;
-  flex-direction: column;
-}
-.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-name {
-  font-size: small;
-  font-weight: bolder;
-}
-.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-resource-row {
+.part-resources .resource-line {
   display: flex;
 }
-.dtg.combat-tracker .actor-list .actor-card .actor-info .actor-resource-row .actor-resource-button {
+.part-resources .resource-button {
   cursor: pointer;
-  background: rgb(from var(--color-warm-1, #8882) r g b / 0.5);
+  background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
   border: 1px solid var(--color-warm-1, #8882);
   margin: 2px;
 }
-.dtg.combat-tracker .footer {
-  width: 100%;
-  margin-top: auto;
-}
-.dtg.combat-tracker .footer button {
-  margin-bottom: 5px;
-  width: 100%;
-}
-.dtg.combat-tracker .title {
-  display: flex;
+.part-resources .res-line {
+  display: grid;
+  grid-template-columns: 40px 24px 30px 12px 30px;
   gap: 8px;
-  justify-content: flex-start;
-  font-size: small;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid var(--color-border, #8882);
+}
+.part-resources .res-label {
+  opacity: 0.9;
+  white-space: nowrap;
+}
+.part-resources .res-sub-label {
+  opacity: 0.9;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.part-resources .res-controls {
+  width: 24px;
+  height: 24px;
+}
+.part-resources .sep {
+  opacity: 0.5;
+  text-align: center;
+}
+.part-resources .res-input {
+  padding: 3px 6px;
+  min-height: 24px;
+  width: 30px;
+  text-align: center;
+  border: 0;
+  background: var(--color-bg-input, #0000);
+}
+.part-resources .res-line-block {
+  grid-template-columns: max-content 1fr;
+  column-gap: 12px;
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  justify-self: center;
+}
+.part-resources .res-line-block.threshold {
+  margin-top: 5px;
+}
+.part-resources .res-line-block.evasion {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.part-resources .res-line-block .res-thresholds {
+  display: grid;
+  grid-template-columns: max-content 30px max-content 30px max-content;
+  gap: 8px;
   align-items: center;
 }
-.dtg.combat-tracker .title .line {
+.part-resources .res-line-block .res-thresholds .th-label {
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.part-resources .res-line-block .res-thresholds .th-input {
+  width: 30px;
+  border: 0;
+}
+.part-resources .res-line--hope {
+  grid-template-columns: max-content 24px 30px 12px 30px 12px max-content 30px;
+}
+.part-resources .res-line--hope .scars {
+  width: 30px;
+}
+@media (max-width: 720px) {
+  .part-resources .res-evasion-card {
+    position: static;
+    width: auto;
+    margin-bottom: 8px;
+  }
+  .part-resources .resources-list {
+    padding-right: 0;
+  }
+}
+.part-roleplay {
+  flex: none;
+  width: 100%;
+  min-height: 400px;
+  padding: 8px 10px;
+  background: var(--color-bg-panel, transparent);
+}
+.part-roleplay .panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  justify-content: flex-start;
+  width: 100%;
+}
+.part-roleplay .panel-header .panel-title {
+  white-space: nowrap;
+}
+.part-roleplay .panel-header .panel-line {
   flex: 1 1 auto;
-  height: 5px;
-  background: var(--color-warm-3, #8882);
+  height: 1px;
+  background: var(--color-border, #8882);
+}
+.part-roleplay .panel-body {
+  height: 100%;
+  margin-bottom: 10px;
+}
+.part-roleplay .panel-body .description {
+  border: solid 1px var(--color-border, #8882);
+  border-radius: 6px;
+  min-height: 400px;
+  width: 100%;
+}
+.part-roleplay .panel-body .description .editor-container {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.dtg-Player form,
+.dtg-Player .sheet-body {
+  display: grid !important;
+  grid-template-columns: minmax(200px, max-content) 1fr;
+  grid-template-rows: max-content max-content max-content 1fr max-content;
+  grid-auto-rows: auto;
+  column-gap: 12px;
+  row-gap: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+.dtg-Player .part-character-info {
+  grid-column: 1 / -1;
+}
+.dtg-Player .part-resources {
+  grid-column: 1;
+}
+.dtg-Player .part-traits {
+  grid-column: 2;
+}
+.dtg-Player .part-quick-access {
+  grid-column: 1 / -1;
+}
+.dtg-Player .part-inventory {
+  grid-column: 1 / -1;
+}
+.dtg-Player .part-roleplay {
+  grid-column: 1 / -1;
+}
+.dtg-Player .window-content {
+  display: flex;
+  flex-direction: column;
+}
+.dtg-Player form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.part-traits {
+  display: grid;
+}
+.part-traits .part-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.part-traits .traits-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  align-items: center;
+  min-height: 0;
+}
+.part-traits .traits-grid {
+  --trait-card-w: 100px;
+  --trait-card-h: 150px;
+  display: grid;
+  grid-template-columns: repeat(6, var(--trait-card-w));
+  gap: 12px;
+  inline-size: max-content;
+}
+.part-traits .trait-card {
+  width: var(--trait-card-w);
+  height: var(--trait-card-h);
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 10px;
+  padding: 8px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: start;
+  justify-items: center;
+  background: var(--color-bg-panel, transparent);
+}
+.part-traits .trait-label {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.part-traits .trait-input {
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  padding: 6px 8px;
+  text-align: center;
+  font-size: 3.6rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: var(--color-bg-input, #0000);
+  border: 0;
+}
+.part-traits .trait-roll-btn {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 8px;
+  background: var(--color-bg-button, #0000);
+  cursor: pointer;
+  width: 100%;
+}
+@media (max-width: 640px) {
+  .part-traits .traits-grid {
+    --trait-card-w: 90px;
+    --trait-card-h: 140px;
+  }
 }
 .dtg.settings-page .settings-list {
   width: 100%;
@@ -904,8 +1071,4 @@
 .dtg.settings-page input {
   border: 0;
   border-bottom: 1px solid var(--color-border, #8882);
-}
-body {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 12px;
 }

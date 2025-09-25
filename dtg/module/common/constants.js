@@ -361,6 +361,7 @@ _rawConstants = {
             customType: 'DTGRadioType',
             default: '5',
             name: 'Style of Small Icons',
+            hint: 'Style of icons in places like Combat Tracker',
             iconClass: 'small-icon',
             items: {
                 '1': [],
@@ -376,6 +377,7 @@ _rawConstants = {
             customType: 'DTGRadioType',
             default: '3',
             name: 'Style of Medium Icons',
+            hint: 'Style of icons in places like Player Sheet and Resource Manager',
             iconClass: 'medium-small-icon',
             items: {
                 '1': [],
@@ -390,6 +392,8 @@ _rawConstants = {
             config: true,
             type: String,
             default: 'none',
+            name: 'Combat Tracker - Player Resource visibility',
+            hint: 'Determines if the players can see resources from non-owned actors',
             choices: {
                 "none": "Only see it's own",
                 "allies": "It's own and other players",
@@ -524,6 +528,7 @@ _rawConstants.TEMPLATES.DUALITY_DICE_ROLL_DETAILS =  { PATH: `${_rawConstants.TE
 _rawConstants.TEMPLATES.NUMBER_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/numberField.hbs`, PRELOAD: true, ALIAS: "numberField" };
 _rawConstants.TEMPLATES.TEXT_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/textField.hbs`, PRELOAD: true, ALIAS: "textField" };
 _rawConstants.TEMPLATES.RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "resourceRow" };
+_rawConstants.TEMPLATES.PLAYER_SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/resourceRow.hbs`, PRELOAD: true, ALIAS: "playerSheetResourceRow" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
 

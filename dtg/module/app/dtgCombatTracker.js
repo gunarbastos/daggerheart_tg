@@ -217,30 +217,77 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
 
                 const flat  = foundry.utils.flattenObject(changes);            // "a.b.c": value
                 const listOfPaths = Object.keys(flat);
+                const roots = [ui.combat.element];
+                if(ui.combat.popout?.element){
+                    roots.push(ui.combat.popout.element);
+                }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.hp.'))){
-                    DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.HP);
+                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.HP, token.actor.system.resources.hp.value);
+                    Utils.updateResourcePips(
+                        token.actor,
+                        CONSTANTS.RESOURCE_TYPES.HP,
+                        token.actor.system.resources.hp.value,
+                        'actor-resource-row',
+                        'id',
+                        `${token.uuid}-${CONSTANTS.RESOURCE_TYPES.HP}`,
+                        'actor-resource-button',
+                        'setResource',
+                        Utils.getGameSetting(CONSTANTS.SETTINGS.SMALL_ICONS_STYLE),
+                        roots);
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.armor.'))){
-                    DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.ARMOR);
+                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.ARMOR, token.actor.system.resources.armor.value);
+                    Utils.updateResourcePips(
+                        token.actor,
+                        CONSTANTS.RESOURCE_TYPES.ARMOR,
+                        token.actor.system.resources.armor.value,
+                        'actor-resource-row',
+                        'id',
+                        `${token.uuid}-${CONSTANTS.RESOURCE_TYPES.ARMOR}`,
+                        'actor-resource-button',
+                        'setResource',
+                        Utils.getGameSetting(CONSTANTS.SETTINGS.SMALL_ICONS_STYLE),
+                        roots);
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.stress.'))){
-                    DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.STRESS);
+                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.STRESS, token.actor.system.resources.stress.value);
+                    Utils.updateResourcePips(
+                        token.actor,
+                        CONSTANTS.RESOURCE_TYPES.STRESS,
+                        token.actor.system.resources.stress.value,
+                        'actor-resource-row',
+                        'id',
+                        `${token.uuid}-${CONSTANTS.RESOURCE_TYPES.STRESS}`,
+                        'actor-resource-button',
+                        'setResource',
+                        Utils.getGameSetting(CONSTANTS.SETTINGS.SMALL_ICONS_STYLE),
+                        roots);
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.hope.')) || listOfPaths.some(v => typeof v === "string" && v.startsWith('system.scars'))){
-                    DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.HOPE);
+                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.HOPE, token.actor.system.resources.hope.value);
+                    Utils.updateResourcePips(
+                        token.actor,
+                        CONSTANTS.RESOURCE_TYPES.HOPE,
+                        token.actor.system.resources.hope.value,
+                        'actor-resource-row',
+                        'id',
+                        `${token.uuid}-${CONSTANTS.RESOURCE_TYPES.HOPE}`,
+                        'actor-resource-button',
+                        'setResource',
+                        Utils.getGameSetting(CONSTANTS.SETTINGS.SMALL_ICONS_STYLE),
+                        roots);
                 }
 
             }
         }
     }
 
-    static #updatePips(token, resource){
+    static #updatePips(token, resource, newValue){
         const id = `${token.uuid}-${resource}`;
-        let value = 0;
         let usedImage = '';
         let availableImage = '';
         let scarImage = '';
@@ -248,22 +295,18 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
 
         switch(resource){
             case CONSTANTS.RESOURCE_TYPES.HP:
-                value = token.actor.system.resources.hp.value;
                 usedImage = CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting];
                 availableImage = CONSTANTS.ASSETS.ICONS.HP.AVAILABLE;
                 break;
             case CONSTANTS.RESOURCE_TYPES.ARMOR:
-                value = token.actor.system.resources.armor.value;
                 usedImage = CONSTANTS.ASSETS.ICONS.ARMOR.USED[iconSetting];
                 availableImage = CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE;
                 break;
             case CONSTANTS.RESOURCE_TYPES.STRESS:
-                value = token.actor.system.resources.stress.value;
                 usedImage = CONSTANTS.ASSETS.ICONS.STRESS.USED;
                 availableImage = CONSTANTS.ASSETS.ICONS.STRESS.AVAILABLE;
                 break;
             case CONSTANTS.RESOURCE_TYPES.HOPE:
-                value = token.actor.system.resources.hope.value;
                 usedImage = CONSTANTS.ASSETS.ICONS.HOPE.USED;
                 availableImage = CONSTANTS.ASSETS.ICONS.HOPE.AVAILABLE;
                 scarImage = CONSTANTS.ASSETS.ICONS.SCAR;
@@ -286,12 +329,12 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
 
                 if(resource !== CONSTANTS.RESOURCE_TYPES.HOPE) {
                     imgs.forEach(img => {
-                        img.src = Number(img.dataset.value) >= value ? usedImage : availableImage;
+                        img.src = Number(img.dataset.value) >= newValue ? usedImage : availableImage;
                     });
                 } else {
                     imgs.forEach(img => {
                         const datasetValue = Number(img.dataset.value);
-                        if(datasetValue <=  value){
+                        if(datasetValue <=  newValue){
                             img.src = availableImage;
                             img.dataset.action = "setResource";
                             img.removeAttribute('style');
@@ -314,14 +357,9 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
         event.preventDefault();
         const uuid = event.target.closest("[data-actor-uuid]").dataset.actorUuid;
         const actor = (await Utils.fromUuid(uuid)).actor;
-        //time to divine intentions.
-        // if current is lower than new, then new value = dataset value
-        // if current is higher than new, then new value = dataset value - 1
-        // if current is the same as nwe, then new value = dataset value - 1
         let newValue = Number(event.target.dataset.value);
-        if(event.target.dataset.resource !== "hope" && actor.system.resources[event.target.dataset.resource].value <= newValue) newValue += 1;
-        if(event.target.dataset.resource === "hope" && actor.system.resources[event.target.dataset.resource].value === newValue) newValue -= 1;
-        await actor.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id});
+        if(actor.system.resources[event.target.dataset.resource].value === newValue) event.target.dataset.resource !== "hope" ? newValue += 1 : newValue -= 1;
+        actor.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id});
     }
 
     static async #toggleSpotlight(event) {

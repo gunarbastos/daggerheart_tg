@@ -8,7 +8,7 @@ import {
     FeatureDocument,
     InventoryItemDocument,
     SpellDocument,
-    SubclassDocument
+    SubclassDocument, WeaponDocument
 } from "../../document/item/index.js";
 
 console.log(`Loaded: ${import.meta.url}`);
@@ -43,6 +43,7 @@ export class PlayerSheet extends DtgActorSheet {
                     deleteItem: PlayerSheet.#deleteItem,
                     openItem: PlayerSheet.#openItem,
                     attachItem: PlayerSheet.#attachItem,
+                    setResource: PlayerSheet.#setResource,
                 },
                 form: { handler: PlayerSheet.#onSubmitForm },
                 window: { title: 'Player Sheet' },
@@ -137,6 +138,122 @@ export class PlayerSheet extends DtgActorSheet {
             part.backpackItems = filteredItems;
         }
 
+        if (partId === "resources") {
+            part.resources = {
+                hp: {},
+                armor: {},
+                stress: {},
+                hope: {}
+            }
+
+            const iconSetting = Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE);
+
+            for (const [k, v] of Object.entries(part.resources)) {
+                v.resourceName = k.capitalize();
+                v.resourceList = [];
+                switch(k){
+                    case 'hp':
+                        const usedHp = this.document.system.resources.hp.max - this.document.system.resources.hp.value;
+                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.hp.max, usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting], CONSTANTS.ASSETS.ICONS.HP.AVAILABLE)];
+                        break;
+                    case 'armor':
+                        const usedArmor = this.document.system.resources.armor.max - this.document.system.resources.armor.value;
+                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.armor.max, usedArmor, "armor", CONSTANTS.ASSETS.ICONS.ARMOR.USED[iconSetting], CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE)];
+                        break;
+                    case 'stress':
+                        const usedStress = this.document.system.resources.stress.max - this.document.system.resources.stress.value;
+                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.stress.max, usedStress, "stress", CONSTANTS.ASSETS.ICONS.STRESS.USED, CONSTANTS.ASSETS.ICONS.STRESS.AVAILABLE)];
+                        break;
+                    case 'hope':
+                        const maxFinalHope = this.document.system.resources.hope.max - this.document.system.scars;
+                        const usedHope = maxFinalHope - this.document.system.resources.hope.value;
+                        const scars = Utils.getListOfResources(this.document.system.scars, 0, "hope", CONSTANTS.ASSETS.ICONS.SCAR, CONSTANTS.ASSETS.ICONS.SCAR, {invertValues: true, canClick: false});
+                        for(const scar of scars){
+                            scar.value += maxFinalHope;
+                        }
+                        v.resourceList =  [...Utils.getListOfResources(maxFinalHope, usedHope, "hope", CONSTANTS.ASSETS.ICONS.HOPE.USED, CONSTANTS.ASSETS.ICONS.HOPE.AVAILABLE, {invertValues: true}),
+                            ...scars];
+                        break;
+                }
+            }
+        }
+
+        if (partId === "quickAccess") {
+            part.actions = [];
+            part.experiences = [];
+
+            //attacks from equipped weapons
+            for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
+                part.actions.push({
+                    isAttack: true,
+                    isBorrowedPower: false,
+                    name: weapon.name,
+                    trait: weapon.system.trait,
+                    damageFormula: weapon.system.damage,
+                    damageType: weapon.system.damageType,
+                })
+            }
+
+            //attacks from equipped spells (later, spells granted by equipped cards)
+            for(const spell of this.document.items.filter(i => i instanceof SpellDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
+                /*part.actions.push({
+                    isAttack: true,
+                    isBorrowedPower: false,
+                    name: spell.name,
+                    trait: spell.system.trait,
+                    damageFormula: spell.system.damage,
+                    damageType: spell.system.damageType,
+                })*/
+            }
+
+            //Features description
+
+            //borrowed powers
+
+            //experiences
+            for (const experience of this.document.system.experiences) {
+                part.experiences.push({ description: experience.description, bonus: experience.bonus });
+            }
+
+            while (part.experiences.length < 5){
+                part.experiences.push({ description: '', bonus: '' });
+            }
+        }
+
+        if(partId === 'characterInfo') {
+            part.classText = 'None';
+            part.origin = 'None';
+            part.ancestry = 'None';
+
+            const ancestries = Array.from(this.document.system.ancestries.values()).reduce((arr, ancestry) => {
+                arr.push(ancestry.name);
+                return arr;
+            }, []);
+
+            const communities = Array.from(this.document.system.communities.values()).reduce((arr, community) => {
+                arr.push(community.name);
+                return arr;
+            }, []);
+
+            const classes = Array.from(this.document.system.classes.values()).reduce((arr, rpgClass) => {
+                if(rpgClass){
+                    let classDescriptor = rpgClass.name;
+                    for(const [k, v] of this.document.system.subclasses){
+                        if(v.document.system.classUUID === rpgClass.uuid){
+                            classDescriptor += ` (${v.masteryLevel} ${v.document.name})`;
+                            break;
+                        }
+                    }
+                    arr.push(classDescriptor);
+                }
+                return arr;
+            }, []);
+
+            if(ancestries.length > 0){ part.ancestry = Utils.joinHelper(ancestries, ' / '); }
+            if(communities.length > 0){ part.origin = Utils.joinHelper(communities, ' / '); }
+            if(classes.length > 0){ part.classText = Utils.joinHelper(classes, ' / '); }
+        }
+
         return Utils.mergeObjects(context, part);
     }
 
@@ -172,7 +289,7 @@ export class PlayerSheet extends DtgActorSheet {
 
         if (path.startsWith("system.traits.")) result.push("traits");
 
-        if (path === "system.experiences" ||
+        if (path.startsWith("system.experiences") ||
             path === "system.equippedDomainCardsUUIDs" ||
             path.startsWith("system.borrowedPowers") ||
             path.startsWith("items")
@@ -222,7 +339,11 @@ export class PlayerSheet extends DtgActorSheet {
                 let _data = this.document.system.schema.fields;
                 keyParts.shift();
                 for(const part of keyParts){
-                    _data = _data[part];
+                    if(_data instanceof foundry.data.fields.ArrayField){
+                        _data = _data.element;
+                    } else {
+                        _data = _data[part];
+                    }
                     if(_data instanceof foundry.data.fields.SchemaField) _data = _data.fields;
                 }
 
@@ -270,13 +391,10 @@ export class PlayerSheet extends DtgActorSheet {
             return undefined;
         }
 
-        Utils.log('PlayerSheet', '_onDropItem', this.document, item);
-
         if(item instanceof InventoryItemDocument){
             const data = item.toObject();
             delete data._id;
 
-            Utils.log('PlayerSheet', '_onDropItem', 'calling createEmbeddedDocuments');
             const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
             return created;
         } else if(item instanceof DomainCardDocument){
@@ -284,38 +402,59 @@ export class PlayerSheet extends DtgActorSheet {
             currentCards.push(item.uuid);
             await this.document.update({'system.domainCardsUUIDs': Utils.unique(currentCards)}, { render: false });
             return undefined;
-         } else if(item instanceof AncestryDocument){
+        } else if(item instanceof AncestryDocument){
             await this.document.update({'system.ancestryUUIDs': [item.uuid],}, { render: false })
+            await this.render({ parts: ["characterInfo"]});
             return undefined;
-         } else if(item instanceof CommunityDocument){
+        } else if(item instanceof CommunityDocument){
             await this.document.update({'system.communityUUIDs': [item.uuid],}, { render: false })
+            await this.render({ parts: ["characterInfo"]});
             return undefined;
-        // } else if(item instanceof ClassDocument){
-        //
-         } else if(item instanceof SubclassDocument){
+        } else if(item instanceof ClassDocument){
             const paths = {
-                "system.playerClassesUUIDs": [],
-                "system.playerSubclasses": []
+                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
             };
-            paths["system.playerClassesUUIDs"].push(item.classUUID);
-            paths["system.playerSubclasses"].push({
-                UUID: item.uuid,
-                masteryLevel: CONSTANTS.DEFAULTS.SUBCLASS_MASTERY_LEVEL
-            });
+            paths["system.playerClassesUUIDs"].push(item.uuid);
+            paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
 
             await this.document.update(paths, { render: false })
-            await this.render({ parts: ["character-info"]});
+            await this.render({ parts: ["characterInfo"]});
             return undefined;
-         } else if(item instanceof SpellDocument){
-            //temporary
-            const data = src.toObject();
+        } else if(item instanceof SubclassDocument){
+            const paths = {
+                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
+                "system.playerSubclasses": [...this.document.system.playerSubclasses]
+            };
+            if(item.system.classUUID ){
+                for(const subclass in this.document.system.playerSubclasses){
+                    if(subclass.UUID === item.uuid){
+                        ui.notifications.warn('Subclass already present.');
+                        event.preventDefault();
+                        return undefined;
+                    }
+                }
+
+                paths["system.playerClassesUUIDs"].push(item.system.classUUID);
+                paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
+                paths["system.playerSubclasses"].push({
+                    UUID: item.uuid,
+                    masteryLevel: CONSTANTS.DEFAULTS.SUBCLASS_MASTERY_LEVEL
+                });
+
+                await this.document.update(paths, { render: false });
+                await this.render({ parts: ["characterInfo"]});
+            } else {
+                ui.notifications.warn('Subclass has no class associated with it.');
+                event.preventDefault();
+            }
+            return undefined;
+        } else if(item instanceof SpellDocument || item instanceof FeatureDocument){
+            const data = item.toObject();
             delete data._id;
 
             const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
             await this.render({ parts: ["inventory"] });
             return created;
-        // } else if(item instanceof FeatureDocument){
-        //
         } else {
             ui.notifications.warn('this item is not supported for this sheet yet.');
             event.preventDefault();
@@ -479,5 +618,27 @@ export class PlayerSheet extends DtgActorSheet {
         await item.update({ "system.quantity": newQuantity }, { render: false });
         await this.render({ parts: ["inventory"] });
     }
+
+    /**
+     * @this {PlayerSheet}
+     */
+    static async #setResource(event) {
+        event.preventDefault();
+        let newValue = Number(event.target.dataset.value);
+        if(this.document.system.resources[event.target.dataset.resource].value === newValue) event.target.dataset.resource !== "hope" ? newValue += 1 : newValue -= 1;
+        this.document.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id});
+        Utils.updateResourcePips(
+            this.document,
+            event.target.dataset.resource,
+            newValue,
+            'resource-row',
+            'id',
+            `res-${event.target.dataset.resource.capitalize()}`,
+            'resource-button',
+            'setResource',
+            Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE),
+            [this.element]);
+    }
+
 
 }

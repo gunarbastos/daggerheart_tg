@@ -12,7 +12,7 @@ export class ExperienceDataModel extends EmbedBaseDataModel {
         const fields = foundry.data.fields;
         return {
             description: new fields.HTMLField({required: true, blank: true, initial: ""}),
-            bonus: new fields.NumberField({required: true, initial: 2}),
+            bonus: new fields.StringField({required: true, initial: ""}),
         }
     }
 }

@@ -137,8 +137,12 @@ export class ResourceManagerApp extends Mixins.DtgApp(foundry.applications.api.H
                     case 'hope':
                         const maxFinalHope = selectedDocument.system.resources.hope.max - selectedDocument.system.scars;
                         const usedHope = maxFinalHope - selectedDocument.system.resources.hope.value;
+                        const scars = Utils.getListOfResources(selectedDocument.system.scars, 0, "hope", CONSTANTS.ASSETS.ICONS.SCAR, CONSTANTS.ASSETS.ICONS.SCAR, {invertValues: true, canClick: false});
+                        for(const scar of scars){
+                            scar.value += maxFinalHope;
+                        }
                         part.resourceList =  [...Utils.getListOfResources(maxFinalHope, usedHope, "hope", CONSTANTS.ASSETS.ICONS.HOPE.USED, CONSTANTS.ASSETS.ICONS.HOPE.AVAILABLE, {invertValues: true}),
-                            ...Utils.getListOfResources(selectedDocument.system.scars, 0, "hope", CONSTANTS.ASSETS.ICONS.SCAR, CONSTANTS.ASSETS.ICONS.SCAR, {canClick: false})]
+                            ...scars]
                         break;
                 }
             }
@@ -183,15 +187,21 @@ export class ResourceManagerApp extends Mixins.DtgApp(foundry.applications.api.H
     static async #setResource(event) {
         event.preventDefault();
         const document = await Utils.fromUuid(Utils.getGameSetting(ResourceManagerApp.SETTINGS_NAME.SELECTED_DOCUMENT));
-        //time to divine intentions.
-        // if current is lower than new, then new value = dataset value
-        // if current is higher than new, then new value = dataset value - 1
-        // if current is the same as nwe, then new value = dataset value - 1
         let newValue = Number(event.target.dataset.value);
-        if(event.target.dataset.resource !== "hope" && document.system.resources[event.target.dataset.resource].value <= newValue) newValue += 1;
-        if(event.target.dataset.resource === "hope" && document.system.resources[event.target.dataset.resource].value === newValue) newValue -= 1;
-        await document.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id});
-        await this.render({parts: [event.target.dataset.resource]});
+        if(document.system.resources[event.target.dataset.resource].value === newValue) event.target.dataset.resource !== "hope" ? newValue += 1 : newValue -= 1;
+        document.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id}).then((result) => {});
+        //ResourceManagerApp.#updatePips.bind(this)(event.target.dataset.resource, newValue);
+        Utils.updateResourcePips(
+            document,
+            event.target.dataset.resource,
+            newValue,
+            'resource-row',
+            'data-application-part',
+            event.target.dataset.resource,
+            'resource-button',
+            'setResource',
+            Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE),
+            [this.element]);
     }
 
     /**

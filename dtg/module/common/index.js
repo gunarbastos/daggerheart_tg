@@ -11,7 +11,7 @@ export {DTGMeasuredTemplate} from './dtgMeasuredTemplate.js';
 export {DTGRuler, DTGTokenRuler} from './dtgRuler.js';
 export {ExperienceDataModel} from './experienceDataModel.js';
 export {DTGHooks} from './hooks.js';
-export {InventoryItemDataModel} from './inventoryItemDataModel.js';
+export {InventoryItemDataModel, EmbedInventoryItemDataModel} from './inventoryItemDataModel.js';
 export {_DO_NOT_USE_LANG} from './language.js';
 export {Mixins} from './mixins.js';
 export {PolymorphicEmbeddedField} from './polymorphicDataType.js';

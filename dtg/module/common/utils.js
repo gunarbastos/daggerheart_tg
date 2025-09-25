@@ -4,6 +4,66 @@ export class Utils {
 
     static _document_cache = new Map();
 
+    static updateResourcePips(document, resource, newValue, rowClass, rowSelectorProperty, rowSelectorValue, buttonClass, buttonAction, iconType, elementRoots){
+        let usedImage = '';
+        let availableImage = '';
+        let scarImage = '';
+
+        switch(resource){
+            case game.dtg.constants.RESOURCE_TYPES.HP:
+                usedImage = game.dtg.constants.ASSETS.ICONS.HP.USED[iconType];
+                availableImage = game.dtg.constants.ASSETS.ICONS.HP.AVAILABLE;
+                break;
+            case game.dtg.constants.RESOURCE_TYPES.ARMOR:
+                usedImage = game.dtg.constants.ASSETS.ICONS.ARMOR.USED[iconType];
+                availableImage = game.dtg.constants.ASSETS.ICONS.ARMOR.AVAILABLE;
+                break;
+            case game.dtg.constants.RESOURCE_TYPES.STRESS:
+                usedImage = game.dtg.constants.ASSETS.ICONS.STRESS.USED;
+                availableImage = game.dtg.constants.ASSETS.ICONS.STRESS.AVAILABLE;
+                break;
+            case game.dtg.constants.RESOURCE_TYPES.HOPE:
+                usedImage = game.dtg.constants.ASSETS.ICONS.HOPE.USED;
+                availableImage = game.dtg.constants.ASSETS.ICONS.HOPE.AVAILABLE;
+                scarImage = game.dtg.constants.ASSETS.ICONS.SCAR;
+                break;
+        }
+
+        usedImage = `${game.dtg.constants.ASSETS.ICON_DIR}/${usedImage}`;
+        availableImage = `${game.dtg.constants.ASSETS.ICON_DIR}/${availableImage}`;
+        scarImage = `${game.dtg.constants.ASSETS.ICON_DIR}/${scarImage}`;
+
+        for(const root of elementRoots) {
+            const row = root.querySelector(`.${rowClass}[${rowSelectorProperty}="${rowSelectorValue}"]`);
+            if (row) {
+                const imgs = row.querySelectorAll(`.${buttonClass}`);
+
+                if(resource !== game.dtg.constants.RESOURCE_TYPES.HOPE) {
+                    imgs.forEach(img => {
+                        img.src = Number(img.dataset.value) >= newValue ? usedImage : availableImage;
+                    });
+                } else {
+                    imgs.forEach(img => {
+                        const datasetValue = Number(img.dataset.value);
+                        if(datasetValue <=  newValue){
+                            img.src = availableImage;
+                            img.dataset.action = buttonAction;
+                            img.removeAttribute('style');
+                        } else if(datasetValue <= document.system.resources.hope.max - document.system.scars){
+                            img.src = usedImage;
+                            img.dataset.action = buttonAction;
+                            img.removeAttribute('style');
+                        } else {
+                            img.src = scarImage;
+                            img.removeAttribute('data-action');
+                            img.style = "cursor: not-allowed;";
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     static async showSheetPartInDialog(sheet, partId, opts = {}) {
         //Resolve the part from the class' static PARTS
         const part = sheet.constructor.PARTS && sheet.constructor.PARTS[partId];

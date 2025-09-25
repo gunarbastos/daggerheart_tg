@@ -42,6 +42,7 @@ export class PlayerDocument extends CombatActorDocument {
 
             if(scars > hopeMax) {
                 foundry.utils.setProperty(changes, `system.scars`, hopeMax);
+                options.skipRequester = false; //force to update on the renderer that set the false info
                 scars = hopeMax;
             }
 
@@ -49,12 +50,11 @@ export class PlayerDocument extends CombatActorDocument {
 
             if (validMax < currValue) {
                 foundry.utils.setProperty(changes, `system.resources.hope.value`, validMax);
+                options.skipRequester = false; //force to update on the renderer that set the false info
             }
 
-            if(this.system.resources.hope.value === validMax && this.system.scars === scars) {
-                this._updateApps(changes, userId, false);
-            } else {
-                options.skipRequester = false; //force to update on the renderer that set the false info
+            if(this.system.resources.hope.value !== validMax || this.system.scars !== scars) {
+                this._updateApps(changes, userId, options.skipRequester, options.appId);
             }
 
         }

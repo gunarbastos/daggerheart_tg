@@ -5,7 +5,6 @@ console.log(`Loaded: ${import.meta.url}`);
 export class DTGRadioType extends foundry.data.fields.StringField {
 
     _toInput(config) {
-        //Utils.log('DTGRadioType', '_toInput', config, this);
         let itemsHTML = '';
         for(const [key, value] of Object.entries(this.options.items)){
             let imagesHTML = '';
@@ -14,9 +13,9 @@ export class DTGRadioType extends foundry.data.fields.StringField {
             }
 
             itemsHTML +=
-                `<div style="display: flex; align-items: center">
-                    <input type="radio" name="${this.name}" id="${this.name}.${key}" value="${key}" id="settings-config-${this.name}" ${config.value === key ? 'checked' : ''}>
+                `<div style="display: flex; align-items: center; justify-content: flex-end">
                     <div style="display: flex">${imagesHTML}</div>
+                    <input type="radio" name="${this.name}" id="${this.name}.${key}" value="${key}" id="settings-config-${this.name}" ${config.value === key ? 'checked' : ''}>
                 </div>`;
         }
         return `<div>
@@ -25,7 +24,6 @@ export class DTGRadioType extends foundry.data.fields.StringField {
     }
 
     toFormGroup(groupConfig={}, inputConfig={}){
-        //Utils.log('DTGRadioType', 'toFormGroup', groupConfig, inputConfig);
         const el = this._toInput(inputConfig);
         const mine = document.createElement("div");
         mine.innerHTML =

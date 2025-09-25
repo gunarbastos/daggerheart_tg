@@ -156,8 +156,6 @@ export class DTGHooks {
     static async #onReady(){
         Utils.log(`#onReady`);
 
-        Utils.log('Ruler');
-
         Utils.log('Configuring DTG Tools bar');
         if(game.dtg.apps.fearTracker.userCanSee()) {
             ui.controls.controls.dtg.tools.fearTracker = await DTGHooks.#getFearTrackerToolsEntry();

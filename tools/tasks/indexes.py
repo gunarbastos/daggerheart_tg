@@ -36,12 +36,33 @@ def generate_indexes_internal(directory: Path):
     offset_hours = offset.total_seconds() / 3600
     index_file = directory / "index.js"
     created_file = not index_file.exists()
-    index_file.write_text("// File generated automatically.\n// Last Updated: " + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n" + "console.log(`Loaded: ${import.meta.url}`);\n\n" + "\n".join(exports) + "\n", encoding="utf-8")
-    #index_file.write_text("// File generated automatically.\n// Last Updated: " + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n" + "\n".join(exports) + "\n", encoding="utf-8")
-    #index_file.write_text("baba yaga", encoding="utf-8")
+    #index_file.write_text("// File generated automatically.\n// Last Updated: " + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n" + "console.log(`Loaded: ${import.meta.url}`);\n\n" + "\n".join(exports) + "\n", encoding="utf-8")
+
+    header = (
+            "// File generated automatically.\n"
+            "// Last Updated: " + now.strftime(
+        f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}") + "\n\n"
+    )
+    body = "console.log(`Loaded: ${import.meta.url}`);\n\n" + "\n".join(exports) + "\n"
+    new_content = header + body
+    if not created_file:
+        #try:
+        existing = index_file.read_text(encoding="utf-8")
+        # Normalize to line lists and drop the first two lines for comparison
+        existing_lines = existing.splitlines()
+        new_lines = new_content.splitlines()
+        existing_body = "\n".join(existing_lines[2:])  # ignore first 2 comment lines
+        new_body = "\n".join(new_lines[2:])  # ignore first 2 comment lines
+        if existing_body == new_body:
+            # Do absolutely nothing if bodies match
+            sys.exit(0)
+        #except Exception:
+            # If we can't read for some reason, fall through and rewrite
+            #pass
     if created_file:
         print(f"adding {index_file} to git")
         os.system(f"git add {index_file}")
+    sys.exit(0)
 
 def generate_indexes(file: Path, dira: Path):
     if not(file is None):

@@ -261,8 +261,6 @@ export class Mixins {
             }
 
             static async _actionOpenSettings(event) {
-                //Utils.log('_actionOpenSettings', this);
-                //Utils.log('_actionOpenSettings', this.constructor.PARTS);
                 if(this.constructor.PARTS && this.constructor.PARTS[this.constructor.SETTINGS_PART_NAME] && this.constructor.PARTS[this.constructor.SETTINGS_PART_NAME].template){
                     await Utils.showSheetPartInDialog(this, this.constructor.SETTINGS_PART_NAME);
                 } else {
