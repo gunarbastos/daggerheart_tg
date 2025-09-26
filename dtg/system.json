@@ -20,11 +20,31 @@
     "main.css"
   ],
   "packs": [
-    { "name": "adversaries", "label": "Adversaries", "type": "Actor" },
-    { "name": "items", "label": "Items", "type": "Item" },
-    { "name": "classes", "label": "Classes", "type": "Item" },
-    { "name": "domains", "label": "Domains", "type": "Item" },
-    { "name": "ancestry", "label": "Ancestry", "type": "Item" }
+    {
+      "name": "adversaries",
+      "label": "Adversaries",
+      "type": "Actor"
+    },
+    {
+      "name": "items",
+      "label": "Items",
+      "type": "Item"
+    },
+    {
+      "name": "classes",
+      "label": "Classes",
+      "type": "Item"
+    },
+    {
+      "name": "domains",
+      "label": "Domains",
+      "type": "Item"
+    },
+    {
+      "name": "ancestry",
+      "label": "Ancestry",
+      "type": "Item"
+    }
   ],
   "languages": [
     {
@@ -71,12 +91,10 @@
     "distance": 5,
     "units": "ft"
   },
-  
   "url": "https://github.com/gunarbastos/daggerheart_tg",
   "readme": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/README.md",
-  "changelog": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/CHANGELOG.md",  
+  "changelog": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/CHANGELOG.md",
   "license": "https://raw.githubusercontent.com/gunarbastos/daggerheart_tg/stable/LICENSE",
-  
   "manifest": "https://github.com/gunarbastos/daggerheart_tg/releases/latest/download/system.json",
-  "download": "https://github.com/gunarbastos/daggerheart_tg/releases/download/v0.1.0/dtg-v0.1.0.zip"
+  "download": "https://github.com/gunarbastos/daggerheart_tg/releases/download/v0.1.1/dtg-v0.1.1.zip"
 }
