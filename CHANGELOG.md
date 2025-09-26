@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## [0.1.1]
+## [0.1.1] - 2025-09-26
 ### Added
 - Combat Tracker Enhancements
 - App for on-screen monitor and edit of Player Resources
