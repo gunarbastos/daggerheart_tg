@@ -1,8 +1,7 @@
 import {CONSTANTS, DtgEngine, Utils} from "../../common/index.js";
+import {DtgActorSheet} from "./dtgActorSheet.js";
 
 console.log(`Loaded: ${import.meta.url}`);
-
-import {DtgActorSheet} from "./dtgActorSheet.js";
 
 export class AdversarySheet extends DtgActorSheet {
     static get PARTS() {
@@ -47,7 +46,6 @@ export class AdversarySheet extends DtgActorSheet {
             finalValue = null;
             finalName = `flags.${CONSTANTS.SYSTEM_ID}.-=${event.target.dataset.name}`;
         }
-        Utils.log(currValue, finalName, finalValue);
         await this.document.update({[finalName]: finalValue}, {render: true});
     }
 

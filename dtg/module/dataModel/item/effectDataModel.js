@@ -1,6 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {TargetDataModel} from "../../common/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class EffectDataModel extends foundry.abstract.DataModel {
 

@@ -1,7 +1,7 @@
-import {CONSTANTS, InventoryItemDataModel} from "../../common/index.js";console.log(`Loaded: ${import.meta.url}`);
-
-
+import {CONSTANTS, InventoryItemDataModel} from "../../common/index.js";
 import {EmbedFeatureDataModel} from "./featureDataModel.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class WeaponDataModel extends InventoryItemDataModel {
 

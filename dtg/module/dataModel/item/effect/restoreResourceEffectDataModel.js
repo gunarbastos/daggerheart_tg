@@ -1,7 +1,7 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {EffectDataModel} from "../effectDataModel.js";
 import {CONSTANTS} from "../../../common/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class RestoreResourceEffectDataModel extends EffectDataModel {
 

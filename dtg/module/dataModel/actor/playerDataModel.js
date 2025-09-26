@@ -1,5 +1,3 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {
     CONSTANTS,
     ResourceDataModel,
@@ -9,6 +7,8 @@ import {
     BorrowedPowerDataModel
 } from "../../common/index.js";
 import {EmbedFeatureDataModel} from "../item/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class PlayerDataModel extends BaseDataModel {
 
@@ -84,7 +84,7 @@ export class PlayerDataModel extends BaseDataModel {
     get subclasses() {
         if(!this.#subclasses) {
             this.#subclasses = new Map();
-            for(const subclass in this.playerSubclasses) {
+            for(const subclass of this.playerSubclasses) {
                 this.#subclasses.set(subclass.UUID, { document: Utils.getCachedDocument(subclass.UUID), masteryLevel: subclass.masteryLevel });
             }
         }

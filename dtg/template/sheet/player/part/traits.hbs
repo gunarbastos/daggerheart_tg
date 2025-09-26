@@ -6,11 +6,7 @@
             {{!-- Strength --}}
             <article class="trait-card" data-trait="strength">
                 <label class="trait-label" for="trait-strength">Strength</label>
-                <input id="trait-strength"
-                       class="trait-input"
-                       type="number" step="1" inputmode="numeric"
-                       name="system.traits.strength"
-                       value="{{system.traits.strength}}" />
+                {{#> numberField }} id="trait-strength" class="trait-input" name="system.traits.strength" value="{{system.traits.strength}}" {{/numberField}}
                 <button type="button"
                         class="trait-roll-btn"
                         data-action="rollDuality"
@@ -20,11 +16,7 @@
             {{!-- Agility --}}
             <article class="trait-card" data-trait="agility">
                 <label class="trait-label" for="trait-agility">Agility</label>
-                <input id="trait-agility"
-                       class="trait-input"
-                       type="number" step="1" inputmode="numeric"
-                       name="system.traits.agility"
-                       value="{{system.traits.agility}}" />
+                {{#> numberField }} id="trait-agility" class="trait-input" name="system.traits.agility" value="{{system.traits.agility}}" {{/numberField}}
                 <button type="button"
                         class="trait-roll-btn"
                         data-action="rollDuality"
@@ -34,11 +26,7 @@
             {{!-- Finesse --}}
             <article class="trait-card" data-trait="finesse">
                 <label class="trait-label" for="trait-finesse">Finesse</label>
-                <input id="trait-finesse"
-                       class="trait-input"
-                       type="number" step="1" inputmode="numeric"
-                       name="system.traits.finesse"
-                       value="{{system.traits.finesse}}" />
+                {{#> numberField }} id="trait-finesse" class="trait-input" name="system.traits.finesse" value="{{system.traits.finesse}}" {{/numberField}}
                 <button type="button"
                         class="trait-roll-btn"
                         data-action="rollDuality"
@@ -48,11 +36,7 @@
             {{!-- Knowledge --}}
             <article class="trait-card" data-trait="knowledge">
                 <label class="trait-label" for="trait-knowledge">Knowledge</label>
-                <input id="trait-knowledge"
-                       class="trait-input"
-                       type="number" step="1" inputmode="numeric"
-                       name="system.traits.knowledge"
-                       value="{{system.traits.knowledge}}" />
+                {{#> numberField }} id="trait-knowledge" class="trait-input" name="system.traits.knowledge" value="{{system.traits.knowledge}}" {{/numberField}}
                 <button type="button"
                         class="trait-roll-btn"
                         data-action="rollDuality"
@@ -62,11 +46,7 @@
             {{!-- Instinct --}}
             <article class="trait-card" data-trait="instinct">
                 <label class="trait-label" for="trait-instinct">Instinct</label>
-                <input id="trait-instinct"
-                       class="trait-input"
-                       type="number" step="1" inputmode="numeric"
-                       name="system.traits.instinct"
-                       value="{{system.traits.instinct}}" />
+                {{#> numberField }} id="trait-instinct" class="trait-input" name="system.traits.instinct" value="{{system.traits.instinct}}" {{/numberField}}
                 <button type="button"
                         class="trait-roll-btn"
                         data-action="rollDuality"
@@ -76,11 +56,7 @@
             {{!-- Presence --}}
             <article class="trait-card" data-trait="presence">
                 <label class="trait-label" for="trait-presence">Presence</label>
-                <input id="trait-presence"
-                       class="trait-input"
-                       type="number" step="1" inputmode="numeric"
-                       name="system.traits.presence"
-                       value="{{system.traits.presence}}" />
+                {{#> numberField }} id="trait-presence" class="trait-input" name="system.traits.presence" value="{{system.traits.presence}}" {{/numberField}}
                 <button type="button"
                         class="trait-roll-btn"
                         data-action="rollDuality"

@@ -1,6 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {BaseDataModel} from "../../common/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class DomainDataModel extends BaseDataModel {
 

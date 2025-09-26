@@ -1,9 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {CONSTANTS} from "./constants.js";
 import {Utils} from "./utils.js";
 import {DtgEngine} from "./dtgEngine.js";
-import {ChatLogPatch} from "../patches/index.js";
 import {BaseDataModel} from "./baseDataModel.js";
 import {InventoryItemDataModel} from "./inventoryItemDataModel.js";
 import {_DO_NOT_USE_LANG} from "./language.js";
@@ -13,15 +10,30 @@ import {
     EnvironmentDocument,
     PlayerDocument} from "../document/actor/index.js";
 import {
+    AncestryDocument,
+    ArmorDocument,
     ClassDocument,
+    CommonItemDocument,
+    CommunityDocument,
+    ConsumableDocument,
     DomainCardDocument,
     DomainDocument,
-    DTGItemDocument, FeatureDocument,
-    FeatureItemDocument,
+    DTGItemDocument,
+    FeatureDocument,
     InventoryItemDocument,
-    SubclassDocument
+    MagicItemDocument,
+    MateriaDocument,
+    SpellDocument,
+    SubclassDocument, WeaponDocument
 } from "../document/item/index.js";
-import {FearTrackerApp} from "../app/index.js";
+import {DTGCombatTracker, FearTrackerApp, ResourceManagerApp} from "../app/index.js";
+import {DtgSockets} from "./sockets.js";
+import {DTGTokenDocument} from "../document/index.js";
+import {DTGRuler, DTGTokenRuler} from "./dtgRuler.js";
+import {DTGMeasuredTemplate} from "./dtgMeasuredTemplate.js";
+import {DTGRadioType} from "./types.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class DTGHooks {
 
@@ -35,6 +47,7 @@ export class DTGHooks {
         Hooks.once("init", DTGHooks.#onInit);
         Hooks.once("ready", DTGHooks.#onReady);
         Hooks.on("getSceneControlButtons", DTGHooks.#getSceneControlButtons);
+        Hooks.on("chatMessage", DTGHooks.#chatMessage);
     }
 
     static #registerDocumentHooks() {
@@ -49,46 +62,6 @@ export class DTGHooks {
         Hooks.on("deleteItem", DTGHooks.#onItemDeleted);
     }
 
-    //!!!!These hooks should not be used unless there is no other way to put the behaviour in the Sheet using the default lifecycle methods
-    static #registerSheetHooks() {
-        for (const sheetDef of [
-            ...CONSTANTS.SHEETS.ACTORS,
-            ...CONSTANTS.SHEETS.ITEMS
-        ]) {
-            const cls = sheetDef.class;
-            const name = cls.name; // e.g., "FeatureSheet"
-
-            const hookMap = {
-                render: "onRender", // Fires after the sheet is rendered
-                close: "onClose",   // Fires after the sheet is closed
-                getHeaderButtons: "onGetHeaderButtons", // Modifies header buttons before rendering
-
-                // Pre-open/close hooks
-                preRender: "onPreRender", // Fires just before rendering (rarely used)
-                preClose: "onPreClose",   // Fires just before closing
-
-                // Sheet-specific configuration/data manipulation
-                getData: "onGetData",       // Fires before data context is passed to Handlebars
-                activateListeners: "onActivateListeners", // Fires after render to bind events
-                setPosition: "onSetPosition",             // When setting sheet position
-                _render: "onRenderInternal",              // Low-level render
-                _renderInner: "onRenderInner",            // Rarely used internal hook
-                submit: "onSubmit",                       // When submitting the form
-                _getSubmitData: "onGetSubmitData",        // Just before form submission
-                _onChangeInput: "onChangeInput",          // On any form input change
-                _onChangeTab: "onChangeTab",              // On tab change
-            };
-
-            for (const [hook, method] of Object.entries(hookMap)) {
-                const hookName = `${hook}${cls.name}`;
-                if (typeof cls[method] === "function") {
-                    Hooks.on(hookName, (...args) => cls[method](...args));
-                }
-            }
-        }
-    }
-    //#endregion
-
     //#region Init Hooks
     static #onInit(){
         Utils.log(`#onInit`);
@@ -98,13 +71,36 @@ export class DTGHooks {
         Utils.deepFreeze(_DO_NOT_USE_LANG);
         Utils.deepFreeze(CONSTANTS);
 
+        Utils.log('defining global objects');
         game.dtg ??= {};
         game.dtg.dualityRoll = async (opts = {}) => await DtgEngine.dualityRoll(opts);
         game.dtg.dualityDice = async (opts = {}) => await DtgEngine.dualityDice(opts);
         game.dtg.constants = CONSTANTS;
         game.dtg.apps ??= {};
 
-        ChatLogPatch.enableDdSlash();
+        Utils.log('registering Document Classes');
+        game.dtg.documents = {};
+        game.dtg.documents.FeatureDocument = FeatureDocument;
+        game.dtg.documents.InventoryItemDocument = InventoryItemDocument;
+        game.dtg.documents.ClassDocument = ClassDocument;
+        game.dtg.documents.DomainDocument = DomainDocument;
+        game.dtg.documents.DomainCardDocument = DomainCardDocument;
+        game.dtg.documents.SubclassDocument = SubclassDocument;
+        game.dtg.documents.AncestryDocument = AncestryDocument;
+        game.dtg.documents.CommunityDocument = CommunityDocument;
+        game.dtg.documents.SpellDocument = SpellDocument;
+        game.dtg.documents.ArmorDocument = ArmorDocument;
+        game.dtg.documents.WeaponDocument = WeaponDocument;
+        game.dtg.documents.CommonItemDocument = CommonItemDocument;
+        game.dtg.documents.ConsumableDocument = ConsumableDocument;
+        game.dtg.documents.MagicItemDocument = MagicItemDocument;
+        game.dtg.documents.MateriaDocument = MateriaDocument;
+
+        game.dtg.documents.PlayerDocument = PlayerDocument;
+        game.dtg.documents.AdversaryDocument = AdversaryDocument;
+        game.dtg.documents.EnvironmentDocument = EnvironmentDocument;
+
+        DTGHooks.#registerCustomChatCommands();
 
         // Document overrides
         CONFIG.Actor.documentClass = DTGActorDocument;
@@ -129,30 +125,8 @@ export class DTGHooks {
 
         DTGHooks.#registerSettings();
 
-        game.dtg.apps.fearTracker = new FearTrackerApp();
-
-        Utils.log(`#onInit end`);
-    }
-    
-    static async #onReady(){
-        Utils.log(`#onReady`);
         Utils.log(`registering handlebar helpers`);
         Utils.registerCommonHelpers();
-
-        Utils.log('registering Document Classes');
-        game.dtg.documents = {};
-        game.dtg.documents.FeatureItemDocument = FeatureItemDocument;
-        game.dtg.documents.FeatureDocument = FeatureDocument;
-        game.dtg.documents.InventoryItemDocument = InventoryItemDocument;
-        game.dtg.documents.ClassDocument = ClassDocument;
-        game.dtg.documents.DomainDocument = DomainDocument;
-        game.dtg.documents.DomainCardDocument = DomainCardDocument;
-        game.dtg.documents.SubclassDocument = SubclassDocument;
-
-        game.dtg.documents.PlayerDocument = PlayerDocument;
-        game.dtg.documents.AdversaryDocument = AdversaryDocument;
-        game.dtg.documents.EnvironmentDocument = EnvironmentDocument;
-
 
         Utils.log('preloading templates');
         for(const template of Object.values(CONSTANTS.TEMPLATES) ) {
@@ -168,18 +142,33 @@ export class DTGHooks {
             }
         }
 
+        game.dtg.apps.fearTracker = new FearTrackerApp();
+        game.dtg.apps.resourceManager = new ResourceManagerApp();
+
+        CONFIG.ui.combat = DTGCombatTracker;
+        CONFIG.Token.documentClass = DTGTokenDocument;
+        CONFIG.Canvas.rulerClass = DTGRuler;
+        CONFIG.Token.rulerClass = DTGTokenRuler;
+        CONFIG.MeasuredTemplate.objectClass = DTGMeasuredTemplate;
+        Utils.log(`#onInit end`);
+    }
+    
+    static async #onReady(){
+        Utils.log(`#onReady`);
+
+        Utils.log('Configuring DTG Tools bar');
         if(game.dtg.apps.fearTracker.userCanSee()) {
             ui.controls.controls.dtg.tools.fearTracker = await DTGHooks.#getFearTrackerToolsEntry();
-            if(await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_WINDOW_IS_OPEN.id) === true)
+            if(FearTrackerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(FearTrackerApp.SETTINGS_NAME.IS_OPENED) === true : false)
                 await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
         }
 
-        if(ui.controls.controls.dtg?.tools?.fearTracker ?? false){
-            ui.controls.controls.dtg.tools.fearTracker.active = game.dtg.apps.fearTracker.rendered;
-        }
-        ui.controls.render({force : true});
+        if(ResourceManagerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(ResourceManagerApp.SETTINGS_NAME.IS_OPENED) === true : true)
+            await game.dtg.apps.resourceManager.render({persistConfigs: false, force : true});
 
-        //DTGHooks.#registerSheetHooks();
+        Utils.log('Setting Socket Hooks');
+        game.socket.on(CONSTANTS.SOCKETS.ID, DtgSockets.socketHandler);
+
         Utils.log(`#onReady end`);
     }
 
@@ -189,37 +178,65 @@ export class DTGHooks {
         controls[CONSTANTS.SYSTEM_ID] = {
             name: CONSTANTS.SYSTEM_ID,
             title: CONSTANTS.SYSTEM_ID,
-            icon: "fas fa-dragon",     // pick any FA icon you like
+            activeTool: 'doNothing',
+            icon: "fas fa-dragon",
             tools: {
-                ph: {
-                    name: "placeholder",
-                    title: "placeholder",
-                    icon: "fas fa-search",
-                    button: true,
+                resourceManager: {
+                    name: "resourceManager",
+                    title: "Resource Manager",
+                    icon: "fas fa-address-card",
+                    toggle: true,
+                    visible: true,
+                    active: ResourceManagerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(ResourceManagerApp.SETTINGS_NAME.IS_OPENED) === true : false,
+                    onChange: (event, active) => {
+                        Utils.log(`tool`, event, active);
+                        const app = game.dtg.apps.resourceManager;
+                        if (active) {
+                            app.render({force: true}, {});
+                        } else {
+                            app.close({});
+                        }
+                    },
+                    //onToolChange
+                },
+                doNothing: {
+                    name: "doNothing",
+                    title: "gambiarra",
+                    icon: "fas fa-empty",
+                    visible: true,
+                    order: 66,
                 }
             },
-            order: 0,
-        };
-
-        // Add the Fear Tracker toggle
-        /*const fearTracker = {
-            name: "fearTracker",
-            title: "Fear Tracker",
-            icon: "fas fa-skull",
-            toggle: true,
-            visible: game.user.hasRole(CONST.USER_ROLES.GAMEMASTER) || (await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_ASSISTANT_CAN_EDIT.id) && game.user.hasRole(CONST.USER_ROLES.ASSISTANT)) ||  await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.id),
-            active: game.dtg.apps.fearTracker.rendered,
+            order: 1,
             onChange: (event, active) => {
-                const app = game.dtg.apps.fearTracker;
-                if (active) {
-                    app.render(true);
-                } else {
-                    app.close();
+                Utils.log(`tool 2`, active);
+                if(active === true) {
+                    document.querySelector('[id=scene-controls-tools]').lastElementChild.outerHTML = '';
                 }
-            },
+            }
         };
-        controls.dtg.tools.fearTracker = fearTracker;
-         */
+    }
+
+    static #chatMessage(chatLog, message, chatData){
+        const parsed = foundry.applications.sidebar.tabs.ChatLog.parse(message);
+        let command = parsed[0];
+
+        switch ( command ) {
+            case "dd":
+                const argString = message.replace(/^\/dd\b\s*/i, "");
+                const args = DTGHooks.#parseDdArgs(argString);
+
+                DtgEngine.dualityRoll({
+                    hopeFormula: args.hope ?? "1d12",
+                    fearFormula: args.fear ?? "1d12",
+                    bonus: args.bonus,
+                    advDisad: args.advDisad ?? "",      // "ADVANTAGE" | "DISADVANTAGE" | ""
+                    grantsHopeFear: true
+                }).then(r => null);
+                return false;
+            default:
+                return;
+        }
     }
     //#endregion
 
@@ -263,6 +280,9 @@ export class DTGHooks {
             Utils.log(`registering setting`, setting.id);
             const finalSetting = Utils.deepClone(setting);
             delete finalSetting.id;
+            if(finalSetting.customType === 'DTGRadioType'){
+                finalSetting.type = new DTGRadioType({...Utils.deepClone(setting)});
+            }
             const hasMethod = typeof this[`${setting.id}OnChange`] === 'function';
             if(hasMethod === true) {
                 finalSetting.onChange = this[`${setting.id}OnChange`];
@@ -274,7 +294,7 @@ export class DTGHooks {
     static async FEAR_MAXIMUMOnChange(value){
         const currFear = await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id);
         if(currFear > value){
-            await game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, value);
+            await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT, value); //game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, value);
         }
 
         if(game.dtg.apps.fearTracker.rendered){
@@ -283,9 +303,9 @@ export class DTGHooks {
     }
 
     static async FEAR_CURRENTOnChange(value){
-        const maxFear = await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_MAXIMUM.id);
+        const maxFear = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_MAXIMUM);
         if(value > maxFear){
-            await game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, maxFear);
+            await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT, maxFear);
         }
 
         if(game.dtg.apps.fearTracker.rendered){
@@ -315,13 +335,37 @@ export class DTGHooks {
             }
             if(value === true){
                 ui.controls.controls.dtg.tools.fearTracker = await DTGHooks.#getFearTrackerToolsEntry();
-                if(game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_WINDOW_IS_OPEN.id) === true){
+                if(Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_WINDOW_IS_OPEN)){
                     await game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
                 }
             }
         }
 
         ui.controls.render();
+    }
+
+    static async SPOTLIGHTOnChange(value){
+        ui.combat.render({parts:['spotlight']});
+    }
+
+    static async SMALL_ICONS_STYLEOnChange(value){
+        await ui.combat.render({parts:['players', 'adversaries']});
+    }
+
+    static async MEDIUM_ICONS_STYLEOnChange(value){
+        if(game.dtg.apps.resourceManager && game.dtg.apps.resourceManager.rendered)
+            await game.dtg.apps.resourceManager.render({parts:['hp', 'armor', 'stress', 'hope']});
+        for(const [key, value] of foundry.applications.instances){
+            for(const actor of CONSTANTS.SHEETS.ACTORS){
+                if(value instanceof actor.class){
+                    await value.render();
+                }
+            }
+        }
+    }
+
+    static async COMBATTRACKER_PLAYERS_SEE_NOT_OWNED_ACTORS_RESOURCES(value){
+        await ui.combat.render({parts:['players', 'adversaries']});
     }
 
     static async #getFearTrackerToolsEntry(){
@@ -331,7 +375,8 @@ export class DTGHooks {
             icon: "fas fa-skull",
             toggle: true,
             visible: game.dtg.apps.fearTracker.userCanSee(),
-            active: game.dtg.apps.fearTracker.rendered,
+            //active: game.dtg.apps.fearTracker.rendered,
+            active: FearTrackerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(FearTrackerApp.SETTINGS_NAME.IS_OPENED) === true : false,
             onChange: (event, active) => {
                 const app = game.dtg.apps.fearTracker;
                 if (active) {
@@ -340,6 +385,7 @@ export class DTGHooks {
                     app.close({});
                 }
             },
+            order: 1,
         }
     }
 
@@ -356,6 +402,51 @@ export class DTGHooks {
                 makeDefault: sheet.default,
             });
         }
+    }
+
+    static #parseDdArgs(str) {
+        const out = { bonus: [] }; // { hope?, fear?, tie?, advDisad?, bonus: (numbers/strings/objects)[] }
+
+        const tokens = str.trim() ? str.trim().match(/"[^"]*"|\S+/g) : [];
+        for (const raw of tokens ?? []) {
+            const tok = raw.replace(/^"(.*)"$/, "$1"); // strip surrounding quotes
+
+            // +N / -N → flat numeric bonus
+            if (/^[+-]?\d+$/.test(tok)) {
+                out.bonus.push(parseInt(tok, 10));
+                continue;
+            }
+
+            // adv / dis
+            if (/^(adv|advantage)$/i.test(tok)) { out.advDisad = "ADVANTAGE"; continue; }
+            if (/^(dis|disad|disadvantage)$/i.test(tok)) { out.advDisad = "DISADVANTAGE"; continue; }
+
+            // key=value (hope=2d12 | fear=1d12 | tie=hope | label=1d4)
+            const m = tok.match(/^([A-Za-z_][\w-]*)\s*=\s*(.+)$/);
+            if (m) {
+                const key = m[1].toLowerCase();
+                const val = m[2];
+                if (key === "hope")       out.hope = val;
+                else if (key === "fear")  out.fear = val;
+                else if (key === "tie")   out.tie = val.toLowerCase();
+                else                      out.bonus.push({ formula: val, description: m[1] }); // arbitrary label=value → treat as labeled bonus
+                continue;
+            }
+
+            // Anything else → treat as a bonus formula token (e.g., 1d4)
+            out.bonus.push(tok);
+        }
+
+        return out;
+    }
+
+    static #registerCustomChatCommands(){
+        const _invalid = foundry.applications.sidebar.tabs.ChatLog.MESSAGE_PATTERNS.invalid;
+        delete foundry.applications.sidebar.tabs.ChatLog.MESSAGE_PATTERNS.invalid;
+        const dice = "([^#]+)(?:#(.*))?";
+        const any = "([^]*)";
+        foundry.applications.sidebar.tabs.ChatLog.MESSAGE_PATTERNS.dd = new RegExp(`^(\\/d(?:uality)?d(?:ice)?)${any}$`, "i");  // Duality dice: /dd or /dualitydice
+        foundry.applications.sidebar.tabs.ChatLog.MESSAGE_PATTERNS.invalid = _invalid;
     }
     //#endregion
 }

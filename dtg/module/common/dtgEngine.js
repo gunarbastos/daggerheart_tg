@@ -1,7 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
-import {CONSTANTS} from "./constants.js";
 import {Utils} from "./utils.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class DtgEngine {
 
@@ -9,7 +8,7 @@ export class DtgEngine {
         const hopeRoll = await (new Roll(`${hopeFormula}`)).evaluate();
         const fearRoll = await (new Roll(`${fearFormula}`)).evaluate();
 
-        const state = ((hopeRoll.total === fearRoll.total) || (hopeRoll.total > fearRoll.total)) ? CONSTANTS.ROLL_RESULTS.HOPE : CONSTANTS.ROLL_RESULTS.FEAR;
+        const state = ((hopeRoll.total === fearRoll.total) || (hopeRoll.total > fearRoll.total)) ? game.dtg.constants.ROLL_RESULTS.HOPE : game.dtg.constants.ROLL_RESULTS.FEAR;
         return { hope: hopeRoll.total, fear: fearRoll.total, state: state, hopeDie: hopeRoll, fearDie: fearRoll};
     }
 
@@ -155,18 +154,18 @@ export class DtgEngine {
             fear: dualityDice.fear,
             state: dualityDice.state,
             base: [
-                { roll: dualityDice.hopeDie, description: CONSTANTS.ROLL_RESULTS.HOPE, total: dualityDice.hopeDie.total},
-                { roll: dualityDice.fearDie, description: CONSTANTS.ROLL_RESULTS.FEAR, total: dualityDice.fearDie.total},
+                { roll: dualityDice.hopeDie, description: game.dtg.constants.ROLL_RESULTS.HOPE, total: dualityDice.hopeDie.total},
+                { roll: dualityDice.fearDie, description: game.dtg.constants.ROLL_RESULTS.FEAR, total: dualityDice.fearDie.total},
             ]
         };
         const consideredBonus = await this.#normalizeBonuses(bonus);
-        if((advDisad === CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE) || (advDisad === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE)){
+        if((advDisad === game.dtg.constants.ROLL_MODIFICATIONS.ADVANTAGE) || (advDisad === game.dtg.constants.ROLL_MODIFICATIONS.DISADVANTAGE)){
             d6roll = await (new Roll(`1d6`)).evaluate();
             consideredBonus.push(
                 {
                     roll: d6roll,
                     description: advDisad,
-                    total: d6roll.total * (advDisad === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE ? -1 : 1)
+                    total: d6roll.total * (advDisad === game.dtg.constants.ROLL_MODIFICATIONS.DISADVANTAGE ? -1 : 1)
                 });
         }
 
@@ -175,7 +174,7 @@ export class DtgEngine {
 
         let total = dualityDice.hope + dualityDice.fear + totalBonus;
 
-        result.template = `systems/${CONSTANTS.SYSTEM_ID}/template/chat/dualityDiceRoll.hbs`;
+        result.template = `${game.dtg.constants.TEMPLATES.ROOT_DIR}/chat/dualityDiceRoll.hbs`;
         result.totalBonus = totalBonus;
         result.total = total;
         result.bonus = consideredBonus;
@@ -194,17 +193,14 @@ export class DtgEngine {
     }
 
     static async damageRoll(formula, type) {
-        Utils.log('damageRoll', formula, type);
         const roll = await (new Roll(formula)).evaluate();
-        Utils.log('damageRoll', 'roll', roll);
 
         const result = {
             formula: formula,
             roll: roll,
             type: type,
-            template: `systems/${CONSTANTS.SYSTEM_ID}/template/chat/damageRoll.hbs`,
+            template: `${game.dtg.constants.TEMPLATES.ROOT_DIR}/chat/damageRoll.hbs`,
         }
-        Utils.log('damageRoll', 'result', result);
 
         await this.#postToChat(result);
 
@@ -223,7 +219,8 @@ export class DtgEngine {
 
         return ChatMessage.create({
             sender,
-            content: content
+            content: content,
+            sound: CONFIG.sounds.dice,
         });
     }
 
@@ -236,20 +233,20 @@ export class DtgEngine {
             roll: roll,
             validRoll: roll,
             advDisad: advDisad,
-            template: `systems/${CONSTANTS.SYSTEM_ID}/template/chat/adversaryRoll.hbs`,
+            template: `${game.dtg.constants.TEMPLATES.ROOT_DIR.SYSTEM_ID}/chat/adversaryRoll.hbs`,
         }
 
         const consideredBonus = await this.#normalizeBonuses(bonus);
-        if((advDisad === CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE) || (advDisad === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE)){
+        if((advDisad === game.dtg.constants.ROLL_MODIFICATIONS.ADVANTAGE) || (advDisad === game.dtg.constants.ROLL_MODIFICATIONS.DISADVANTAGE)){
             const advDisadRoll = await (new Roll(baseDice)).evaluate();
             result.advDisadRoll = advDisadRoll;
             switch (advDisad){
-                case CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE:
+                case game.dtg.constants.ROLL_MODIFICATIONS.ADVANTAGE:
                     if(advDisadRoll.total > roll.total){
                         result.validRoll = advDisadRoll;
                     }
                     break;
-                case CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE:
+                case game.dtg.constants.ROLL_MODIFICATIONS.DISADVANTAGE:
                     if(advDisadRoll.total < roll.total){
                         result.validRoll = advDisadRoll;
                     }

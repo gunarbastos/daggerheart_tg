@@ -1,0 +1,133 @@
+.dtg.combat-tracker {
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  gap: 5px;
+
+  .window-content{
+    align-items: center;
+  }
+
+  &#combat-popout {
+    display: block;
+    height: auto;
+  }
+
+  &.active {
+    display: flex;
+  }
+
+  .header {
+    margin-top: 5px;
+  }
+
+  .spotlight {
+    width: 80%;
+    text-align: center;
+
+    .indicator {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .with-gm {
+      background-color: darkred;
+      color: white;
+    }
+
+    .with-players {
+      background-color: darkgreen;
+      color: white;
+    }
+
+    .holder{
+      height: 100%;
+      width: 100%;
+    }
+
+    .toggle-button{
+      position: absolute;
+      right: 5px;
+    }
+  }
+
+  .actor-list {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+
+    .actor-card {
+      display: flex;
+      gap: 5px;
+      background-position: right;
+      background-repeat: no-repeat;
+      background-size: contain;
+      padding: 5px;
+      border: 1px solid var(--color-warm-2, #8882);
+      min-height: 85px;
+
+      &.owned {
+        border: 1px solid var(--color-warm-1, #8882);
+      }
+
+
+      .actor-img {
+        flex: none;
+        height: 50px;
+        width: 50px;
+      }
+
+      .actor-info {
+        display: flex;
+        flex-direction: column;
+
+        .actor-name {
+          font-size: small;
+          font-weight: bolder;
+        }
+
+        .actor-resource-row{
+          display: flex;
+
+          .actor-resource-button {
+            cursor: pointer;
+            background: rgb(from var(--color-warm-1, #8882) r g b / 0.50);
+            border: 1px solid var(--color-warm-1, #8882);
+            margin: 2px;
+          }
+        }
+      }
+    }
+  }
+
+  .footer {
+    width: 100%;
+    margin-top: auto;
+
+    button {
+      margin-bottom: 5px;
+      width: 100%;
+    }
+  }
+
+  .title {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    font-size: small;
+    align-items: center;
+
+    .line {
+      flex: 1 1 auto;
+      height: 5px;
+      background: var(--color-warm-3, #8882);
+    }
+  }
+}

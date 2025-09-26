@@ -1,5 +1,3 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {EffectDataModel} from "../dataModel/item/effectDataModel.js";
 import {_DO_NOT_USE_LANG} from './language.js'
 import {
@@ -54,8 +52,12 @@ import {
     SubClassDataModel,
     WeaponDataModel
 } from "../dataModel/item/index.js";
+import {DTGRadioType} from "./types.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 let _rawConstants = {
+    SYSTEM_ID: "dtg",
     LANG: {..._DO_NOT_USE_LANG},
 }
 
@@ -96,8 +98,16 @@ _rawConstants = {
     ..._rawConstants,
 
     //Raw Constants
-    SYSTEM_ID: "dtg",
+    //SYSTEM_ID: "dtg",
     CORE_ID: "core",
+
+    //sockets
+    SOCKETS: {
+        ID: `system.${_rawConstants.SYSTEM_ID}`,
+        MESSAGES: {
+            REFRESH_PLAYER_SHEET: "REFRESH_PLAYER_SHEET",
+        }
+    },
 
     //Dynamically Built
     CHOICES: {}, //Built Dynamically
@@ -114,6 +124,40 @@ _rawConstants = {
     },
 
     TEMPLATES: {
+    },
+
+    ASSETS: {
+        ICONS: {
+            HP: {
+                USED: {
+                    '1': 'heart_marked.png',
+                    '2': 'heart_marked_2.png',
+                    '3': 'heart_marked_3.png',
+                    '4': 'heart_marked_4_2.png',
+                    '5': 'heart_marked_5.png',
+                },
+                AVAILABLE: 'heart_unmarked.png',
+            },
+            ARMOR: {
+                USED: {
+                    '1': 'armor_marked.png',
+                    '2': 'armor_marked_2.png',
+                    '3': 'armor_marked_3.png',
+                    '4': 'armor_marked_4_2.png',
+                    '5': 'armor_marked_5.png',
+                },
+                AVAILABLE: 'armor_unmarked.png',
+            },
+            STRESS: {
+                USED: 'stress_marked.png',
+                AVAILABLE: 'stress_unmarked.png',
+            },
+            HOPE: {
+                USED: 'hope_empty.png',
+                AVAILABLE: 'hope_filled.png',
+            },
+            SCAR: 'scar_1.png',
+        }
     },
 
     //Enums
@@ -208,6 +252,10 @@ _rawConstants = {
         PRIMARY: 'Primary',
         SECONDARY: 'Secondary',
     },
+    SPOTLIGHT: {
+        GM: "GM",
+        PLAYERS: "Players",
+    },
 
     //Defaults
     DEFAULTS: {},
@@ -250,29 +298,108 @@ _rawConstants = {
             default: true,
         },
         FEAR_WINDOW_POSITION: {
-            scope: "client",
-            //config: false,
+            scope: "user",
+            config: false,
             type: Object,
             default: {},
-            name: "Fear: FEAR_WINDOW_POSITION",
-            hint: "FEAR_WINDOW_POSITION",
-            config: true,
         },
         FEAR_WINDOW_IS_OPEN: {
-            scope: "client",
-            //config: false,
+            scope: "user",
+            config: false,
             type: Boolean,
             default: true,
-            name: "Fear: FEAR_WINDOW_IS_OPEN",
-            hint: "FEAR_WINDOW_IS_OPEN",
-            config: true,
         },
         /*FEAR_WINDOW_LAYOUT: {
-            scope: "client",
+            scope: "user",
             config: false,
             type: String,
             default: "numbers",
         },*/
+        RESOURCEMANAGER_WINDOW_POSITION: {
+            scope: "user",
+            config: false,
+            type: Object,
+            default: {},
+        },
+        RESOURCEMANAGER_WINDOW_IS_OPEN: {
+            scope: "user",
+            config: false,
+            type: Boolean,
+            default: true,
+        },
+        RESOURCEMANAGER_SELECTED_DOCUMENT: {
+            scope: "user",
+            config: false,
+            type: String,
+            default: '',
+        },
+        RESOURCEMANAGER_SHOW_NOT_OWNED: {
+            scope: "user",
+            config: true,
+            name: "Resource Manager: Show actors that you can see only",
+            hint: "Determines if the Resource Manager App shows actors that the player can see but not edit.",
+            type: Boolean,
+            default: true,
+        },
+        RESOURCEMANAGER_SHOW_FOLDER_IN_NAME: {
+            scope: "user",
+            config: true,
+            name: "Resource Manager: Show folder in name",
+            hint: "Determines if the the folder name is prepended to the token name.",
+            type: Boolean,
+            default: false,
+        },
+        SPOTLIGHT: {
+            scope: "world",
+            config: false,
+            type: String,
+            default: 'GM',
+        },
+        SMALL_ICONS_STYLE: {
+            scope: "user",
+            config: true,
+            customType: 'DTGRadioType',
+            default: '5',
+            name: 'Style of Small Icons',
+            hint: 'Style of icons in places like Combat Tracker',
+            iconClass: 'small-icon',
+            items: {
+                '1': [],
+                '2': [],
+                '3': [],
+                '4': [],
+                '5': [],
+            }
+        },
+        MEDIUM_ICONS_STYLE: {
+            scope: "user",
+            config: true,
+            customType: 'DTGRadioType',
+            default: '3',
+            name: 'Style of Medium Icons',
+            hint: 'Style of icons in places like Player Sheet and Resource Manager',
+            iconClass: 'medium-small-icon',
+            items: {
+                '1': [],
+                '2': [],
+                '3': [],
+                '4': [],
+                '5': [],
+            }
+        },
+        COMBATTRACKER_PLAYERS_SEE_NOT_OWNED_ACTORS_RESOURCES: {
+            scope: "world",
+            config: true,
+            type: String,
+            default: 'none',
+            name: 'Combat Tracker - Player Resource visibility',
+            hint: 'Determines if the players can see resources from non-owned actors',
+            choices: {
+                "none": "Only see it's own",
+                "allies": "It's own and other players",
+                "all": "See everyone's resources"
+            }
+        }
     },
 
     APPS: {
@@ -396,11 +523,47 @@ _rawConstants.DEFAULTS.WEAPON_SLOT = _rawConstants.WEAPON_SLOT.PRIMARY;
 //Templates to preload
 _rawConstants.TEMPLATES.ROOT_DIR = `systems/${_rawConstants.SYSTEM_ID}/template`;
 _rawConstants.TEMPLATES.DUALITY_DICE_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/dualityDiceRoll.hbs` };
+_rawConstants.TEMPLATES.RULER = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/canvas/ruler-waypoint-label.hbs` };
 _rawConstants.TEMPLATES.DUALITY_DICE_ROLL_DETAILS =  { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/partials/dualityDiceRollDetails.hbs`, PRELOAD: true, ALIAS: "dualityDiceRollDetails" };
+_rawConstants.TEMPLATES.NUMBER_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/numberField.hbs`, PRELOAD: true, ALIAS: "numberField" };
+_rawConstants.TEMPLATES.TEXT_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/textField.hbs`, PRELOAD: true, ALIAS: "textField" };
+_rawConstants.TEMPLATES.RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "resourceRow" };
+_rawConstants.TEMPLATES.PLAYER_SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/resourceRow.hbs`, PRELOAD: true, ALIAS: "playerSheetResourceRow" };
+_rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
+_rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
+
+//Asset dirs
+_rawConstants.ASSETS.ROOT_DIR = `systems/${_rawConstants.SYSTEM_ID}/asset`;
+_rawConstants.ASSETS.ICON_DIR = `${_rawConstants.ASSETS.ROOT_DIR}/icon`;
+
+//Range Bands
+_rawConstants.RANGE_BANDS = {
+    5: _rawConstants.RANGE.MELEE,
+    10: _rawConstants.RANGE.VERY_CLOSE,
+    30: _rawConstants.RANGE.CLOSE,
+    100: _rawConstants.RANGE.FAR,
+    300: _rawConstants.RANGE.VERY_FAR,
+    max: 'OUT OF RANGE'
+}
 
 //Set property "id" for each and all Settings
 for(const [settingKey, settingValue] of Object.entries(_rawConstants.SETTINGS)) {
     settingValue.id = settingKey;
+}
+
+for(const setting of [_rawConstants.SETTINGS.MEDIUM_ICONS_STYLE, _rawConstants.SETTINGS.SMALL_ICONS_STYLE]) {
+    console.log('setting', setting);
+    console.log('constant', _rawConstants.ASSETS.ICONS.HP.USED);
+    setting.items['1'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['1']}`);
+    setting.items['1'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['1']}`);
+    setting.items['2'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['2']}`);
+    setting.items['2'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['2']}`);
+    setting.items['3'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['3']}`);
+    setting.items['3'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['3']}`);
+    setting.items['4'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['4']}`);
+    setting.items['4'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['4']}`);
+    setting.items['5'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['5']}`);
+    setting.items['5'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['5']}`);
 }
 
 //Polymorphic Type

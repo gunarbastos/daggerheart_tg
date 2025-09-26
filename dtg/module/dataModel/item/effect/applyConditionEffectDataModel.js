@@ -1,6 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {EffectDataModel} from "../effectDataModel.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class ApplyConditionEffectDataModel extends EffectDataModel {
 

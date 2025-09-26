@@ -1,18 +1,22 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {CONSTANTS, Utils} from "../../common/index.js";
 import {DtgActorSheet} from "./dtgActorSheet.js";
 import {
+    AncestryDocument,
+    ClassDocument,
+    CommunityDocument,
     DomainCardDocument,
     FeatureDocument,
-    FeatureItemDocument,
-    InventoryItemDocument
+    InventoryItemDocument,
+    SpellDocument,
+    SubclassDocument, WeaponDocument
 } from "../../document/item/index.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class PlayerSheet extends DtgActorSheet {
 
     static get PARTS() {
-        const partsBasePath = `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/parts`;
+        const partsBasePath = `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/part`;
         return {
             characterInfo: {template:`${partsBasePath}/characterInfo.hbs`},
             resources: {template:`${partsBasePath}/resources.hbs`},
@@ -20,20 +24,17 @@ export class PlayerSheet extends DtgActorSheet {
             quickAccess: {template:`${partsBasePath}/quickAccess.hbs`},
             inventory: {template:`${partsBasePath}/inventory.hbs`},
             roleplay: {template:`${partsBasePath}/roleplay.hbs`},
-            //settings: {template:`${partsBasePath}/settings.hbs`}, //probably should do this on an App
+            settings: {template:`${partsBasePath}/settings.hbs`},
         };
     }
 
     static get DEFAULT_OPTIONS() {
         const base = super.DEFAULT_OPTIONS;
-        return Utils.mergeObjects(
-            base,
-            {
+        return {
                 position: {width: 1200, height: 1200},
-                classes: Utils.unique([...base.classes ?? [], `${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.PLAYER}`]),
+                classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.PLAYER}`],
                 actions: {
-                    openSettings: PlayerSheet.#openSettings,
-                    setFlag: PlayerSheet.#setFlag,
+                    ...base.actions,
                     equipItem: PlayerSheet.#equipItem,
                     unequipItem: PlayerSheet.#unequipItem,
                     consumeItem: PlayerSheet.#consumeItem,
@@ -42,17 +43,11 @@ export class PlayerSheet extends DtgActorSheet {
                     deleteItem: PlayerSheet.#deleteItem,
                     openItem: PlayerSheet.#openItem,
                     attachItem: PlayerSheet.#attachItem,
-                    //itemQuantitySet: PlayerSheet.#itemQuantitySet,
+                    setResource: PlayerSheet.#setResource,
                 },
-                form: {
-                    handler: PlayerSheet.#onSubmitForm
-                },
-                window: {
-                    contentClasses: Utils.unique([...base.window.contentClasses ?? [], 'sheet-body']),
-                    title: 'Player Sheet',
-                    resizable: true
-                },
-            });
+                form: { handler: PlayerSheet.#onSubmitForm },
+                window: { title: 'Player Sheet' },
+            };
     }
 
     get title(){
@@ -61,11 +56,10 @@ export class PlayerSheet extends DtgActorSheet {
 
     async _prepareContext(options) {
         const base = await super._prepareContext(options);
-        const rollModValue = this.document.getFlag(CONSTANTS.SYSTEM_ID, "rollMod") ?? "";
         return {
             ...base,
-            flagRollModAdv: rollModValue === CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE,
-            flagRollModDis: rollModValue === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE,
+            flagRollModAdv: base.rollData.rollMod === CONSTANTS.ROLL_MODIFICATIONS.ADVANTAGE,
+            flagRollModDis: base.rollData.rollMod === CONSTANTS.ROLL_MODIFICATIONS.DISADVANTAGE,
         };
     }
 
@@ -95,46 +89,43 @@ export class PlayerSheet extends DtgActorSheet {
             }
 
             const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
-            //Utils.log('domainCardsUUIDs', this.document.system.domainCardsUUIDs);
-            //Utils.log('unified items', [...this.document.items, ...cards.values()]);
             for(const item of [...this.document.items, ...cards.values()]){
-                const properItem = item.asProperType();
-                itemTypes.push(properItem.type);
+                itemTypes.push(item.type);
                 let kind = "";
                 let equipped = false;
                 let equipable = false;
-                let itemId = properItem._id;
-                if(properItem instanceof DomainCardDocument){
+                let itemId = item._id;
+                if(item instanceof DomainCardDocument){
                     kind = CONSTANTS.ITEM_TYPES.DOMAIN_CARD;
-                    equipped = equippedDomainCardsUUIDs.has(properItem.uuid);
+                    equipped = equippedDomainCardsUUIDs.has(item.uuid);
                     equipable = true;
-                    itemId = properItem.uuid;
+                    itemId = item.uuid;
                 } else {
                     kind = "embed";
-                    equipped = properItem.getFlag(CONSTANTS.SYSTEM_ID, "equipped");
-                    equipable = properItem.system.equipable;
+                    equipped = item.getFlag(CONSTANTS.SYSTEM_ID, "equipped");
+                    equipable = item.system.equipable;
                 }
 
-                if (includeAll || itemFilter[properItem.type] === true){
-                    filteredItems.push({ kind: kind, equipped: equipped, equipable: equipable, id: itemId, item: properItem});
+                if (includeAll || itemFilter[item.type] === true){
+                    filteredItems.push({ kind: kind, equipped: equipped, equipable: equipable, id: itemId, item: item});
                 }
 
-                if(properItem instanceof DomainCardDocument) continue;
+                if(item instanceof DomainCardDocument) continue;
 
                 if (equipped === true){
-                    switch(properItem.type){
+                    switch(item.type){
                         case CONSTANTS.ITEM_TYPES.WEAPON:
-                            switch (properItem.system.slot){
+                            switch (item.system.slot){
                                 case CONSTANTS.WEAPON_SLOT.PRIMARY:
-                                    part.equippedItems.primaryWeapon = properItem;
+                                    part.equippedItems.primaryWeapon = item;
                                     break;
                                 case CONSTANTS.WEAPON_SLOT.SECONDARY:
-                                    part.equippedItems.secondaryWeapon = properItem;
+                                    part.equippedItems.secondaryWeapon = item;
                                     break;
                             }
                             break;
                         case CONSTANTS.ITEM_TYPES.ARMOR:
-                            part.equippedItems.armor = properItem;
+                            part.equippedItems.armor = item;
                             break;
                     }
                 }
@@ -147,22 +138,146 @@ export class PlayerSheet extends DtgActorSheet {
             part.backpackItems = filteredItems;
         }
 
+        if (partId === "resources") {
+            part.resources = {
+                hp: {},
+                armor: {},
+                stress: {},
+                hope: {}
+            }
+
+            const iconSetting = Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE);
+
+            for (const [k, v] of Object.entries(part.resources)) {
+                v.resourceName = k.capitalize();
+                v.resourceList = [];
+                switch(k){
+                    case 'hp':
+                        const usedHp = this.document.system.resources.hp.max - this.document.system.resources.hp.value;
+                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.hp.max, usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting], CONSTANTS.ASSETS.ICONS.HP.AVAILABLE)];
+                        break;
+                    case 'armor':
+                        const usedArmor = this.document.system.resources.armor.max - this.document.system.resources.armor.value;
+                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.armor.max, usedArmor, "armor", CONSTANTS.ASSETS.ICONS.ARMOR.USED[iconSetting], CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE)];
+                        break;
+                    case 'stress':
+                        const usedStress = this.document.system.resources.stress.max - this.document.system.resources.stress.value;
+                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.stress.max, usedStress, "stress", CONSTANTS.ASSETS.ICONS.STRESS.USED, CONSTANTS.ASSETS.ICONS.STRESS.AVAILABLE)];
+                        break;
+                    case 'hope':
+                        const maxFinalHope = this.document.system.resources.hope.max - this.document.system.scars;
+                        const usedHope = maxFinalHope - this.document.system.resources.hope.value;
+                        const scars = Utils.getListOfResources(this.document.system.scars, 0, "hope", CONSTANTS.ASSETS.ICONS.SCAR, CONSTANTS.ASSETS.ICONS.SCAR, {invertValues: true, canClick: false});
+                        for(const scar of scars){
+                            scar.value += maxFinalHope;
+                        }
+                        v.resourceList =  [...Utils.getListOfResources(maxFinalHope, usedHope, "hope", CONSTANTS.ASSETS.ICONS.HOPE.USED, CONSTANTS.ASSETS.ICONS.HOPE.AVAILABLE, {invertValues: true}),
+                            ...scars];
+                        break;
+                }
+            }
+        }
+
+        if (partId === "quickAccess") {
+            part.actions = [];
+            part.experiences = [];
+
+            //attacks from equipped weapons
+            for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
+                part.actions.push({
+                    isAttack: true,
+                    isBorrowedPower: false,
+                    name: weapon.name,
+                    trait: weapon.system.trait,
+                    damageFormula: weapon.system.damage,
+                    damageType: weapon.system.damageType,
+                })
+            }
+
+            //attacks from equipped spells (later, spells granted by equipped cards)
+            for(const spell of this.document.items.filter(i => i instanceof SpellDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
+                /*part.actions.push({
+                    isAttack: true,
+                    isBorrowedPower: false,
+                    name: spell.name,
+                    trait: spell.system.trait,
+                    damageFormula: spell.system.damage,
+                    damageType: spell.system.damageType,
+                })*/
+            }
+
+            //Features description
+
+            //borrowed powers
+
+            //experiences
+            for (const experience of this.document.system.experiences) {
+                part.experiences.push({ description: experience.description, bonus: experience.bonus });
+            }
+
+            while (part.experiences.length < 5){
+                part.experiences.push({ description: '', bonus: '' });
+            }
+        }
+
+        if(partId === 'characterInfo') {
+            part.classText = 'None';
+            part.origin = 'None';
+            part.ancestry = 'None';
+
+            const ancestries = Array.from(this.document.system.ancestries.values()).reduce((arr, ancestry) => {
+                arr.push(ancestry.name);
+                return arr;
+            }, []);
+
+            const communities = Array.from(this.document.system.communities.values()).reduce((arr, community) => {
+                arr.push(community.name);
+                return arr;
+            }, []);
+
+            const classes = Array.from(this.document.system.classes.values()).reduce((arr, rpgClass) => {
+                if(rpgClass){
+                    let classDescriptor = rpgClass.name;
+                    for(const [k, v] of this.document.system.subclasses){
+                        if(v.document.system.classUUID === rpgClass.uuid){
+                            classDescriptor += ` (${v.masteryLevel} ${v.document.name})`;
+                            break;
+                        }
+                    }
+                    arr.push(classDescriptor);
+                }
+                return arr;
+            }, []);
+
+            if(ancestries.length > 0){ part.ancestry = Utils.joinHelper(ancestries, ' / '); }
+            if(communities.length > 0){ part.origin = Utils.joinHelper(communities, ' / '); }
+            if(classes.length > 0){ part.classText = Utils.joinHelper(classes, ' / '); }
+        }
+
         return Utils.mergeObjects(context, part);
     }
 
     static #partsForPath(path){
         const result = [];
         if (!path) return [];
-        if(path === "name") result.push('full');
-
         if (path === "name" ||
             path === "img" ||
-            path === "system.level" ||
+            path === "ownership" ||
+            path === "permission" ||
+            path === "folder" ||
+            path.startsWith("prototypeToken"))
+        {
+            result.push('full');
+            return result;
+        }
+
+        if (path === "system.level" ||
             path === "system.proficiency" ||
             path === "system.ancestryUUID" ||
             path === "system.communityUUID" ||
             path === "system.playerClassesUUIDs" ||
-            path.startsWith("system.playerSubclasses.")
+            path.startsWith("system.playerSubclasses.") ||
+            path.startsWith("flags.")
         ) result.push("characterInfo");
 
         if (path.startsWith("system.resources.") ||
@@ -174,7 +289,7 @@ export class PlayerSheet extends DtgActorSheet {
 
         if (path.startsWith("system.traits.")) result.push("traits");
 
-        if (path === "system.experiences" ||
+        if (path.startsWith("system.experiences") ||
             path === "system.equippedDomainCardsUUIDs" ||
             path.startsWith("system.borrowedPowers") ||
             path.startsWith("items")
@@ -182,7 +297,8 @@ export class PlayerSheet extends DtgActorSheet {
 
         if (path.startsWith("items") ||
             path === "system.domainCardsUUIDs" ||
-            path === "system.equippedDomainCardsUUIDs"
+            path === "system.equippedDomainCardsUUIDs" ||
+            path.startsWith("system.currency")
         ) result.push("inventory");
 
         if (path === "system.description") result.push("roleplay");
@@ -192,12 +308,54 @@ export class PlayerSheet extends DtgActorSheet {
         return Utils.unique(result);
     }
 
+    static requiresRender(path){
+        const flat  = foundry.utils.flattenObject(path);            // "a.b.c": value
+        const listOfPaths = Object.keys(flat);
+        const parts = new Set();
+        for (const path of listOfPaths) for (const part of PlayerSheet.#partsForPath(path)) parts.add(part);
+        const result = {
+            requires: parts.size && parts.size > 0,
+            options: {}
+        }
+        if(result.requires === false) return result;
+
+        if(parts.size && !parts.has('full'))
+            result.options.parts = [...parts];
+        else
+            result.options.force = true;
+        return result;
+    }
+
     static async #onSubmitForm(event, form, formData) {
-        // before/after snapshots
         const before = this.document.toObject(false);
+        const formDataObject = formData.object;
+
+        //we modify the before snapshot based on the values returned by the formData.
+        //this is due to the fact that all input that the user can type are text
+        //and thus they come as string instead of the proper type
+        for(const[key, value] of Object.entries(formDataObject)){
+            const keyParts = key.split(".");
+            if(keyParts[0] === 'system'){
+                let _data = this.document.system.schema.fields;
+                keyParts.shift();
+                for(const part of keyParts){
+                    if(_data instanceof foundry.data.fields.ArrayField){
+                        _data = _data.element;
+                    } else {
+                        _data = _data[part];
+                    }
+                    if(_data instanceof foundry.data.fields.SchemaField) _data = _data.fields;
+                }
+
+                if(_data instanceof foundry.data.fields.NumberField){
+                    formDataObject[key] = Number(formDataObject[key]);
+                }
+            }
+        }
+
         const after = Utils.mergeObjects(
             before,
-            formData.object,
+            formDataObject,
             { insertKeys: true, overwrite: true }
         );
 
@@ -210,64 +368,103 @@ export class PlayerSheet extends DtgActorSheet {
         const parts = new Set();
         for (const path of listOfPaths) for (const part of PlayerSheet.#partsForPath(path)) parts.add(part);
 
-        await this.document.update(diff, { render: false });        // send only changes
-        if (parts.size) await this.render({ parts: [...parts] });
+        if (parts.size && !parts.has('full'))
+            await this.document.update(diff, { render: false, skipRequester: true, appId: this.id });
+        else
+            await this.document.update(diff);
+
     }
 
     async _onDropItem(event, item) {
-        const properItem = item.asProperType();
-        if(!(properItem instanceof InventoryItemDocument) && !(properItem instanceof FeatureDocument) && !(properItem instanceof DomainCardDocument)) {
+        /*if(!(item instanceof InventoryItemDocument) && !(item instanceof FeatureDocument) && !(item instanceof DomainCardDocument)) {
             ui.notifications.warn('this sheet only accepts Features and Inventory items for now');
             event.preventDefault();
             return;
+        }*/
+
+        // If dragging within the same actor, ignore for now (no sort behavior yet)
+        if (item.parent?.id === this.document.id) return undefined;
+
+        // Ensure we have a full Item document (handles compendium/UUID drops)
+        if (typeof item?.toObject !== "function" && item?.uuid && !await Utils.fromUuid(item.uuid)) {
+            ui.notifications.warn("Could not resolve dropped item.");
+            return undefined;
         }
 
-        if(properItem instanceof DomainCardDocument){
+        if(item instanceof InventoryItemDocument){
+            const data = item.toObject();
+            delete data._id;
+
+            const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
+            return created;
+        } else if(item instanceof DomainCardDocument){
             const currentCards = [...this.document.system.domainCardsUUIDs];
             currentCards.push(item.uuid);
             await this.document.update({'system.domainCardsUUIDs': Utils.unique(currentCards)}, { render: false });
-            await this.render({ parts: ["inventory"]})
-            return;
+            return undefined;
+        } else if(item instanceof AncestryDocument){
+            await this.document.update({'system.ancestryUUIDs': [item.uuid],}, { render: false })
+            await this.render({ parts: ["characterInfo"]});
+            return undefined;
+        } else if(item instanceof CommunityDocument){
+            await this.document.update({'system.communityUUIDs': [item.uuid],}, { render: false })
+            await this.render({ parts: ["characterInfo"]});
+            return undefined;
+        } else if(item instanceof ClassDocument){
+            const paths = {
+                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
+            };
+            paths["system.playerClassesUUIDs"].push(item.uuid);
+            paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
+
+            await this.document.update(paths, { render: false })
+            await this.render({ parts: ["characterInfo"]});
+            return undefined;
+        } else if(item instanceof SubclassDocument){
+            const paths = {
+                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
+                "system.playerSubclasses": [...this.document.system.playerSubclasses]
+            };
+            if(item.system.classUUID ){
+                for(const subclass in this.document.system.playerSubclasses){
+                    if(subclass.UUID === item.uuid){
+                        ui.notifications.warn('Subclass already present.');
+                        event.preventDefault();
+                        return undefined;
+                    }
+                }
+
+                paths["system.playerClassesUUIDs"].push(item.system.classUUID);
+                paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
+                paths["system.playerSubclasses"].push({
+                    UUID: item.uuid,
+                    masteryLevel: CONSTANTS.DEFAULTS.SUBCLASS_MASTERY_LEVEL
+                });
+
+                await this.document.update(paths, { render: false });
+                await this.render({ parts: ["characterInfo"]});
+            } else {
+                ui.notifications.warn('Subclass has no class associated with it.');
+                event.preventDefault();
+            }
+            return undefined;
+        } else if(item instanceof SpellDocument || item instanceof FeatureDocument){
+            const data = item.toObject();
+            delete data._id;
+
+            const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
+            await this.render({ parts: ["inventory"] });
+            return created;
+        } else {
+            ui.notifications.warn('this item is not supported for this sheet yet.');
+            event.preventDefault();
+            return undefined;
         }
-
-        // If dragging within the same actor, ignore for now (no sort behavior yet)
-        if (item.parent?.id === this.document.id) return null;
-
-        // Ensure we have a full Item document (handles compendium/UUID drops)
-        let src = item;
-        if (typeof item?.toObject !== "function" && item?.uuid) {
-            src = await fromUuid(item.uuid);
-            if (!src) { ui.notifications.warn("Could not resolve dropped item."); return null; }
-        }
-
-        const data = src.toObject();
-        delete data._id;
-
-        const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
-        await this.render({ parts: ["inventory"] });
-        return created;
     }
 
-    static async #openSettings(event) {
-        await DtgActorSheet._notYetImplemented(event);
-    }
-
-    static async #setFlag(event) {
-        event.preventDefault();
-        let finalName = `flags.${CONSTANTS.SYSTEM_ID}.${event.target.dataset.name}`;
-        const currValue = this.document.getFlag(CONSTANTS.SYSTEM_ID, event.target.dataset.name);
-        let finalValue = event.target.dataset.value;
-        if (event.target.dataset.toggle && currValue === finalValue) {
-            finalValue = null;
-            finalName = `flags.${CONSTANTS.SYSTEM_ID}.-=${event.target.dataset.name}`;
-        }
-        await this.document.update({[finalName]: finalValue}, {render: false});
-        if(event.target.dataset.name === "rollMod"){
-            await this.render({ parts: ["characterInfo"] });
-            return;
-        }
-
-        this.render();
+    static async _actionSetFlag(event) {
+        const preventRender = event.target.dataset.name === "rollMod";
+        await super._actionSetFlag(event, {preventRender: preventRender});
     }
 
     static async #equipItem(event) {
@@ -281,10 +478,8 @@ export class PlayerSheet extends DtgActorSheet {
                 await item.update({[`flags.${CONSTANTS.SYSTEM_ID}.equipped`]: true}, {render: false});
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                //item = fromUuidSync(element?.dataset.itemId);
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
                 equippedDomainCardsUUIDs.add(element?.dataset.itemId);
-                Utils.log('equipItem', equippedDomainCardsUUIDs);
                 await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs]}, { render: false });
                 break;
             default:
@@ -303,10 +498,9 @@ export class PlayerSheet extends DtgActorSheet {
                 await item.update({[`flags.${CONSTANTS.SYSTEM_ID}.equipped`]: false}, {render: false});
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                item = fromUuidSync(element?.dataset.itemId);
+                item = Utils.fromUuidSync(element?.dataset.itemId);
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
                 equippedDomainCardsUUIDs.delete(element?.dataset.itemId);
-                Utils.log('unequipItem', equippedDomainCardsUUIDs);
                 await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs]}, { render: false });
                 break;
             default:
@@ -324,8 +518,8 @@ export class PlayerSheet extends DtgActorSheet {
             await this.document.deleteEmbeddedDocuments("Item", [id], {render: false});
         } else {
             await item.update({'system.quantity': qtd - 1}, {render: false});
+            await this.render({ parts: ["inventory"] });
         }
-        await this.render({ parts: ["inventory"] });
     }
 
     static async #activateItem(event) {
@@ -362,7 +556,7 @@ export class PlayerSheet extends DtgActorSheet {
                 item = this.document.items.get(element?.dataset.itemId);
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                item = fromUuidSync(element?.dataset.itemId);
+                item = Utils.fromUuidSync(element?.dataset.itemId);
                 break;
         }
         if(item) {
@@ -385,13 +579,11 @@ export class PlayerSheet extends DtgActorSheet {
                 equippedDomainCardsUUIDs.delete(element?.dataset.itemId);
                 const domainCardsUUIDs = this.document.system.domainCardsUUIDs;
                 domainCardsUUIDs.delete(element?.dataset.itemId);
-                Utils.log('equipItem', equippedDomainCardsUUIDs);
                 await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs], 'system.domainCardsUUIDs': [...domainCardsUUIDs]}, { render: false });
                 break;
             default:
                 ui.notifications.error('Item type not set on #equipItem.')
         }
-        await this.render({parts: ["inventory", "quickAccess"]});
     }
 
     async _onFirstRender(context, options) {
@@ -427,15 +619,26 @@ export class PlayerSheet extends DtgActorSheet {
         await this.render({ parts: ["inventory"] });
     }
 
-    /*static async #itemQuantitySet(event) {
-        Utils.log('#itemQuantitySet', event);
-        return;
-        const item = this.document.items.get(event.target.closest("[data-item-id]")?.dataset.itemId);
-        const raw = event.target.value;
-        const newQuantity = Math.max(0, Number.isFinite(+raw) ? Math.floor(+raw) : 0);
-        if (newQuantity === Number(item.system.quantity ?? 0)) return;
-        await item.update({ "system.quantity": newQuantity }, { render: false });
-        await this.render({ parts: ["inventory"] });
-    }*/
+    /**
+     * @this {PlayerSheet}
+     */
+    static async #setResource(event) {
+        event.preventDefault();
+        let newValue = Number(event.target.dataset.value);
+        if(this.document.system.resources[event.target.dataset.resource].value === newValue) event.target.dataset.resource !== "hope" ? newValue += 1 : newValue -= 1;
+        this.document.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id});
+        Utils.updateResourcePips(
+            this.document,
+            event.target.dataset.resource,
+            newValue,
+            'resource-row',
+            'id',
+            `res-${event.target.dataset.resource.capitalize()}`,
+            'resource-button',
+            'setResource',
+            Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE),
+            [this.element]);
+    }
+
 
 }

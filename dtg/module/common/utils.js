@@ -1,27 +1,304 @@
 console.log(`Loaded: ${import.meta.url}`);
 
-const _document_cache = new Map();
-
 export class Utils {
+
+    static _document_cache = new Map();
+
+    static updateResourcePips(document, resource, newValue, rowClass, rowSelectorProperty, rowSelectorValue, buttonClass, buttonAction, iconType, elementRoots){
+        let usedImage = '';
+        let availableImage = '';
+        let scarImage = '';
+
+        switch(resource){
+            case game.dtg.constants.RESOURCE_TYPES.HP:
+                usedImage = game.dtg.constants.ASSETS.ICONS.HP.USED[iconType];
+                availableImage = game.dtg.constants.ASSETS.ICONS.HP.AVAILABLE;
+                break;
+            case game.dtg.constants.RESOURCE_TYPES.ARMOR:
+                usedImage = game.dtg.constants.ASSETS.ICONS.ARMOR.USED[iconType];
+                availableImage = game.dtg.constants.ASSETS.ICONS.ARMOR.AVAILABLE;
+                break;
+            case game.dtg.constants.RESOURCE_TYPES.STRESS:
+                usedImage = game.dtg.constants.ASSETS.ICONS.STRESS.USED;
+                availableImage = game.dtg.constants.ASSETS.ICONS.STRESS.AVAILABLE;
+                break;
+            case game.dtg.constants.RESOURCE_TYPES.HOPE:
+                usedImage = game.dtg.constants.ASSETS.ICONS.HOPE.USED;
+                availableImage = game.dtg.constants.ASSETS.ICONS.HOPE.AVAILABLE;
+                scarImage = game.dtg.constants.ASSETS.ICONS.SCAR;
+                break;
+        }
+
+        usedImage = `${game.dtg.constants.ASSETS.ICON_DIR}/${usedImage}`;
+        availableImage = `${game.dtg.constants.ASSETS.ICON_DIR}/${availableImage}`;
+        scarImage = `${game.dtg.constants.ASSETS.ICON_DIR}/${scarImage}`;
+
+        for(const root of elementRoots) {
+            const row = root.querySelector(`.${rowClass}[${rowSelectorProperty}="${rowSelectorValue}"]`);
+            if (row) {
+                const imgs = row.querySelectorAll(`.${buttonClass}`);
+
+                if(resource !== game.dtg.constants.RESOURCE_TYPES.HOPE) {
+                    imgs.forEach(img => {
+                        img.src = Number(img.dataset.value) >= newValue ? usedImage : availableImage;
+                    });
+                } else {
+                    imgs.forEach(img => {
+                        const datasetValue = Number(img.dataset.value);
+                        if(datasetValue <=  newValue){
+                            img.src = availableImage;
+                            img.dataset.action = buttonAction;
+                            img.removeAttribute('style');
+                        } else if(datasetValue <= document.system.resources.hope.max - document.system.scars){
+                            img.src = usedImage;
+                            img.dataset.action = buttonAction;
+                            img.removeAttribute('style');
+                        } else {
+                            img.src = scarImage;
+                            img.removeAttribute('data-action');
+                            img.style = "cursor: not-allowed;";
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    static async showSheetPartInDialog(sheet, partId, opts = {}) {
+        //Resolve the part from the class' static PARTS
+        const part = sheet.constructor.PARTS && sheet.constructor.PARTS[partId];
+        if (!part || !part.template) throw new Error(`Part "${partId}" not found or missing template.`);
+
+        //Build the same context the sheet would use for that part
+        const ctx = await sheet._prepareContext({ parts: [partId] });
+        const html = await foundry.applications.handlebars.renderTemplate(part.template, ctx);
+        const content = document.createElement("div");
+        content.innerHTML = html;
+        //content.className = "dtg settings-page";
+
+        //Modal dialog that submits via the sheet's own helpers
+        const dlg = new foundry.applications.api.DialogV2({
+            window: { title: opts.title || `${sheet.title} — Settings` },
+            modal: true,
+            content,
+            classes: ['dtg', 'settings-page'],
+            buttons: [
+                {
+                    action: "save",
+                    label: "Save",
+                    default: true,
+                    callback: async (_ev, button, dialog) => {
+                        const form = button.form;
+                        const fdx  = new foundry.applications.ux.FormDataExtended(form);
+
+                        //Build the same submit data
+                        const submitData = sheet._processFormData(null, form, fdx);
+
+                        //Compute the minimal change object vs the current document
+                        const before = sheet.document.toObject();
+                        const after  = foundry.utils.mergeObject(foundry.utils.deepClone(before), submitData, {
+                            insertKeys: true, overwrite: true, inplace: false
+                        });
+                        const changed = foundry.utils.diffObject(before, after); // minimal patch
+
+                        //Do nothing if nothing changed
+                        if (!Object.keys(changed).length) { dialog.close(); return; }
+
+                        //Update without triggering the sheet's global render
+                        await sheet._processSubmitData(
+                            new SubmitEvent("submit"),
+                            form,
+                            changed,
+                            { render: false, diff: true, skipRequester: true, appId: sheet.id } // suppress auto-rerender, still send diff
+                        );
+
+                        //Decide which parts to re-render (prefix match against your watch-map)
+                        const { requires, options } = sheet.constructor.requiresRender(changed);
+                        //const affected = sheet.RequiresRender(changed, sheet.constructor.PARTS);
+                        if(requires === true) await sheet.render(options);
+
+                        dialog.close();
+                    }
+                },
+                { action: "cancel", label: "Cancel" }
+            ]
+        });
+
+        await dlg.render({ force: true });
+    }
+
+    static getRangeDescriptor(distance){
+        let range = '';
+        for (const [key, value] of Object.entries(game.dtg.constants.RANGE_BANDS)) {
+            if(key === 'max' || Number(distance) <= Number(key)) {
+                range = value;
+                break;
+            }
+        }
+        return range;
+    }
+
+    static getListOfResources(maxValue, usedAmount, resourceName, iconUsed, iconAvailable, {canClick= true, invertValues = false} = {}){
+        const result = [];
+        for(let iter = 1; iter <= maxValue; iter++ ){
+            let imgFinal = '';
+            if(invertValues){
+                imgFinal = iter <= (maxValue - usedAmount) ? `${game.dtg.constants.ASSETS.ICON_DIR}/${iconAvailable}` : `${game.dtg.constants.ASSETS.ICON_DIR}/${iconUsed}`;
+            } else {
+                imgFinal = iter <= usedAmount ? `${game.dtg.constants.ASSETS.ICON_DIR}/${iconUsed}` : `${game.dtg.constants.ASSETS.ICON_DIR}/${iconAvailable}`
+            }
+            result.push({
+                img: imgFinal,
+                resourceName: resourceName,
+                value: invertValues ? iter : maxValue - iter,
+                canClick: canClick,
+            });
+        }
+        return result;
+    }
+
+    static getCheckIcon(value){
+        return value ? 'fa-regular fa-square-check' : 'fa-regular fa-square';
+    }
+
+    static actionNotYetImplemented(event) {
+        ui.notifications.warn("Not implemented yet.");
+    }
+
+    static filterByOwnership(collection, level = CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED, user = game.user) {
+        return collection.filter(doc => doc.testUserPermission(user, level));
+    }
+
+    static async fromUuid(uuid){
+        return await fromUuid(uuid);
+    }
+
+    static fromUuidSync(uuid){
+        return fromUuidSync(uuid);
+    }
+
+    static isBoxedPrimitive(value) {
+        if (value === null) return false;
+        if (typeof value !== "object") return false; // all boxed primitives are objects
+        const tag = Object.prototype.toString.call(value);
+        return tag === "[object String]"  ||
+            tag === "[object Number]"  ||
+            tag === "[object Boolean]" ||
+            tag === "[object BigInt]"  ||
+            tag === "[object Symbol]";
+    };
+
+    static getGameSetting(setting){
+        let value = game.settings.get(game.dtg.constants.SYSTEM_ID, setting.id);
+        if (Utils.isBoxedPrimitive(value)) {
+            ui.notifications.error(`Setting ${setting.id} is a boxed primitive.`);
+            value = undefined;
+        }
+        if((value === undefined || value === null) && setting.hasOwnProperty('default')) value = Utils.deepClone(setting.default);
+        return value;
+    }
+
+    static async setGameSetting(setting, value){
+        if (Utils.isBoxedPrimitive(value)) {
+            ui.notifications.error(`Value passed to setting ${setting.id} is a boxed primitive.`);
+            return;
+        }
+        await game.settings.set(game.dtg.constants.SYSTEM_ID, setting.id, value);
+    }
 
     static deepClone(original, {strict=false}={}) {
         return foundry.utils.deepClone(original, {strict: strict});
     }
 
     static getTemplateUrl(templateUrlFromProjectRoot){
-        return `${CONSTANTS.TEMPLATES_ROOT_DIR}/${templateUrlFromProjectRoot}`;
+        return `${game.dtg.constants.TEMPLATES.ROOT_DIR}/${templateUrlFromProjectRoot}`;
     }
 
     static JSON(object) {
         return JSON.stringify(object, null, 2);
     }
 
+    static #isLogOpts(value) {
+        return value && typeof value === "object" && (value.hasOwnProperty("showUiNotification") || value.hasOwnProperty("uiMessage"));
+    }
+
+    static #getFinalArgs(...data){
+        let opts = {};
+        if (data.length && Utils.#isLogOpts(data[0])) opts = data.shift();
+        else if (data.length && Utils.#isLogOpts(data[data.length - 1])) opts = data.pop();
+        return { opts: opts, args: data };
+    }
+
+    static #buildUiMessage(...data){
+        let messages = [];
+        for(const part of data){
+            messages.push(String(part));
+        }
+        let message = messages.join(' ').trim();
+        if(message.length > 100 ){
+            message = message.slice(0, 97) + "...";
+        }
+        return message;
+    }
+
     static log(...data){
-        console.log("DTG | ", ...data);
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.log("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.info(msg);
+        }
+    }
+
+    static info(...data){
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.info("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.info(msg);
+        }
     }
 
     static warn(...data){
-        console.warn("DTG | ", ...data);
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.warn("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.warn(msg);
+        }
+    }
+
+    static error(...data){
+        const {opts, args} = Utils.#getFinalArgs(...data);
+
+        // Log everything else
+        console.error("DTG |", ...args);
+
+        // Optional UI surface
+        if (opts.showUiNotification) {
+            const msg = typeof opts.uiMessage === "string"
+                ? opts.uiMessage
+                : Utils.#buildUiMessage(...args);
+            ui.notifications.error(msg);
+        }
     }
 
     static localize(text, lang = (game?.i18n?.lang ?? "en")) {
@@ -40,16 +317,16 @@ export class Utils {
     }
 
     static getCachedDocument(uuid) {
-        if (!_document_cache.has(uuid)) { _document_cache.set(uuid, fromUuidSync(uuid)); }
-        return _document_cache.get(uuid);
+        if (!this._document_cache.has(uuid)) { this._document_cache.set(uuid, Utils.fromUuidSync(uuid)); }
+        return this._document_cache.get(uuid);
     }
 
     static invalidateDocument(uuid){
-        if(_document_cache.has(uuid)) { _document_cache.delete(uuid); }
+        if(this._document_cache.has(uuid)) { this._document_cache.delete(uuid); }
     }
 
     static invalidateEntireCache(){
-        _document_cache.clear();
+        this._document_cache.clear();
     }
 
     static localizeLangTree(source, langCode, fallback = 'en') {

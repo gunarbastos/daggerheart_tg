@@ -3,19 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## [Unreleased]
+## [0.1.1] - 2025-09-26
 ### Added
 - Combat Tracker Enhancements
 - App for on-screen monitor and edit of Player Resources
-- Progress/Countdown App
-- Long/Shor Rest Implementation
-- Death Move Implementation
-- Sheets Configurations
-- Full fields for all Items Types and Actors
+- Player Sheet Configurations
+- Support for notation pd<size> on Weapon damage rolls made trough the Player Sheet, where p is the proficiency
 
 ### Changed
 - Player Sheet Improvements
-- Standardized style for all Non Player Sheets
 
 
 ## [0.1.0] - 2025-08-26
@@ -37,5 +33,6 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
-[Unreleased]: https://github.com/gunarbastos/daggerheart_tg/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/gunarbastos/daggerheart_tg/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/gunarbastos/daggerheart_tg/releases/tag/v0.1.1
 [0.1.0]: https://github.com/gunarbastos/daggerheart_tg/releases/tag/v0.1.0

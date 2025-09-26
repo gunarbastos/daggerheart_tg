@@ -5,16 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b46537d5-41ec-4430-bf0a-69bd752f0afb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../dtg/less/common/variables.less" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/less/common/variables.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dtg/module/common/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/common/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/tools.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/tools.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dtg/less/sheet/player/roleplay.less" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/less/common/utilitarians.less" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/less/common/0_utilitarians.less" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/less/main.less" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/less/main.less" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/template/sheet/player/part/roleplay.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/template/sheet/player/part/roleplay.hbs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/cli.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/indexes.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/indexes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/lessc.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/lessc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/types.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/types.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,27 +30,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "develop",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Git/daggerheart_tg/tools",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Git/daggerheart_tg/tools&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-PY-251.26927.90" />
-        <option value="bundled-python-sdk-41e8cd69c857-64d779b69b7a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26927.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-PY-252.26199.168" />
+        <option value="bundled-python-sdk-b3d66beaba9a-c6efb3732140-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26199.168" />
       </set>
     </attachedChunks>
   </component>
@@ -66,6 +64,7 @@
       <workItem from="1754305744956" duration="34000" />
       <workItem from="1754306689134" duration="1655000" />
       <workItem from="1754332558735" duration="9084000" />
+      <workItem from="1758658515989" duration="2699000" />
     </task>
     <servers />
   </component>

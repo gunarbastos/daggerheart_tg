@@ -1,0 +1,6 @@
+<!--<h1>SELECTOR</h1>-->
+<div class="actor-selection">
+    {{#each documents as |doc|}}
+        <div data-action="selectDocument" data-uuid="{{doc.uuid}}" class="actor-select-button{{#if doc.selected}} selected shine{{/if}}"><img src="{{doc.img}}" alt="{{doc.name}}" class="small-icon" /><span class="actor-name">{{doc.name}}</span></div>
+    {{/each}}
+</div>

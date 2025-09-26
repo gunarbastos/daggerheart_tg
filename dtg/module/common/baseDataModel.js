@@ -1,6 +1,6 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {Utils} from "./utils.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class BaseDataModel extends foundry.abstract.TypeDataModel {
 

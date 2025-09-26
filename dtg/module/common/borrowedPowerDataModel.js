@@ -1,7 +1,7 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {EmbedFeatureDataModel} from "../dataModel/item/featureDataModel.js";
 import {CONSTANTS} from "./constants.js";
+
+console.log(`Loaded: ${import.meta.url}`);
 
 export class BorrowedPowerDataModel extends foundry.abstract.DataModel {
     /** @inheritDoc */

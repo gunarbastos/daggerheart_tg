@@ -1,13 +1,13 @@
-console.log(`Loaded: ${import.meta.url}`);
-
 import {
-    BaseDataModel,
     CONSTANTS,
-    EmbedBaseDataModel,
+    InventoryItemDataModel,
+    EmbedInventoryItemDataModel,
     PolymorphicEmbeddedField
 } from "../../common/index.js";
 
-export class FeatureDataModel extends BaseDataModel {
+console.log(`Loaded: ${import.meta.url}`);
+
+export class FeatureDataModel extends InventoryItemDataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;
@@ -18,6 +18,8 @@ export class FeatureDataModel extends BaseDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            equipable: new fields.BooleanField({required: true, initial: false}),
+            isGrantedToUser: new fields.BooleanField({required: true, initial: false}),
             effects: new fields.ArrayField(/** @type any*/ new PolymorphicEmbeddedField(
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.BASE,
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.MAP,
@@ -26,7 +28,7 @@ export class FeatureDataModel extends BaseDataModel {
     }
 }
 
-export class EmbedFeatureDataModel extends EmbedBaseDataModel {
+export class EmbedFeatureDataModel extends EmbedInventoryItemDataModel {
 
     /** @inheritDoc */
     static _enableV10Validation = true;
@@ -37,6 +39,7 @@ export class EmbedFeatureDataModel extends EmbedBaseDataModel {
         const base = super.defineSchema();
         return {
             ...base,
+            isGrantedToUser: new fields.BooleanField({required: true, initial: false}),
             effects: new fields.ArrayField(/** @type any*/ new PolymorphicEmbeddedField(
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.BASE,
                 CONSTANTS.POLYMORPHIC_TYPES.EFFECTS.MAP,
