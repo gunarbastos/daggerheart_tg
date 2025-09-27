@@ -13,6 +13,8 @@
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/tools" />
+      <excludeFolder url="file://$MODULE_DIR$/licenses" />
+      <excludeFolder url="file://$MODULE_DIR$/releases" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

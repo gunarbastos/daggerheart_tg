@@ -37,7 +37,10 @@ def now_tmz():
     return datetime.now().astimezone()
 
 def normalize_version(version):
-    return version.lstrip('v')
+    internal_version = version
+    if Path(version).exists() and Path(version).is_file():
+        internal_version = Path(version).read_text(encoding="utf-8")
+    return internal_version.lstrip('v')
 
 class _RegexNS:
     """Compiled regex patterns and helpers. Use as: common.regex.NAME"""

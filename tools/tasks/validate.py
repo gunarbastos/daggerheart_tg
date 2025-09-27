@@ -1,8 +1,13 @@
 import common
+from common import project_root
+
 
 def validate_system():
     print("Running basic system validation...")
     print(common.project_root())
+    print(common.normalize_version('1.0.2'))
+    print(common.normalize_version('v1.0.2'))
+    print(common.normalize_version((common.project_root() / "VERSION").as_posix()))
     # try:
     #     common.run(["python", "-m", "tools", "types"], check=True)
     #     common.run(["python", "-m", "tools", "indexes"], check=True)
