@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b46537d5-41ec-4430-bf0a-69bd752f0afb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/common.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/changelog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dtg/system.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/system.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli_handlers_patch.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli_patch.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/build.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/build.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/indexes.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/indexes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/lessc.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/lessc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/local_deploy.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/local_deploy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/release.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/release.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/validate.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/validate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tasks/changelog.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/changelog.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +72,7 @@
       <workItem from="1754332558735" duration="9084000" />
       <workItem from="1758658515989" duration="2699000" />
       <workItem from="1758911001830" duration="14724000" />
-      <workItem from="1758944213260" duration="9615000" />
+      <workItem from="1758944213260" duration="12550000" />
     </task>
     <servers />
   </component>

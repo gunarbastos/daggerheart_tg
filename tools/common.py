@@ -47,7 +47,6 @@ class _RegexNS:
     GITHUB_SSH_REMOTE   = re.compile(r"git@[^:]+:([^/]+)/([^/]+?)(?:\.git)?$")
 
     # --- Changelog headings/sections ---
-    # Next section header (kept once; duplicate removed)
     CHANGELOG_NEXT_HEADER = re.compile(r"(?m)^##\s*\[")
 
     # Version-specific header like: ## [0.1.2] - 2025-09-27
@@ -56,6 +55,14 @@ class _RegexNS:
         return re.compile(
             rf"(?m)^##\s*\[\s*v?{re.escape(version)}\s*\]\s*(?:-\s*\d{{4}}-\d{{2}}-\d{{2}})?\s*$"
         )
+
+    CHANGELOG_VERSION_HEADER = re.compile(
+        r'(?m)^##\s*\[\s*v?([\w.\-]+)\s*\]'
+    )
+
+    CHANGELOG_UNRELEASED_REF = re.compile(r'(?mi)^\[Unreleased\]\s*:\s*(?P<url>\S+)\s*$')
+    CHANGELOG_VERSION_TOKEN = re.compile(r'\d+')
+    CHANGELOG_UNRELEASED_CHANGES_HEADER = re.compile(r'(?mi)^##\s*\[\s*Unreleased\s*\]\s*$')
 
     # --- Changelog reference links at bottom ---
     # E.g.: [0.1.2]: https://github.com/OWNER/REPO/releases/tag/v0.1.2
@@ -78,18 +85,3 @@ class _RegexNS:
 
 # public namespace object
 regex = _RegexNS()
-
-# r"https?://[^/]+/([^/]+)/([^/]+?)(?:\.git)?$"
-# r"git@[^:]+:([^/]+)/([^/]+?)(?:\.git)?$"
-
-# rf"(?m)^##\s*\[\s*v?{re.escape(version)}\s*\]\s*(?:-\s*\d{{4}}-\d{{2}}-\d{{2}})?\s*$"
-# rf'(?m)^##\s*\[\s*v?{re.escape(version)}\s*\]\s*(?:-\s*\d{{4}}-\d{{2}}-\d{{2}})?\s*$'
-
-# r'(?m)^##\s*\['
-# r'(?m)^##\s*\['
-
-# rf'(?mi)^\[\s*v?{re.escape(version)}\s*\]\s*:\s*\S+\s*$'
-# r"export\s+(?:const|let|var|function|class)\s+([a-zA-Z0-9_]+)"
-# r"export\s*\{\s*([^}]+)\s*\}"
-# r"\s+as\s+"
-# rf'(?mi)^\[\s*v?{re.escape(version)}\s*\]\s*:\s*(?P<url>\S+)\s*$'
