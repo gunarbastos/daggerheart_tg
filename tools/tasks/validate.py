@@ -1,11 +1,12 @@
-def validate_system():
-    print("🧪 Running basic system validation...")
+import common
 
-    try:
-        import subprocess
-        subprocess.run(["python", "-m", "tools", "types"], check=True)
-        subprocess.run(["python", "-m", "tools", "indexes"], check=True)
-        print("✅ Validation passed.")
-    except Exception as e:
-        print("❌ Validation failed.")
-        raise e
+def validate_system():
+    print("Running basic system validation...")
+    print(common.project_root())
+    # try:
+    #     common.run(["python", "-m", "tools", "types"], check=True)
+    #     common.run(["python", "-m", "tools", "indexes"], check=True)
+    #     print("Validation passed.")
+    # except Exception as e:
+    #     common.fail("Validation failed.")
+    #     raise e

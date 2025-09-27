@@ -1,9 +1,8 @@
 import argparse
-from pathlib import Path
 
 
 def main():
-    parser = argparse.ArgumentParser(description="DTG Tooling CLI")
+    parser = argparse.ArgumentParser(prog="tools", description="DTG Tooling CLI")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     idx = sub.add_parser("indexes", help="Generate index.js files. If not extra parameters are given, regenerates for all modules folders. If both are given file has precedence over dir")
@@ -11,12 +10,13 @@ def main():
     idx.add_argument("--dir", help="Directory to generate index.js for", required=False)
     sub.add_parser("less", help="Compile LESS to CSS")
     #sub.add_parser("deploy", help="Copy to local Foundry system folder")
-    #sub.add_parser("validate", help="Validate system before release")
-    #rel = sub.add_parser("release", help="Release a version")
-    #rel.add_argument("version", help="Version tag")
-    #rel.add_argument("--gh", action="store_true", help="Trigger GitHub Actions")
-    #build = sub.add_parser("build", help="Build release package")
-    #build.add_argument("--release", help="Release tag", required=False)
+    sub.add_parser("validate", help="Validate system before release")
+    rel = sub.add_parser("release", help="Release a version")
+    rel.add_argument("version", help="Version tag")
+    build = sub.add_parser("build", help="Build release package")
+    build.add_argument("release", help="Release tag")
+    changelog = sub.add_parser("changelog", help="Build release notes into CHANGELOG.md")
+    changelog.add_argument("release", help="Release tag")
 
     args = parser.parse_args()
 
@@ -29,12 +29,15 @@ def main():
     #elif args.cmd == "deploy":
     #    from tasks.local_deploy import deploy_to_local_foundry
     #    deploy_to_local_foundry()
-    #elif args.cmd == "validate":
-    #    from tasks.validate import validate_system
-    #    validate_system()
-    #elif args.cmd == "release":
-    #    from tasks.release import run_release
-    #    run_release(args.version, use_github_actions=args.gh)
-    #elif args.cmd == "build":
-    #    from tasks.build import build_release
-    #    build_release(args.release)
+    elif args.cmd == "validate":
+        from tasks.validate import validate_system
+        validate_system()
+    elif args.cmd == "release":
+        from tasks.release import run_release
+        run_release(args.version)
+    elif args.cmd == "build":
+        from tasks.build import build_release
+        build_release(args.release)
+    elif args.cmd == "changelog":
+        from tasks.changelog import changelog
+        changelog(args.release)

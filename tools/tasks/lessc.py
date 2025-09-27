@@ -1,52 +1,5 @@
-# import subprocess, sys
-# from pathlib import Path
-#
-# def compile_less():
-#     project_dir = Path(__file__).resolve().parent.parent.parent
-#     lessc = project_dir / "node_modules" / ".bin" / "lessc.cmd"
-#     input_less = project_dir / "dtg" / "less" / "main.less"
-#     output_css = project_dir / "dtg" / "main.css"
-#
-#     if not lessc.exists():
-#         print(f"lessc.cmd not found at: {lessc}")
-#         return
-#
-#     command = [str(lessc), str(input_less), str(output_css)]
-#     print(f"Running LESS compiler: {' '.join(command)}")
-#
-#     try:
-#         subprocess.run(command, check=True)
-#         print("Compilation successful.")
-#     except subprocess.CalledProcessError as e:
-#         print(f"LESS compilation failed: {e}")
-#         sys.exit(1)
-
-import sys
-import subprocess
+import sys, subprocess, common
 from pathlib import Path
-from datetime import datetime
-
-def _less_relpath(path: Path, base: Path) -> str:
-    return path.relative_to(base).as_posix()
-
-# def _build_main_less_content(less_dir: Path) -> str:
-#     # Collect every .less file except main.less, sort alphabetically (case-insensitive).
-#     files = sorted(
-#         (p for p in less_dir.rglob("*.less") if p.name != "main.less"),
-#         key=lambda p: _less_relpath(p, less_dir).lower()
-#     )
-#     imports = "\n".join(f'@import "{_less_relpath(p, less_dir)}";' for p in files)
-#     # Two header comment lines, then imports
-#     now = datetime.now().astimezone()
-#     offset = now.utcoffset()
-#     offset_hours = (offset.total_seconds() / 3600) if offset else 0
-#     header = (
-#         "// File generated automatically.\n"
-#         "// Last Updated: "
-#         + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}")
-#         + "\n\n"
-#     )
-#     return header + imports + ("\n" if imports else "")
 
 def _build_main_less_content(less_dir: Path) -> str:
     # Collect every .less file except main.less
@@ -58,21 +11,21 @@ def _build_main_less_content(less_dir: Path) -> str:
     common_files = []
     other_files = []
     for p in all_files:
-        rel = _less_relpath(p, less_dir)
+        rel = p.relative_to(less_dir).as_posix()
         if rel.startswith("common/"):
             common_files.append(p)
         else:
             other_files.append(p)
 
     # Sort each group alphabetically
-    common_files = sorted(common_files, key=lambda p: _less_relpath(p, less_dir).lower())
-    other_files = sorted(other_files, key=lambda p: _less_relpath(p, less_dir).lower())
+    common_files = sorted(common_files, key=lambda p: p.relative_to(less_dir).as_posix().lower())
+    other_files = sorted(other_files, key=lambda p: p.relative_to(less_dir).as_posix().lower())
 
     # Combine (common first, then others)
     ordered = common_files + other_files
 
     # Build header + imports
-    now = datetime.now().astimezone()
+    now = common.now_tmz()
     offset = now.utcoffset()
     offset_hours = (offset.total_seconds() / 3600) if offset else 0
     header = (
@@ -81,7 +34,7 @@ def _build_main_less_content(less_dir: Path) -> str:
         + now.strftime(f"%d/%m/%Y %H:%M:%S.{now.microsecond // 1000:03d} UTC{offset_hours:+.0f}")
         + "\n\n"
     )
-    imports = "\n".join(f'@import "{_less_relpath(p, less_dir)}";' for p in ordered)
+    imports = "\n".join(f'@import "{p.relative_to(less_dir).as_posix()}";' for p in ordered)
     return header + imports + ("\n" if imports else "")
 
 
@@ -93,22 +46,18 @@ def _write_if_body_changed(target: Path, new_content: str) -> bool:
     """
     created = not target.exists()
     if not created:
-        try:
-            existing = target.read_text(encoding="utf-8").splitlines()
-            new = new_content.splitlines()
-            # Ignore first 3 header lines
-            existing_body = "\n".join(existing[3:])
-            new_body = "\n".join(new[3:])
-            if existing_body == new_body:
-                return False
-        except Exception:
-            # If reading fails, fall through and write
-            pass
+        existing = target.read_text(encoding="utf-8").splitlines()
+        new = new_content.splitlines()
+        # Ignore first 3 header lines
+        existing_body = "\n".join(existing[3:])
+        new_body = "\n".join(new[3:])
+        if existing_body == new_body:
+            return False
     target.write_text(new_content, encoding="utf-8")
     return True
 
 def compile_less():
-    project_dir = Path(__file__).resolve().parent.parent.parent
+    project_dir = common.project_root()
     lessc = project_dir / "node_modules" / ".bin" / "lessc.cmd"
     less_dir = project_dir / "dtg" / "less"
     main_less = less_dir / "main.less"
