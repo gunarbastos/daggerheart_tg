@@ -5,13 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b46537d5-41ec-4430-bf0a-69bd752f0afb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/watcherTasks.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dtg/module/common/dtgSceneControls.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/daggerheart_tg.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/daggerheart_tg.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/../CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dtg/system.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/system.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/module/common/hooks.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/common/hooks.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/module/common/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/common/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/module/dataModel/item/classDataModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/classDataModel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/module/dataModel/item/domainDataModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/domainDataModel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dtg/module/dataModel/item/weaponDataModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../dtg/module/dataModel/item/weaponDataModel.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/common.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/validate.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/validate.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,22 +40,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Git/daggerheart_tg/tools&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "develop",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Git/daggerheart_tg/tools",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -77,6 +79,7 @@
       <workItem from="1758911001830" duration="14724000" />
       <workItem from="1758944213260" duration="12948000" />
       <workItem from="1758996049233" duration="284000" />
+      <workItem from="1759175161158" duration="483000" />
     </task>
     <servers />
   </component>
