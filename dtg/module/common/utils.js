@@ -306,7 +306,10 @@ export class Utils {
         if (text && typeof text === "object" && !Array.isArray(text) && Object.prototype.hasOwnProperty.call(text, "en") && typeof text.en === "string") return text.en;
         return JSON.stringify(text);
     }
-    static unique(arr) { return Array.from(new Set(arr ?? [])); }
+
+    static unique(arr) {
+        return Array.from(new Set(arr ?? []));
+    }
 
     static mergeObjects(base, extra, options = {}) {
         return foundry.utils.mergeObject(

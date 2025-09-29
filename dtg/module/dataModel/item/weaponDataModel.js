@@ -23,7 +23,7 @@ export class WeaponDataModel extends InventoryItemDataModel {
             burden: new fields.NumberField({required: true, integer: true, initial: 1}),
             features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
             materiaSlots: new fields.NumberField({required: true, initial: 0, min: 0}),
-            equippedMateriasUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()), //UUIDs of adversary type Actors
+            equippedMateriasUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()), //UUIDs of materia type Items
         }
     }
 
