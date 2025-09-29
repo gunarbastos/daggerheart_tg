@@ -8,18 +8,22 @@ export class DomainDataModel extends BaseDataModel {
     static _enableV10Validation = true;
 
     /** @inheritDoc */
-    static defineSchema() {
-        const fields = foundry.data.fields;
-        const base = super.defineSchema();
-        return {
-            ...base,
-            domainCardsUUIDs: new fields.SetField(/** @type any */new fields.DocumentUUIDField()), //UUIDs of Items type DomainCard
-        }
-    }
+    // static defineSchema() {
+    //     const fields = foundry.data.fields;
+    //     const base = super.defineSchema();
+    //     return {
+    //         ...base,
+    //         //domainCardsUUIDs: new fields.SetField(/** @type any */new fields.DocumentUUIDField()), //UUIDs of Items type DomainCard
+    //     }
+    // }
 
-    #domainCards = null;
+    /*#domainCards = null;
     get domainCards() {
         if(!this.#domainCards) { this.#domainCards = this._buildCacheMap(this.domainCardsUUIDs); }
         return this.#domainCards;
+    }*/
+    get domainCards() {
+        return game.items.filter(doc => doc instanceof game.dtg.documents.DomainCardDocument && doc.system.domainUUID === this.uuid);
     }
+
 }

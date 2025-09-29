@@ -20,7 +20,7 @@ export class ClassDataModel extends BaseDataModel {
             classItemsOptions: new fields.ArrayField(/** @type any */ new fields.ArrayField(/** @type any */ new fields.SchemaField({itemsUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField())}))), //2 level array of Sets of UUIDs of Items type Weapon, Armor, Consumable or CommonItem
             features: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
             hopeFeatures: new fields.ArrayField(new fields.EmbeddedDataField(EmbedFeatureDataModel),{ initial: [] }),
-            subclassesUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()),//UUIDs of Item type Subclasses
+            //subclassesUUIDs: new fields.SetField(/** @type any */ new fields.DocumentUUIDField()),//UUIDs of Item type Subclasses
         }
     }
 
@@ -30,9 +30,12 @@ export class ClassDataModel extends BaseDataModel {
         return this.#domains;
     }
 
-    #subclasses = null;
+    /*#subclasses = null;
     get subclasses() {
         if(!this.#subclasses) { this.#subclasses = this._buildCacheMap(this.subclassesUUIDs); }
         return this.#subclasses;
+    }*/
+    get subclasses() {
+        return game.items.filter(doc => doc instanceof game.dtg.documents.SubclassDocument && doc.system.classUUID === this.uuid);
     }
 }
