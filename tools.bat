@@ -1,2 +1,2 @@
 @echo off
-python tools %*
+python -m tools %*

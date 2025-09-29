@@ -1,4 +1,5 @@
-import json, tempfile, os, shutil, common
+import json, tempfile, os, shutil
+from tools import common
 from pathlib import Path
 
 def _extract_notes_from_changelog(version: str, changelog_path: Path) -> str:

@@ -21,23 +21,23 @@ def main():
     args = parser.parse_args()
 
     if args.cmd == "indexes":
-        from tasks.indexes import generate_indexes
+        from tools.tasks.indexes import generate_indexes
         generate_indexes(args.file, args.dir)
     elif args.cmd == "less":
-        from tasks.lessc import compile_less
+        from tools.tasks.lessc import compile_less
         compile_less()
     #elif args.cmd == "deploy":
     #    from tasks.local_deploy import deploy_to_local_foundry
     #    deploy_to_local_foundry()
     elif args.cmd == "validate":
-        from tasks.validate import validate_system
+        from tools.tasks.validate import validate_system
         validate_system()
     elif args.cmd == "release":
-        from tasks.release import run_release
+        from tools.tasks.release import run_release
         run_release(args.version)
     elif args.cmd == "build":
-        from tasks.build import build_release
+        from tools.tasks.build import build_release
         build_release(args.release)
     elif args.cmd == "changelog":
-        from tasks.changelog import changelog
+        from tools.tasks.changelog import changelog
         changelog(args.release)

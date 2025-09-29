@@ -1,6 +1,4 @@
-import common
-from common import project_root
-
+from tools import common
 
 def validate_system():
     print("Running basic system validation...")

@@ -1,4 +1,5 @@
-import json, zipfile, common
+import json, zipfile
+from tools import common
 
 def build_release(tag=None):
     project_root = common.project_root()
