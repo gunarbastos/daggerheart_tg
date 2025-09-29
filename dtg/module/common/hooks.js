@@ -32,6 +32,7 @@ import {DTGTokenDocument} from "../document/index.js";
 import {DTGRuler, DTGTokenRuler} from "./dtgRuler.js";
 import {DTGMeasuredTemplate} from "./dtgMeasuredTemplate.js";
 import {DTGRadioType} from "./types.js";
+import {DTGSceneControls} from "./dtgSceneControls.js";
 
 console.log(`Loaded: ${import.meta.url}`);
 
@@ -150,6 +151,7 @@ export class DTGHooks {
         CONFIG.Canvas.rulerClass = DTGRuler;
         CONFIG.Token.rulerClass = DTGTokenRuler;
         CONFIG.MeasuredTemplate.objectClass = DTGMeasuredTemplate;
+        CONFIG.ui.controls = DTGSceneControls;
         Utils.log(`#onInit end`);
     }
     
@@ -170,51 +172,6 @@ export class DTGHooks {
         game.socket.on(CONSTANTS.SOCKETS.ID, DtgSockets.socketHandler);
 
         Utils.log(`#onReady end`);
-    }
-
-    static async #getSceneControlButtons(controls = []){
-        if (!game?.user) return;
-
-        controls[CONSTANTS.SYSTEM_ID] = {
-            name: CONSTANTS.SYSTEM_ID,
-            title: CONSTANTS.SYSTEM_ID,
-            activeTool: 'doNothing',
-            icon: "fas fa-dragon",
-            tools: {
-                resourceManager: {
-                    name: "resourceManager",
-                    title: "Resource Manager",
-                    icon: "fas fa-address-card",
-                    toggle: true,
-                    visible: true,
-                    active: ResourceManagerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(ResourceManagerApp.SETTINGS_NAME.IS_OPENED) === true : false,
-                    onChange: (event, active) => {
-                        Utils.log(`tool`, event, active);
-                        const app = game.dtg.apps.resourceManager;
-                        if (active) {
-                            app.render({force: true}, {});
-                        } else {
-                            app.close({});
-                        }
-                    },
-                    //onToolChange
-                },
-                doNothing: {
-                    name: "doNothing",
-                    title: "gambiarra",
-                    icon: "fas fa-empty",
-                    visible: true,
-                    order: 66,
-                }
-            },
-            order: 1,
-            onChange: (event, active) => {
-                Utils.log(`tool 2`, active);
-                if(active === true) {
-                    document.querySelector('[id=scene-controls-tools]').lastElementChild.outerHTML = '';
-                }
-            }
-        };
     }
 
     static #chatMessage(chatLog, message, chatData){
@@ -368,27 +325,6 @@ export class DTGHooks {
         await ui.combat.render({parts:['players', 'adversaries']});
     }
 
-    static async #getFearTrackerToolsEntry(){
-        return  {
-            name: "fearTracker",
-            title: "Fear Tracker",
-            icon: "fas fa-skull",
-            toggle: true,
-            visible: game.dtg.apps.fearTracker.userCanSee(),
-            //active: game.dtg.apps.fearTracker.rendered,
-            active: FearTrackerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(FearTrackerApp.SETTINGS_NAME.IS_OPENED) === true : false,
-            onChange: (event, active) => {
-                const app = game.dtg.apps.fearTracker;
-                if (active) {
-                    app.render({force: true}, {});
-                } else {
-                    app.close({});
-                }
-            },
-            order: 1,
-        }
-    }
-
     static #registerSheets(collection, sheetList) {
         if(collection.sheetClasses && collection.sheetClasses[CONSTANTS.CORE_ID]){
             for (const sheetId in collection.sheetClasses[CONSTANTS.CORE_ID]) {
@@ -447,6 +383,92 @@ export class DTGHooks {
         const any = "([^]*)";
         foundry.applications.sidebar.tabs.ChatLog.MESSAGE_PATTERNS.dd = new RegExp(`^(\\/d(?:uality)?d(?:ice)?)${any}$`, "i");  // Duality dice: /dd or /dualitydice
         foundry.applications.sidebar.tabs.ChatLog.MESSAGE_PATTERNS.invalid = _invalid;
+    }
+
+    static async #getSceneControlButtons(controls = []){
+        if (!game?.user) return;
+
+        controls[CONSTANTS.SYSTEM_ID] = {
+            name: CONSTANTS.SYSTEM_ID,
+            title: CONSTANTS.SYSTEM_ID,
+            activeTool: 'doNothing',
+            icon: "fas fa-dragon",
+            tools: {
+                resourceManager: {
+                    name: "resourceManager",
+                    title: "Resource Manager",
+                    icon: "fas fa-address-card",
+                    toggle: true,
+                    visible: true,
+                    active: ResourceManagerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(ResourceManagerApp.SETTINGS_NAME.IS_OPENED) === true : false,
+                    onChange: (event, active) => {
+                        Utils.log(`tool`, event, active);
+                        const app = game.dtg.apps.resourceManager;
+                        if (active) {
+                            app.render({force: true}, {});
+                        } else {
+                            app.close({});
+                        }
+                    },
+                    order: 0,
+                },
+                rest: {
+                    name: "rest",
+                    title: "rest",
+                    icon: "fas fa-tent",
+                    visible: true,
+                    onChange: (event, active) => {
+                        Utils.actionNotYetImplemented(event);
+                    },
+                    order: 2,
+                },
+                countdownProgress: {
+                    name: "countdownProgress",
+                    title: "countdown / progress",
+                    icon: "fas fa-hourglass-start",
+                    toggle: true,
+                    visible: true,
+                    active: false,
+                    onChange: (event, active) => {
+                        Utils.actionNotYetImplemented(event);
+                    },
+                    order: 3,
+                }
+
+            },
+            order: 1,
+            onChange: (event, active) => {
+            }
+        };
+        controls[CONSTANTS.SYSTEM_ID].tools.doNothing = {
+            name: "doNothing",
+                title: "gambiarra",
+                icon: "fas fa-empty",
+                visible: true,
+                order: 66,
+        };
+
+    }
+
+    static async #getFearTrackerToolsEntry(){
+        return  {
+            name: "fearTracker",
+            title: "Fear Tracker",
+            icon: "fas fa-skull",
+            toggle: true,
+            visible: game.dtg.apps.fearTracker.userCanSee(),
+            //active: game.dtg.apps.fearTracker.rendered,
+            active: FearTrackerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(FearTrackerApp.SETTINGS_NAME.IS_OPENED) === true : false,
+            onChange: (event, active) => {
+                const app = game.dtg.apps.fearTracker;
+                if (active) {
+                    app.render({force: true}, {});
+                } else {
+                    app.close({});
+                }
+            },
+            order: 1,
+        }
     }
     //#endregion
 }
