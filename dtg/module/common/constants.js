@@ -528,7 +528,8 @@ _rawConstants.TEMPLATES.DUALITY_DICE_ROLL_DETAILS =  { PATH: `${_rawConstants.TE
 _rawConstants.TEMPLATES.NUMBER_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/numberField.hbs`, PRELOAD: true, ALIAS: "numberField" };
 _rawConstants.TEMPLATES.TEXT_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/textField.hbs`, PRELOAD: true, ALIAS: "textField" };
 _rawConstants.TEMPLATES.RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "resourceRow" };
-_rawConstants.TEMPLATES.PLAYER_SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/resourceRow.hbs`, PRELOAD: true, ALIAS: "playerSheetResourceRow" };
+_rawConstants.TEMPLATES.SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "sheetResourceRow" };
+_rawConstants.TEMPLATES.PLAYER_SHEET_TRAIT = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/trait.hbs`, PRELOAD: true, ALIAS: "playerSheetTrait" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
 

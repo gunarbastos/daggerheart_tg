@@ -5,23 +5,40 @@ console.log(`Loaded: ${import.meta.url}`);
 
 export class AdversarySheet extends DtgActorSheet {
     static get PARTS() {
-        const base = super.PARTS;
+        //const base = super.PARTS;
+        const basePartPath = `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/adversary/part`
         return {
-            content: {...base.content},
+            /*content: {...base.content},
             adversary: {template: `systems/${CONSTANTS.SYSTEM_ID}/template/sheet/adversary.hbs`},
-            debug: {...base.debug},
+            debug: {...base.debug},*/
+            adversaryInfo: { template: `${basePartPath}/adversaryInfo.hbs` },
+            resources: { template: `${basePartPath}/resources.hbs` },
+            combatInfo: { template: `${basePartPath}/combatInfo.hbs` },
+            features: { template: `${basePartPath}/features.hbs` },
+            roleplay: { template: `${basePartPath}/roleplay.hbs` },
+            settings: { template: `${basePartPath}/settings.hbs` },
         }
     }
 
     static get DEFAULT_OPTIONS() {
         const base = super.DEFAULT_OPTIONS;
         return {
-            ...base,
-            classes: Utils.unique([...base.classes ?? [], `${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.ADVERSARY}`]),
-            actions: {
-                setFlag: AdversarySheet.#setFlag,
-                adversaryRoll: AdversarySheet.#adversaryRoll,
-            },
+            position: {width: 1200, height: 1200},
+            classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.ADVERSARY}`],
+            // actions: {
+            //     ...base.actions,
+            //     equipItem: PlayerSheet.#equipItem,
+            //     unequipItem: PlayerSheet.#unequipItem,
+            //     consumeItem: PlayerSheet.#consumeItem,
+            //     activateItem: PlayerSheet.#activateItem,
+            //     filterItems: PlayerSheet.#filterItems,
+            //     deleteItem: PlayerSheet.#deleteItem,
+            //     openItem: PlayerSheet.#openItem,
+            //     attachItem: PlayerSheet.#attachItem,
+            //     setResource: PlayerSheet.#setResource,
+            // },
+            //form: { handler: PlayerSheet.#onSubmitForm },
+            window: { title: 'Adversary Sheet' },
         };
     }
 
@@ -35,6 +52,52 @@ export class AdversarySheet extends DtgActorSheet {
             RANGE_CHOICES: Object.fromEntries(CONSTANTS.CHOICES.RANGE.map(v => [v, v])),
             DAMAGETYPE_CHOICES: Object.fromEntries(CONSTANTS.CHOICES.DAMAGE_TYPES.map(v => [v, v])),
         };
+    }
+
+    async _preparePartContext(partId, context, options) {
+        const part = {};
+        switch(partId) {
+            case "resources":
+                part.resources = {
+                    hp: {},
+                    armor: {},
+                    stress: {},
+                    hope: {}
+                }
+                const iconSetting = Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE);
+
+                for (const [k, v] of Object.entries(part.resources)) {
+                    v.resourceName = k.capitalize();
+                    v.resourceList = [];
+                    switch(k){
+                        case 'hp':
+                            const usedHp = this.document.system.resources.hp.max - this.document.system.resources.hp.value;
+                            v.resourceList = [...Utils.getListOfResources(this.document.system.resources.hp.max, context.isWorldDocument ? 0 : usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting], CONSTANTS.ASSETS.ICONS.HP.AVAILABLE, {canClick: !context.isWorldDocument})];
+                            v.HideName = context.isWorldDocument;
+                            break;
+                        case 'stress':
+                            const usedStress = this.document.system.resources.stress.max - this.document.system.resources.stress.value;
+                            v.resourceList = [...Utils.getListOfResources(this.document.system.resources.stress.max, context.isWorldDocument ? 0 :usedStress, "stress", CONSTANTS.ASSETS.ICONS.STRESS.USED, CONSTANTS.ASSETS.ICONS.STRESS.AVAILABLE, {canClick: !context.isWorldDocument})];
+                            v.HideName = context.isWorldDocument;
+                            break;
+                    }
+                }
+
+                break;
+            case "combatInfo":
+                part.experiences = [];
+
+                for (const experience of this.document.system.experiences) {
+                    part.experiences.push({ description: experience.description, bonus: experience.bonus });
+                }
+
+                while (part.experiences.length < 5){
+                    part.experiences.push({ description: '', bonus: '' });
+                }
+                break;
+        }
+
+        return Utils.mergeObjects(context, part);
     }
 
     static async #setFlag(event) {

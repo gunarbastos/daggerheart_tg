@@ -191,6 +191,7 @@ export class Mixins {
                     systemFields: this.document.system.schema.fields,
                     CONSTANTS: game.dtg.constants,
                     rollData: this.rollData,
+                    isWorldDocument: this.document.parent === null
                 };
             }
 

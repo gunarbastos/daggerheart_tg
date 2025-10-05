@@ -3,65 +3,12 @@
 
     <div class="traits-wrap">
         <div class="traits-grid">
-            {{!-- Strength --}}
-            <article class="trait-card" data-trait="strength">
-                <label class="trait-label" for="trait-strength">Strength</label>
-                {{#> numberField }} id="trait-strength" class="trait-input" name="system.traits.strength" value="{{system.traits.strength}}" {{/numberField}}
-                <button type="button"
-                        class="trait-roll-btn"
-                        data-action="rollDuality"
-                        data-trait="strength">Roll</button>
-            </article>
-
-            {{!-- Agility --}}
-            <article class="trait-card" data-trait="agility">
-                <label class="trait-label" for="trait-agility">Agility</label>
-                {{#> numberField }} id="trait-agility" class="trait-input" name="system.traits.agility" value="{{system.traits.agility}}" {{/numberField}}
-                <button type="button"
-                        class="trait-roll-btn"
-                        data-action="rollDuality"
-                        data-trait="agility">Roll</button>
-            </article>
-
-            {{!-- Finesse --}}
-            <article class="trait-card" data-trait="finesse">
-                <label class="trait-label" for="trait-finesse">Finesse</label>
-                {{#> numberField }} id="trait-finesse" class="trait-input" name="system.traits.finesse" value="{{system.traits.finesse}}" {{/numberField}}
-                <button type="button"
-                        class="trait-roll-btn"
-                        data-action="rollDuality"
-                        data-trait="finesse">Roll</button>
-            </article>
-
-            {{!-- Knowledge --}}
-            <article class="trait-card" data-trait="knowledge">
-                <label class="trait-label" for="trait-knowledge">Knowledge</label>
-                {{#> numberField }} id="trait-knowledge" class="trait-input" name="system.traits.knowledge" value="{{system.traits.knowledge}}" {{/numberField}}
-                <button type="button"
-                        class="trait-roll-btn"
-                        data-action="rollDuality"
-                        data-trait="knowledge">Roll</button>
-            </article>
-
-            {{!-- Instinct --}}
-            <article class="trait-card" data-trait="instinct">
-                <label class="trait-label" for="trait-instinct">Instinct</label>
-                {{#> numberField }} id="trait-instinct" class="trait-input" name="system.traits.instinct" value="{{system.traits.instinct}}" {{/numberField}}
-                <button type="button"
-                        class="trait-roll-btn"
-                        data-action="rollDuality"
-                        data-trait="instinct">Roll</button>
-            </article>
-
-            {{!-- Presence --}}
-            <article class="trait-card" data-trait="presence">
-                <label class="trait-label" for="trait-presence">Presence</label>
-                {{#> numberField }} id="trait-presence" class="trait-input" name="system.traits.presence" value="{{system.traits.presence}}" {{/numberField}}
-                <button type="button"
-                        class="trait-roll-btn"
-                        data-action="rollDuality"
-                        data-trait="presence">Roll</button>
-            </article>
+            {{> playerSheetTrait trait="strength" value=system.traits.strength }}
+            {{> playerSheetTrait trait="agility" value=system.traits.agility }}
+            {{> playerSheetTrait trait="finesse" value=system.traits.finesse }}
+            {{> playerSheetTrait trait="knowledge" value=system.traits.knowledge }}
+            {{> playerSheetTrait trait="instinct" value=system.traits.instinct }}
+            {{> playerSheetTrait trait="presence" value=system.traits.presence }}
         </div>
     </div>
 </section>

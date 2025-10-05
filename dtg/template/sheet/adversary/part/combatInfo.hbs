@@ -1,0 +1,62 @@
+<section class="dtg-part part-combat-info" data-part-id="combatInfo">
+    <div class="diff-thresholds">
+        <div class="difficulty center-items">
+            <label class="field-label" for="adv-difficulty">Difficulty:</label>
+            {{#> numberField }} id="adv-difficulty" class="field-input small-input" name="system.difficulty" value="{{system.difficulty}}" {{/numberField}}
+        </div>
+        <div class="modifier center-items">
+            <label class="field-label" for="adv-atk-mod">Modifier:</label>
+            {{#> numberField }} id="adv-atk-mod" class="field-input small-input" name="system.attackModifier" value="{{system.attackModifier}}" {{/numberField}}
+        </div>
+        <div class="thresholds">
+            <div class="dmg-threshold">
+                <span class="field-label">Minor</span>
+                <span class="field-label">Major</span>
+                <span class="field-label">Severe</span>
+                {{#> numberField }} class="field-input minor-major-threshold" name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" {{/numberField}}
+                {{#> numberField }} class="field-input major-severe-threshold" name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" {{/numberField}}
+            </div>
+        </div>
+    </div>
+    <div class="base-attack">
+        <div class="field center-items">
+            <label class="field-label" for="adv-atk-name">Name:</label>
+            {{#> numberField }} id="adv-atk-name" class="field-input" name="system.standardAttack.name" value="{{system.standardAttack.name}}" {{/numberField}}
+        </div>
+        <div class="field center-items">
+            <label class="field-label" for="adv-dmg-formula">Damage:</label>
+            {{#> textField }} id="adv-dmg-formula" class="field-input" name="system.standardAttack.damage" value="{{system.standardAttack.damage}}" {{/textField}}
+        </div>
+        <div class="field center-items">
+            <label class="field-label" for="adv-dmg-type">Type:</label>
+            {{#> textField }} id="adv-dmg-type" class="field-input" name="system.standardAttack.damageType" value="{{system.standardAttack.damageType}}" {{/textField}}
+        </div>
+        <div class="field center-items">
+            <label class="field-label" for="adv-atk-range">Range:</label>
+            {{#> textField }} id="adv-atk-range" class="field-input" name="system.standardAttack.range" value="{{system.standardAttack.range}}" {{/textField}}
+        </div>
+        <div class="buttons">
+            <button type="button">H</button>
+            <button type="button">D</button>
+        </div>
+    </div>
+    <div class="tactics center-items">
+        <label class="field-label" for="adv-tactics">Tactics:</label>
+        {{#> textField }} id="adv-tactics" class="field-input" name="system.tactics" value="{{system.tactics}}" {{/textField}}
+    </div>
+    <div class="experience-list">
+        <div class="section-header">
+            <span class="section-name">Experiences</span>
+            <span class="section-line" aria-hidden="true"></span>
+        </div>
+        <div class="section-body">
+            {{#each experiences as |e|}}
+                <div class="experience center-items" id="exp-{{@index}}">
+                    <input type="checkbox" />
+                    {{#> numberField }} class="field-input small-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
+                    {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</section>

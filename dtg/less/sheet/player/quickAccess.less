@@ -1,4 +1,4 @@
-.part-quick-access{
+.dtg.dtg-Player .part-quick-access{
   width: 100%;
   padding: 8px 10px;
   background: var(--color-bg-panel, transparent);
@@ -24,25 +24,6 @@
       }
     }
 
-    .section-header {
-      display: flex;
-
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      justify-content: flex-start;
-
-      width: 100%;
-
-      .section-title { white-space: nowrap; }
-      .section-line {
-        flex: 1 1 auto;
-        height: 1px;
-        background: var(--color-border, #8882);
-      }
-    }
-
     --actions-gap: 12px;
     --actions-item-h: 34px;
     --actions-items-q: 6;
@@ -52,8 +33,6 @@
       display: grid;
       grid-auto-flow: column;
       grid-auto-columns: max-content;
-      //grid-template-rows: repeat(6, max-content);
-      //gap: 12px;
       grid-template-rows: repeat(var(--actions-items-q), max-content);
       gap: var(--actions-gap);
 
@@ -106,8 +85,6 @@
       overflow-y: auto;
       overscroll-behavior-y: contain;
 
-      //height: 240px;
-      //height: calc(( 34px + 12px - 2px ) * 6);
       height: calc(( var(--actions-item-h) + var(--actions-gap) - var(--actions-drift-per-item) ) * var(--actions-items-q));
 
       .experience {
@@ -124,10 +101,6 @@
           flex: none;
         }
       }
-
-      //.card {
-      //  display: flex;
-      //}
     }
   }
 }

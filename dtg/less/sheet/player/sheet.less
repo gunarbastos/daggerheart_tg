@@ -1,4 +1,4 @@
-.dtg-Player {
+.dtg.dtg-Player {
   form,
   .sheet-body {
     display: grid !important;                       // override the default column flex
@@ -7,10 +7,6 @@
     grid-auto-rows: auto;
     column-gap: 12px;
     row-gap: 0;
-
-    flex: 1 1 auto;      // take remaining height
-    min-height: 0;       // critical for scroll within flex
-    overflow: auto;      // <-- scrolls when content exceeds height
   }
 
   // Character Info spans full width; then two columns for the next parts
@@ -24,12 +20,5 @@
   .window-content {
     display: flex;
     flex-direction: column;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 0;       // critical: allow child to shrink
   }
 }

@@ -1,0 +1,231 @@
+.dtg {
+  form,
+  .sheet-body {
+    flex: 1 1 auto;      // take remaining height
+    min-height: 0;       // critical for scroll within flex
+    overflow: auto;      // <-- scrolls when content exceeds height
+  }
+
+  form {
+    display: flex;
+    --my-random-prop: 12px;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;       // critical: allow child to shrink
+  }
+
+  .btn-action {
+    border-radius: 4px;
+    border: 1px solid var(--color-border, #8882);
+    background: transparent;
+
+    &[aria-pressed="true"] {
+      background: rgba(94, 214, 255, 0.20);
+      border-color: rgba(94, 214, 255, 0.95);
+      box-shadow:
+              0 0 0 1px rgba(94, 214, 255, 0.95) inset,
+              0 0 8px 1px rgba(94, 214, 255, 0.40);
+      font-weight: 700;
+    }
+
+    &:hover {
+      background: var(--button-hover-background-color, transparent);
+    }
+  }
+
+
+  .btn-settings {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+
+    i { font-size: 1rem; }
+    &:hover {
+      background: var(--button-hover-background-color, transparent);
+    }
+  }
+
+  .btn-link {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .field-label {
+    opacity: 0.8
+  }
+
+  .field-input {
+    background-color: #0000;
+    border: 0;
+    border-bottom: 1px solid var(--color-border, #888888);
+
+    &:hover{
+      background-color: rgb(from var(--input-background-color, #0000) r g b / 0.3);
+    }
+
+    &:focus{
+      background-color: var(--input-background-color, #0000);
+    }
+  }
+
+  .field-editor {
+    border: solid 1px var(--color-border, #8882);;
+    border-radius: 6px;
+    min-height: 400px;
+    width: 100%;
+
+    .editor-container {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    height: 1em;
+
+    justify-content: flex-start;
+
+    ~ .section-header {
+      margin-top: 0.5em;
+    }
+
+    .section-name {
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1 1 auto;
+      height: 1px;
+      background: var(--color-border, #8882);
+    }
+
+    .section-filter {
+      display: inline-flex;
+      gap: 6px;
+
+      .btn-filter {
+        padding: 2px 8px;
+        border: 1px solid var(--color-border, #8882);
+        border-radius: 999px;
+        //background: var(--color-bg-button, #0000);
+        background: transparent;
+        //cursor: pointer;
+
+        &:hover {
+          background: var(--button-hover-background-color, transparent);
+        }
+
+        &[aria-pressed="true"] {
+          background: rgba(94, 214, 255, 0.20);
+          border-color: rgba(94, 214, 255, 0.95);
+          box-shadow:
+                  0 0 0 1px rgba(94, 214, 255, 0.95) inset,
+                  0 0 8px 1px rgba(94, 214, 255, 0.40);
+          font-weight: 700;
+        }
+
+        &[aria-pressed="true"]:hover {
+          background: rgba(94, 214, 255, 0.28);
+        }
+      }
+    }
+  }
+
+  .dmg-threshold {
+    position: relative;
+    display: grid;
+    grid-template-columns: 6em 7em 6em;
+    align-items: center;
+    justify-items: center;
+    justify-self: center;
+    border: none;                 /* border will be drawn by ::before */
+    border-radius: 8px;
+    height: 1.5em;
+    margin: 1em 0;
+
+    /* geometry vars */
+    --input-w: 2.5em;             /* width of the numeric inputs */
+    --x1: calc(100% / 3);         /* center of first divider (Minor/Major) */
+    --x2: calc(100% / 3 * 2);     /* center of second divider (Major/Severe) */
+
+    /* draw the frame and punch two vertical “holes” */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--color-border, #8882);
+      border-radius: 8px;
+      pointer-events: none;
+
+      /* one mask with two transparent windows where the inputs overlap */
+      -webkit-mask: linear-gradient(
+              to right,
+              #000 0,
+              #000 calc(var(--x1) - (var(--input-w) / 2 + 1px)),
+              transparent calc(var(--x1) - (var(--input-w) / 2 + 1px)) calc(var(--x1) + (var(--input-w) / 2 + 1px)),
+              #000 calc(var(--x1) + (var(--input-w) / 2 + 1px)) calc(var(--x2) - (var(--input-w) / 2 + 1px)),
+              transparent calc(var(--x2) - (var(--input-w) / 2 + 1px)) calc(var(--x2) + (var(--input-w) / 2 + 1px)),
+              #000 calc(var(--x2) + (var(--input-w) / 2 + 1px)) 100%
+      );
+      mask: linear-gradient(
+              to right,
+              #000 0,
+              #000 calc(var(--x1) - (var(--input-w) / 2 + 1px)),
+              transparent calc(var(--x1) - (var(--input-w) / 2 + 1px)) calc(var(--x1) + (var(--input-w) / 2 + 1px)),
+              #000 calc(var(--x1) + (var(--input-w) / 2 + 1px)) calc(var(--x2) - (var(--input-w) / 2 + 1px)),
+              transparent calc(var(--x2) - (var(--input-w) / 2 + 1px)) calc(var(--x2) + (var(--input-w) / 2 + 1px)),
+              #000 calc(var(--x2) + (var(--input-w) / 2 + 1px)) 100%
+      );
+    }
+
+    .field-input {
+      width: 2.5em;
+      height: 2.5em;
+      text-align: center;
+      border: 1px solid var(--color-border, #8882);
+    }
+
+    .minor-major-threshold {
+      position: absolute;
+      left: calc(((100% / 3) * 1) - (2.5em / 2));
+    }
+
+    .major-severe-threshold {
+      position: absolute;
+      left: calc(((100% / 3) * 2) - (2.5em / 2));
+    }
+  }
+
+  .resource-row {
+    display: grid;
+    grid-template-columns: 45px 1fr;
+  }
+
+  .resource-title {
+    align-content: center;
+  }
+
+  .resource-line {
+    display: flex;
+  }
+
+  .resource-button {
+    cursor: pointer;
+    background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
+    border: 1px solid var(--color-warm-1, #8882);
+    margin: 2px;
+  }
+
+}

@@ -1,6 +1,5 @@
 <section class="dtg-part part-character-info" data-part-id="characterInfo">
 
-    {{!-- Left column: image + level --}}
     <div class="ci-left">
         <div class="ci-image">
             <img class="profile-img"
@@ -11,45 +10,40 @@
         </div>
 
         <div class="ci-level">
-            <label class="ci-label" for="pc-level">Level</label>
-            {{#> numberField }} id="pc-level" class="ci-input" name="system.level" value="{{system.level}}" placeholder="0" {{/numberField}}
+            <label class="field-label" for="pc-level">Level</label>
+            {{#> numberField }} id="pc-level" class="field-input" name="system.level" value="{{system.level}}" placeholder="0" {{/numberField}}
         </div>
     </div>
 
-    {{!-- Main column: name/class + ancestry/origin (2x2 grid) --}}
     <div class="ci-main">
         <div class="ci-column">
             <div class="ci-field">
-                <label class="ci-label" for="pc-name">Name</label>
-                {{#> textField }} id="pc-name" class="ci-input"  name="name" value="{{source.name}}" placeholder="Unnamed Hero" {{/textField}}
+                <label class="field-label" for="pc-name">Name</label>
+                {{#> textField }} id="pc-name" class="field-input"  name="name" value="{{source.name}}" placeholder="Unnamed Hero" {{/textField}}
             </div>
 
             <div class="ci-field">
-                <label class="ci-label">Class</label>
-                <span class="ci-input ci-placeholder">{{classText}}</span>
+                <label class="field-label">Class</label>
+                {{#> textField }} id="pc-name" class="field-input"  value="{{classText}}" disabled {{/textField}}
             </div>
         </div>
 
         <div class="ci-column">
             <div class="ci-field">
-                <label class="ci-label">Ancestry</label>
-                <span class="ci-input ci-placeholder">{{ancestry}}</span>
+                <label class="field-label">Ancestry</label>
+                {{#> textField }} id="pc-name" class="field-input" value="{{ancestry}}" disabled {{/textField}}
             </div>
 
             <div class="ci-field">
-                <label class="ci-label">Origin</label>
-                <span class="ci-input ci-placeholder">{{origin}}</span>
+                <label class="field-label">Origin</label>
+                {{#> textField }} id="pc-name" class="field-input" value="{{origin}}" disabled {{/textField}}
             </div>
         </div>
     </div>
 
-    {{!-- Right column: settings (top-right) + flags --}}
     <div class="ci-side">
         <div class="ci-side-top">
-            <button type="button"
-                    class="ci-settings-btn"
-                    data-action="openSettings"
-                    title="Settings">
+            <button type="button" class="btn-settings" data-action="openSettings" title="Settings">
                 <i class="bi bi-gear-fill" aria-hidden="true"></i>
                 <span class="visually-hidden">Settings</span>
             </button>
@@ -57,7 +51,7 @@
 
         <div class="ci-flags" aria-label="Flags">
             <button type="button"
-                    class="flag-btn{{#if flagRollModAdv}} isShiny{{/if}}"
+                    class="btn-action{{#if flagRollModAdv}} shine{{/if}}"
                     title="Advantage"
                     data-action="setFlag"
                     data-name="rollMod"
@@ -69,7 +63,7 @@
             </button>
 
             <button type="button"
-                    class="flag-btn{{#if flagRollModDis}} isShiny{{/if}}"
+                    class="btn-action{{#if flagRollModDis}} shine{{/if}}"
                     title="Disadvantage"
                     data-action="setFlag"
                     data-name="rollMod"
@@ -84,8 +78,8 @@
 
     {{!-- Bottom center: proficiency --}}
     <div class="ci-proficiency">
-        <label class="ci-label" for="pc-proficiency">Proficiency</label>
-        {{#> numberField }} id="pc-proficiency" class="ci-input" name="system.proficiency" value="{{system.proficiency}}" placeholder="0" {{/numberField}}
+        <label class="field-label" for="pc-proficiency">Proficiency</label>
+        {{#> numberField }} id="pc-proficiency" class="field-input" name="system.proficiency" value="{{system.proficiency}}" placeholder="0" {{/numberField}}
     </div>
 
 </section>

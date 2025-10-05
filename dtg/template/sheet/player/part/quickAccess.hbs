@@ -2,7 +2,7 @@
     <div class="panel-body">
         <div class="info-section">
             <div class="section-header">
-                <span class="section-title">Experiences</span>
+                <span class="section-name">Experiences</span>
                 <span class="section-line" aria-hidden="true"></span>
             </div>
             <div class="section-body">
@@ -10,8 +10,8 @@
                     {{#each experiences as |e|}}
                         <div class="experience" id="exp-{{@index}}">
                             <input type="checkbox" />
-                            {{#> numberField }} class="typable bonus" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
-                            {{#> textField }} class="typable" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
+                            {{#> numberField }} class="field-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
+                            {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
                         </div>
                     {{/each}}
                 </div>
@@ -20,8 +20,13 @@
 
         <div class="actions-section">
             <div class="section-header">
-                <span class="section-title">Actions</span>
+                <span class="section-name">Actions</span>
                 <span class="section-line" aria-hidden="true"></span>
+                <div class="section-filter" role="toolbar" aria-label="Filter item types">
+                    {{#each actionFilters as |filter|}}
+                        <button type="button" class="btn-filter" data-action="filterActions" data-filter="{{filter.name}}" aria-pressed="{{filter.active}}">{{#if filter.active}}<i class="bi bi-check-lg"></i> {{/if}}{{capitalize filter.name}}</button>
+                    {{/each}}
+                </div>
             </div>
             <div class="section-body">
                 <div class="actions">
@@ -29,8 +34,6 @@
                     <div class="{{#if a.isAttack}}attack {{else}}{{#if a.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action">
                         <span class="action-name">{{a.name}}</span>
                         {{#if a.isAttack}}
-                            {{!--<button type="button" class="roll-btn" data-action="rollToHit"><i class="bi bi-crosshair"></i></button>
-                            <button type="button" class="roll-btn" data-action="rollToDamage"><i class="bi bi-droplet"></i></button>--}}
                             <button type="button" class="roll-btn" data-action="rollDuality" data-trait="{{a.trait}}"><i class="bi bi-crosshair"></i></button>
                             <button type="button" class="roll-btn" data-action="rollDamage" data-formula="{{a.damageFormula}}" data-type="{{a.damageType}}"><i class="bi bi-droplet"></i></button>
                         {{else}}

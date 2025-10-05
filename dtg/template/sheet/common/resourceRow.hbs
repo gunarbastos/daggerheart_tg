@@ -1,5 +1,5 @@
 <div class="resource-row" id="res-{{resource.resourceName}}">
-    <div class="resource-title">{{resource.resourceName}}:</div>
+    <div class="resource-title{{#if resource.HideName}} visually-hidden{{/if}}">{{resource.resourceName}}:</div>
     <div class="resource-line">
         {{> resourceRow list=resource.resourceList dataAction="setResource" classes="medium-smaller-icon resource-button"}}
     </div>

@@ -1,0 +1,5 @@
+<article class="trait-card" data-trait="{{trait}}">
+    <label class="field-label" for="trait-{{trait}}">{{capitalize trait}}</label>
+    {{#> numberField }} id="trait-{{trait}}" class="field-input" name="system.traits.{{trait}}" value="{{value}}" {{/numberField}}
+    <button type="button" class="btn-action" data-action="rollDuality" data-trait="{{trait}}">Roll</button>
+</article>

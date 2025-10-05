@@ -181,6 +181,13 @@ export class PlayerSheet extends DtgActorSheet {
         if (partId === "quickAccess") {
             part.actions = [];
             part.experiences = [];
+            part.actionFilters = [
+                {name: "weapon", active: false},
+                {name: "spell", active: false},
+                {name: "class card", active: false},
+                {name: "non-class card", active: false},
+                {name: "borrowed power", active: false},
+            ];
 
             //attacks from equipped weapons
             for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){

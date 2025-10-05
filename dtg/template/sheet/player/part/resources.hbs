@@ -1,25 +1,24 @@
 <section class="dtg-part part-resources" data-part-id="resources" aria-label="Resources">
     <div class="resources-list">
-        {{> playerSheetResourceRow resource=resources.hp }}
-        {{> playerSheetResourceRow resource=resources.armor }}
-        {{> playerSheetResourceRow resource=resources.stress }}
+        {{> sheetResourceRow resource=resources.hp }}
+        {{> sheetResourceRow resource=resources.armor }}
+        {{> sheetResourceRow resource=resources.stress }}
 
-        <div class="res-line res-line-block threshold">
-            <div class="res-label">Damage Thresholds</div>
-            <div class="res-thresholds">
-                <span class="th-label">Minor</span>
-                {{#> numberField }} class="res-input th-input" name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" {{/numberField}}
-                <span class="th-label">Major</span>
-                {{#> numberField }} class="res-input th-input" name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" {{/numberField}}
-                <span class="th-label">Severe</span>
+        <div class="eva-thresholds">
+            <div class="evasion">
+                <span class="field-label">Evasion</span>
+                {{#> numberField }} class="field-input evasion" name="system.evasion" value="{{system.evasion}}" {{/numberField}}
+            </div>
+            <div class="dmg-threshold">
+                <span class="field-label">Minor</span>
+                <span class="field-label">Major</span>
+                <span class="field-label">Severe</span>
+                {{#> numberField }} class="field-input minor-major-threshold" name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" {{/numberField}}
+                {{#> numberField }} class="field-input major-severe-threshold" name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" {{/numberField}}
             </div>
         </div>
-        <div class="res-line res-line-block evasion">
-            <span class="th-label">Evasion</span>
-            {{#> numberField }} class="res-input evasion" name="system.evasion" value="{{system.evasion}}" {{/numberField}}
-        </div>
 
-        {{> playerSheetResourceRow resource=resources.hope }}
+        {{> sheetResourceRow resource=resources.hope }}
     </div>
 </section>
 

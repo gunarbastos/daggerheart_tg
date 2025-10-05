@@ -1,0 +1,12 @@
+<section class="dtg-part part-resources" data-part-id="resources">
+    <div class="field-column{{#if isWorldDocument}}{{else}} visually-hidden {{/if}}">
+            <label class="field-label" for="adv-hp">HP:</label>
+            {{#> numberField }} id="adv-hp" class="field-input" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{/numberField}}
+            <label class="field-label" for="adv-stress">Stress:</label>
+            {{#> numberField }} id="adv-stress" class="field-input" name="system.resources.stress.max" value="{{system.resources.stress.max}}" {{/numberField}}
+    </div>
+    <div class="resource-column">
+        {{> sheetResourceRow resource=resources.hp }}
+        {{> sheetResourceRow resource=resources.stress }}
+    </div>
+</section>
