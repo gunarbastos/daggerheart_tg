@@ -130,33 +130,35 @@ _rawConstants = {
         ICONS: {
             HP: {
                 USED: {
-                    '1': 'heart_marked.png',
-                    '2': 'heart_marked_2.png',
-                    '3': 'heart_marked_3.png',
-                    '4': 'heart_marked_4_2.png',
-                    '5': 'heart_marked_5.png',
+                    '1': 'heart_marked.webp',
+                    '2': 'heart_marked_2.webp',
+                    '3': 'heart_marked_3.webp',
+                    '4': 'heart_marked_4_2.webp',
+                    '5': 'heart_marked_5.webp',
                 },
-                AVAILABLE: 'heart_unmarked.png',
+                AVAILABLE: 'heart_unmarked.webp',
             },
             ARMOR: {
                 USED: {
-                    '1': 'armor_marked.png',
-                    '2': 'armor_marked_2.png',
-                    '3': 'armor_marked_3.png',
-                    '4': 'armor_marked_4_2.png',
-                    '5': 'armor_marked_5.png',
+                    '1': 'armor_marked.webp',
+                    '2': 'armor_marked_2.webp',
+                    '3': 'armor_marked_3.webp',
+                    '4': 'armor_marked_4_2.webp',
+                    '5': 'armor_marked_5.webp',
                 },
-                AVAILABLE: 'armor_unmarked.png',
+                AVAILABLE: 'armor_unmarked.webp',
             },
             STRESS: {
-                USED: 'stress_marked.png',
-                AVAILABLE: 'stress_unmarked.png',
+                USED: 'stress_marked.webp',
+                AVAILABLE: 'stress_unmarked.webp',
             },
             HOPE: {
-                USED: 'hope_empty.png',
-                AVAILABLE: 'hope_filled.png',
+                USED: 'hope_empty.webp',
+                AVAILABLE: 'hope_filled.webp',
             },
-            SCAR: 'scar_1.png',
+            SCAR: 'scar_1.webp',
+            ADVANTAGE: 'advantage.webp',
+            DISADVANTAGE: 'disadvantage.webp',
         }
     },
 
