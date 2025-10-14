@@ -9,13 +9,14 @@
             {{#> numberField }} id="adv-atk-mod" class="field-input small-input" name="system.attackModifier" value="{{system.attackModifier}}" {{/numberField}}
         </div>
         <div class="thresholds">
-            <div class="dmg-threshold">
+            {{!--<div class="dmg-threshold">
                 <span class="field-label">Minor</span>
                 <span class="field-label">Major</span>
                 <span class="field-label">Severe</span>
                 {{#> numberField }} class="field-input minor-major-threshold" name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" {{/numberField}}
                 {{#> numberField }} class="field-input major-severe-threshold" name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" {{/numberField}}
-            </div>
+            </div>--}}
+            {{> sheetThresholds majorThresholdField="system.majorDamageThreshold" majorThresholdValue=system.majorDamageThreshold severeThresholdField="system.severeDamageThreshold" severeThresholdValue=system.severeDamageThreshold }}
         </div>
     </div>
     <div class="base-attack">

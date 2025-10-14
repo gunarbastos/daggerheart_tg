@@ -9,13 +9,14 @@
                 <span class="field-label">Evasion</span>
                 {{#> numberField }} class="field-input evasion" name="system.evasion" value="{{system.evasion}}" {{/numberField}}
             </div>
-            <div class="dmg-threshold">
+            {{!--<div class="dmg-threshold">
                 <span class="field-label">Minor</span>
                 <span class="field-label">Major</span>
                 <span class="field-label">Severe</span>
                 {{#> numberField }} class="field-input minor-major-threshold" name="system.majorDamageThreshold" value="{{system.majorDamageThreshold}}" {{/numberField}}
                 {{#> numberField }} class="field-input major-severe-threshold" name="system.severeDamageThreshold" value="{{system.severeDamageThreshold}}" {{/numberField}}
-            </div>
+            </div>--}}
+            {{> sheetThresholds majorThresholdField="system.majorDamageThreshold" majorThresholdValue=system.majorDamageThreshold severeThresholdField="system.severeDamageThreshold" severeThresholdValue=system.severeDamageThreshold }}
         </div>
 
         {{> sheetResourceRow resource=resources.hope }}
