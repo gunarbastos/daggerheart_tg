@@ -233,7 +233,7 @@ export class DtgEngine {
             roll: roll,
             validRoll: roll,
             advDisad: advDisad,
-            template: `${game.dtg.constants.TEMPLATES.ROOT_DIR.SYSTEM_ID}/chat/adversaryRoll.hbs`,
+            template: `${game.dtg.constants.TEMPLATES.ROOT_DIR}/chat/adversaryRoll.hbs`,
         }
 
         const consideredBonus = await this.#normalizeBonuses(bonus);

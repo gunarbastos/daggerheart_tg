@@ -30,8 +30,8 @@
             {{#> textField }} id="adv-atk-range" class="field-input" name="system.standardAttack.range" value="{{system.standardAttack.range}}" {{/textField}}
         </div>
         <div class="buttons">
-            <button type="button">H</button>
-            <button type="button">D</button>
+            <button type="button" data-action="rollGM" data-bonus="{{system.attackModifier}}"><i class="bi bi-crosshair"></i></button>
+            <button type="button" data-action="rollDamage" data-formula="{{system.standardAttack.damage}}" data-type="{{system.standardAttack.damageType}}"><i class="bi bi-droplet"></i></button>
         </div>
     </div>
     <div class="tactics center-items">

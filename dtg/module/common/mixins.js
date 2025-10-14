@@ -43,11 +43,9 @@ export class Mixins {
 
             async _onFirstRender(context, options) {
                 super._onFirstRender(context, options);
-                Utils.log('DtgApp', '_onFirstRender', this);
                 if(this.constructor.SETTINGS_NAME && DtgApplication._isValidSetting(this.constructor.SETTINGS_NAME.POSITION)) {
                     const appPosition = Utils.getGameSetting(this.constructor.SETTINGS_NAME.POSITION);
                     if (appPosition && typeof appPosition === 'object' && Object.prototype.toString.call(appPosition) === "[object Object]") {
-                        Utils.log('DtgApp', '_onFirstRender', 'changing position', appPosition);
                         this.setPosition(appPosition);
                     }
                 }
@@ -94,6 +92,7 @@ export class Mixins {
     //Adds Roll GM Dice
     //Adds Dice and roll flags
     //Adds Open Settings
+    /** @BaseClass DtgActor */
     static DtgSheet(BaseClass) {
         return class DtgSheet extends BaseClass {
 
@@ -169,6 +168,7 @@ export class Mixins {
                         rollDuality: this._actionRollDualityDice,
                         notYetImplemented: Utils.actionNotYetImplemented,
                         rollDamage: this._actionRollDamage,
+                        rollGM: this._actionGMRoll,
                     },
                     window: {
                         contentClasses: ['standard-form', 'sheet-body'],
@@ -237,10 +237,10 @@ export class Mixins {
             //#endregion
 
             //#region actions
+            /** @this DtgSheet */
             static async _actionRollDualityDice(event) {
                 event.preventDefault();
                 const rolledTrait = event.target.dataset.trait.toLowerCase();
-                Utils.log('_actionRollDualityDice', event.target.dataset.trait, rolledTrait, this.document.system.traits);
                 return await DtgEngine.dualityRoll({
                     bonus:{
                         [rolledTrait]: this.document.system.traits[rolledTrait],
@@ -261,6 +261,15 @@ export class Mixins {
                 return await DtgEngine.damageRoll(rollFormula, rollType);
             }
 
+            /** @this DtgSheet */
+            static async _actionGMRoll(event){
+                event.preventDefault();
+                const bonus = event.target.dataset.bonus;
+                const crit = event.target.dataset.crit;
+                return await DtgEngine.adversaryRoll( {bonus: [bonus], advDisad: this.rollData.rollMod, critOnAndAbove: crit, baseDice: this.rollData.gmDie} );
+            }
+
+            /** @this DtgSheet */
             static async _actionOpenSettings(event) {
                 if(this.constructor.PARTS && this.constructor.PARTS[this.constructor.SETTINGS_PART_NAME] && this.constructor.PARTS[this.constructor.SETTINGS_PART_NAME].template){
                     await Utils.showSheetPartInDialog(this, this.constructor.SETTINGS_PART_NAME);
@@ -269,6 +278,7 @@ export class Mixins {
                 }
             }
 
+            /** @this DtgSheet */
             static async _actionSetFlag(event, {preventRender = false}) {
                 event.preventDefault();
                 const currValue = this._getFlag(event.target.dataset.name);
@@ -287,10 +297,7 @@ export class Mixins {
                 const outside = formula.replace(/\[[^\]]*]/g, " ");
                 const rx = /(?:^|[^A-Za-z0-9_])(pd\d+)/gi;
 
-                for (const m of outside.matchAll(rx)) {
-                    return true;
-                }
-                return false;
+                return rx.test(outside);
             }
 
             #fillProficiencyDie(formula, proficiency) {

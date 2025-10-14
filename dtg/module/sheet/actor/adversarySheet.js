@@ -5,12 +5,8 @@ console.log(`Loaded: ${import.meta.url}`);
 
 export class AdversarySheet extends DtgActorSheet {
     static get PARTS() {
-        //const base = super.PARTS;
         const basePartPath = `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/adversary/part`
         return {
-            /*content: {...base.content},
-            adversary: {template: `systems/${CONSTANTS.SYSTEM_ID}/template/sheet/adversary.hbs`},
-            debug: {...base.debug},*/
             adversaryInfo: { template: `${basePartPath}/adversaryInfo.hbs` },
             resources: { template: `${basePartPath}/resources.hbs` },
             combatInfo: { template: `${basePartPath}/combatInfo.hbs` },
@@ -21,7 +17,6 @@ export class AdversarySheet extends DtgActorSheet {
     }
 
     static get DEFAULT_OPTIONS() {
-        const base = super.DEFAULT_OPTIONS;
         return {
             position: {width: 1200, height: 1200},
             classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.ADVERSARY}`],

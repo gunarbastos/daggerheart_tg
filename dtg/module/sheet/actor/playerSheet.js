@@ -29,12 +29,10 @@ export class PlayerSheet extends DtgActorSheet {
     }
 
     static get DEFAULT_OPTIONS() {
-        const base = super.DEFAULT_OPTIONS;
         return {
                 position: {width: 1200, height: 1200},
                 classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.PLAYER}`],
                 actions: {
-                    ...base.actions,
                     equipItem: PlayerSheet.#equipItem,
                     unequipItem: PlayerSheet.#unequipItem,
                     consumeItem: PlayerSheet.#consumeItem,
