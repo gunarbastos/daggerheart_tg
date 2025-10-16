@@ -1,11 +1,7 @@
 <section class="dtg-part part-quick-access" data-part-id="quick-access" data-drop-scope="quick-access" aria-label="quick-access">
     <div class="panel-body">
         <div class="info-section">
-            <div class="section-header">
-                <span class="section-name">Experiences</span>
-                <span class="section-line" aria-hidden="true"></span>
-            </div>
-            <div class="section-body">
+            {{#> sheetSection name="Experiences"}}
                 <div class="info">
                     {{#each experiences as |e|}}
                         <div class="experience" id="exp-{{@index}}">
@@ -14,35 +10,30 @@
                             {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
                         </div>
                     {{/each}}
+                    <div class="items-button-row">
+                        <button type="button" class="full-width"><i class="bi bi-plus-lg"></i></button>
+                        <button type="button" class="preserve-width"><i class="bi bi-unlock-fill"></i></button>
+                    </div>
                 </div>
-            </div>
+            {{/sheetSection}}
         </div>
 
         <div class="actions-section">
-            <div class="section-header">
-                <span class="section-name">Actions</span>
-                <span class="section-line" aria-hidden="true"></span>
-                <div class="section-filter" role="toolbar" aria-label="Filter item types">
-                    {{#each actionFilters as |filter|}}
-                        <button type="button" class="btn-filter" data-action="filterActions" data-filter="{{filter.name}}" aria-pressed="{{filter.active}}">{{#if filter.active}}<i class="bi bi-check-lg"></i> {{/if}}{{capitalize filter.name}}</button>
-                    {{/each}}
-                </div>
-            </div>
-            <div class="section-body">
+            {{#> sheetSection name="Actions" buttonsDescription="Filter Action types" buttonsAction="filterActions" buttons=actionFilters}}
                 <div class="actions">
                     {{#each actions as |a|}}
-                    <div class="{{#if a.isAttack}}attack {{else}}{{#if a.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action">
-                        <span class="action-name">{{a.name}}</span>
-                        {{#if a.isAttack}}
-                            <button type="button" class="roll-btn" data-action="rollDuality" data-trait="{{a.trait}}"><i class="bi bi-crosshair"></i></button>
-                            <button type="button" class="roll-btn" data-action="rollDamage" data-formula="{{a.damageFormula}}" data-type="{{a.damageType}}"><i class="bi bi-droplet"></i></button>
-                        {{else}}
-                            <button type="button" class="roll-btn" data-action="activatePower"><i class="bi {{#if a.isBorrowedPower}}bi-hurricane{{else}}bi-crosshair{{/if}}"></i></button>
-                        {{/if}}
-                    </div>
+                        <div class="{{#if a.isAttack}}attack {{else}}{{#if a.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action">
+                            <span class="action-name">{{a.name}}</span>
+                            {{#if a.isAttack}}
+                                <button type="button" class="roll-btn" data-action="rollDuality" data-trait="{{a.trait}}"><i class="bi bi-crosshair"></i></button>
+                                <button type="button" class="roll-btn" data-action="rollDamage" data-formula="{{a.damageFormula}}" data-type="{{a.damageType}}"><i class="bi bi-droplet"></i></button>
+                            {{else}}
+                                <button type="button" class="roll-btn" data-action="activatePower"><i class="bi {{#if a.isBorrowedPower}}bi-hurricane{{else}}bi-crosshair{{/if}}"></i></button>
+                            {{/if}}
+                        </div>
                     {{/each}}
                 </div>
-            </div>
+            {{/sheetSection}}
         </div>
     </div>
 </section>

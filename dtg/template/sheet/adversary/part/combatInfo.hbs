@@ -38,19 +38,13 @@
         <label class="field-label" for="adv-tactics">Tactics:</label>
         {{#> textField }} id="adv-tactics" class="field-input" name="system.tactics" value="{{system.tactics}}" {{/textField}}
     </div>
-    <div class="experience-list">
-        <div class="section-header">
-            <span class="section-name">Experiences</span>
-            <span class="section-line" aria-hidden="true"></span>
-        </div>
-        <div class="section-body">
-            {{#each experiences as |e|}}
-                <div class="experience center-items" id="exp-{{@index}}">
-                    <input type="checkbox" />
-                    {{#> numberField }} class="field-input small-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
-                    {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
-                </div>
-            {{/each}}
-        </div>
-    </div>
+    {{#> sheetSection name="Experiences" }}
+        {{#each experiences as |e|}}
+            <div class="experience center-items" id="exp-{{@index}}">
+                <input type="checkbox" />
+                {{#> numberField }} class="field-input small-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
+                {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
+            </div>
+        {{/each}}
+    {{/sheetSection}}
 </section>

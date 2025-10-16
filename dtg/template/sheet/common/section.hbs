@@ -1,0 +1,14 @@
+<div class="section-header">
+    <span class="section-name">{{name}}</span>
+    <span class="section-line" aria-hidden="true"></span>
+    {{#if buttons}}
+        <div class="section-filter" role="toolbar" aria-label="{{buttonsDescription}}">
+            {{#each buttons as |buttons|}}
+                <button type="button" class="btn-filter" data-action="{{../buttonsAction}}" data-filter="{{buttons.name}}" aria-pressed="{{buttons.active}}">{{#if buttons.active}}<i class="bi bi-check-lg"></i> {{/if}}{{capitalize buttons.name}}</button>
+            {{/each}}
+        </div>
+    {{/if}}
+</div>
+<div class="section-body">
+    {{~> @partial-block}}
+</div>

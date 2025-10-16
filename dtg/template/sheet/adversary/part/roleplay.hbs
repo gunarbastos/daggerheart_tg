@@ -1,17 +1,5 @@
-<!--<div><h1>ROLEPLAY</h1></div>-->
 <section class="dtg-part part-roleplay" data-part-id="roleplay" data-drop-scope="roleplay" aria-label="Roleplay">
-    {{!--<div class="section-header">
-        <span class="section-name">Tactics</span>
-        <span class="section-line" aria-hidden="true"></span>
-    </div>
-    <div class="panel-body">
-        {{#> textField }} id="actor-name" class="field-input"  name="system.tactics" value="{{system.tactics}}" {{/textField}}
-    </div>--}}
-    <div class="section-header">
-        <span class="section-name">Description</span>
-        <span class="section-line" aria-hidden="true"></span>
-    </div>
-    <div class="panel-body">
+    {{#> sheetSection name="Description" }}
         {{formInput systemFields.description value=system.description enriched=descriptionHTML classes="field-editor" compact=false toggled=false}}
-    </div>
+    {{/sheetSection}}
 </section>

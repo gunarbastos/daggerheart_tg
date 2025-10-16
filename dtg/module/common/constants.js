@@ -535,6 +535,7 @@ _rawConstants.TEMPLATES.PLAYER_SHEET_TRAIT = { PATH: `${_rawConstants.TEMPLATES.
 _rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
 _rawConstants.TEMPLATES.SHEET_THRESHOLDS = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/thresholds.hbs`, PRELOAD: true, ALIAS: "sheetThresholds" }
+_rawConstants.TEMPLATES.SHEET_SECTION = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/section.hbs`, PRELOAD: true, ALIAS: "sheetSection" }
 
 //Asset dirs
 _rawConstants.ASSETS.ROOT_DIR = `systems/${_rawConstants.SYSTEM_ID}/asset`;

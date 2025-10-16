@@ -1,97 +1,89 @@
 
 <section class="dtg-part part-inventory" data-part-id="inventory" data-drop-scope="inventory" aria-label="Inventory">
     <div class="inv-panel inv-backpack">
-        <div class="section-header">
-            <span class="section-name">Backpack</span>
-            <span class="section-line" aria-hidden="true"></span>
-            <div class="section-filter" role="toolbar" aria-label="Filter item types">
-                {{#each itemTypes as |type|}}
-                    <button type="button" class="btn-filter" data-action="filterItems" data-filter="{{type.name}}" aria-pressed="{{type.active}}">{{#if type.active}}<i class="bi bi-check-lg"></i> {{/if}}{{type.name}}</button>
-                {{/each}}
+        {{#> sheetSection  name="Backpack" buttonsDescription="Filter item types" buttonsAction="filterItems" buttons=itemTypes}}
+            <div class="inv-currency">
+                <div class="currency-box">
+                    <ul class="currency-list">
+                        <li class="curr">
+                            <div class="curr-head"><i class="bi bi-coin"></i><span class="field-label">Coins</span></div>
+                            {{#> numberField }} class="curr-input field-input" name="system.currency.coins" value="{{system.currency.coins}}" {{/numberField}}
+                        </li>
+
+                        <li class="curr">
+                            <div class="curr-head"><i class="bi bi-cash-coin"></i><span class="field-label">Handfuls</span></div>
+                            {{#> numberField }} class="curr-input field-input"  name="system.currency.handfuls" value="{{system.currency.handfuls}}" {{/numberField}}
+                        </li>
+
+                        <li class="curr">
+                            <div class="curr-head"><i class="bi bi-piggy-bank-fill"></i><span class="field-label">Bags</span></div>
+                            {{#> numberField }} class="curr-input field-input" name="system.currency.bags" value="{{system.currency.bags}}" {{/numberField}}
+                        </li>
+
+                        <li class="curr">
+                            <div class="curr-head"><i class="bi bi-bank2"></i><span class="field-label">Chests</span></div>
+                            {{#> numberField }} class="curr-input field-input" name="system.currency.chests" value="{{system.currency.chests}}" {{/numberField}}
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <div class="inv-currency">
-            <div class="currency-box">
-                <ul class="currency-list">
-                    <li class="curr">
-                        <div class="curr-head"><i class="bi bi-coin"></i><span class="field-label">Coins</span></div>
-                        {{#> numberField }} class="curr-input field-input" name="system.currency.coins" value="{{system.currency.coins}}" {{/numberField}}
-                    </li>
+            <ul class="item-list" data-list="backpack">
+                {{#if backpackItems.length}}
+                    {{#each backpackItems as |backpackItem|}}
+                        <li class="item-row" data-item-id="{{backpackItem.id}}" data-item-type="{{backpackItem.item.type}}" data-item-kind="{{backpackItem.kind}}">
+                            <div class="item-main">
+                                <span class="item-name" data-action="openItem">{{backpackItem.item.name}}</span>
+                                <span class="item-type">{{backpackItem.item.type}}</span>
+                            </div>
 
-                    <li class="curr">
-                        <div class="curr-head"><i class="bi bi-cash-coin"></i><span class="field-label">Handfuls</span></div>
-                        {{#> numberField }} class="curr-input field-input"  name="system.currency.handfuls" value="{{system.currency.handfuls}}" {{/numberField}}
-                    </li>
+                            <div class="item-meta">
+                                {{#if (or (eq backpackItem.item.system.quantity 0) backpackItem.item.system.quantity)}}
+                                    <div class="qty-ctrl">
+                                        {{#> numberField }} class="field-input" value="{{backpackItem.item.system.quantity}}" {{/numberField}}
+                                    </div>
+                                {{/if}}
+                            </div>
 
-                    <li class="curr">
-                        <div class="curr-head"><i class="bi bi-piggy-bank-fill"></i><span class="field-label">Bags</span></div>
-                        {{#> numberField }} class="curr-input field-input" name="system.currency.bags" value="{{system.currency.bags}}" {{/numberField}}
-                    </li>
-
-                    <li class="curr">
-                        <div class="curr-head"><i class="bi bi-bank2"></i><span class="field-label">Chests</span></div>
-                        {{#> numberField }} class="curr-input field-input" name="system.currency.chests" value="{{system.currency.chests}}" {{/numberField}}
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <ul class="item-list" data-list="backpack">
-            {{#if backpackItems.length}}
-                {{#each backpackItems as |backpackItem|}}
-                    <li class="item-row" data-item-id="{{backpackItem.id}}" data-item-type="{{backpackItem.item.type}}" data-item-kind="{{backpackItem.kind}}">
-                        <div class="item-main">
-                            <span class="item-name" data-action="openItem">{{backpackItem.item.name}}</span>
-                            <span class="item-type">{{backpackItem.item.type}}</span>
-                        </div>
-
-                        <div class="item-meta">
-                            {{#if (or (eq backpackItem.item.system.quantity 0) backpackItem.item.system.quantity)}}
-                                <div class="qty-ctrl">
-                                    {{#> numberField }} class="field-input" value="{{backpackItem.item.system.quantity}}" {{/numberField}}
-                                </div>
-                            {{/if}}
-                        </div>
-
-                        <div class="item-actions">
-                            <button type="button"
-                                    class="btn-action bi bi-arrow-up-right-square"
-                                    data-action="openItem" title="Open"></button>
-                            {{#if backpackItem.equipable}}
+                            <div class="item-actions">
                                 <button type="button"
-                                        class="btn-action bi{{#if backpackItem.equipped}} bi-person-fill{{else}} bi-backpack3-fill{{/if}}"
-                                        data-action="{{#if backpackItem.equipped}}unequipItem{{else}}equipItem{{/if}}"
-                                        aria-pressed="{{backpackItem.equipped}}" title="Equip/Unequip"></button>
-                            {{/if}}
-                            {{#if backpackItem.item.system.activatable}}
+                                        class="btn-action bi bi-arrow-up-right-square"
+                                        data-action="openItem" title="Open"></button>
+                                {{#if backpackItem.equipable}}
+                                    <button type="button"
+                                            class="btn-action bi{{#if backpackItem.equipped}} bi-person-fill{{else}} bi-backpack3-fill{{/if}}"
+                                            data-action="{{#if backpackItem.equipped}}unequipItem{{else}}equipItem{{/if}}"
+                                            aria-pressed="{{backpackItem.equipped}}" title="Equip/Unequip"></button>
+                                {{/if}}
+                                {{#if backpackItem.item.system.activatable}}
+                                    <button type="button"
+                                            class="btn-action bi bi-magic"
+                                            data-action="activateItem"
+                                            title="Activate"></button>
+                                {{/if}}
+                                {{#if backpackItem.item.system.consumable}}
+                                    <button type="button"
+                                            class="btn-action bi bi-cup-straw"
+                                            data-action="consumeItem"
+                                            title="Consume"></button>
+                                {{/if}}
+                                {{#if backpackItem.item.system.attachable}}
+                                    <button type="button"
+                                            class="btn-action bi bi-cpu-fill"
+                                            data-action="attachItem"
+                                            title="Attach"></button>
+                                {{/if}}
                                 <button type="button"
-                                        class="btn-action bi bi-magic"
-                                        data-action="activateItem"
-                                        title="Activate"></button>
-                            {{/if}}
-                            {{#if backpackItem.item.system.consumable}}
-                                <button type="button"
-                                        class="btn-action bi bi-cup-straw"
-                                        data-action="consumeItem"
-                                        title="Consume"></button>
-                            {{/if}}
-                            {{#if backpackItem.item.system.attachable}}
-                                <button type="button"
-                                        class="btn-action bi bi-cpu-fill"
-                                        data-action="attachItem"
-                                        title="Attach"></button>
-                            {{/if}}
-                            <button type="button"
-                                    class="btn-action danger bi bi-trash-fill"
-                                    data-action="deleteItem"
-                                    title="Remove"></button>
-                        </div>
-                    </li>
-                {{/each}}
-            {{else}}
-                <li class="empty">Drop Feature or Inventory items here.</li>
-            {{/if}}
-        </ul>
+                                        class="btn-action danger bi bi-trash-fill"
+                                        data-action="deleteItem"
+                                        title="Remove"></button>
+                            </div>
+                        </li>
+                    {{/each}}
+                {{else}}
+                    <li class="empty">Drop Feature or Inventory items here.</li>
+                {{/if}}
+            </ul>
+        {{/sheetSection}}
     </div>
 </section>
