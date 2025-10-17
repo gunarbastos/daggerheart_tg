@@ -18,17 +18,25 @@
 }
 .dtg .btn-action {
   border-radius: 4px;
-  border: 1px solid var(--color-border, #8882);
   background: transparent;
 }
 .dtg .btn-action[aria-pressed="true"] {
-  background: rgba(94, 214, 255, 0.2);
-  border-color: rgba(94, 214, 255, 0.95);
-  box-shadow: 0 0 0 1px rgba(94, 214, 255, 0.95) inset, 0 0 8px 1px rgba(94, 214, 255, 0.4);
+  background: rgba(94, 150, 94, 0.2);
+  border-color: rgba(94, 150, 94, 0.95);
+  box-shadow: 0 0 0 1px rgba(94, 150, 94, 0.95) inset, 0 0 8px 1px rgba(94, 150, 94, 0.4);
   font-weight: 700;
+}
+.dtg .btn-action[aria-pressed="true"]:hover {
+  background: rgba(94, 150, 94, 0.95);
 }
 .dtg .btn-action:hover {
   background: var(--button-hover-background-color, transparent);
+}
+.dtg .btn-action.danger {
+  border-color: #c44a;
+}
+.dtg .btn-action.danger:hover {
+  background: #c44a;
 }
 .dtg .btn-settings {
   width: 32px;
@@ -101,8 +109,7 @@
 }
 .dtg .section-header .section-filter .btn-filter {
   padding: 2px 8px;
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 999px;
+  border-radius: 100vh;
   background: transparent;
 }
 .dtg .section-header .section-filter .btn-filter:hover {
@@ -759,9 +766,6 @@
 .dtg.dtg-Player .part-inventory .item-row .item-actions .btn-action[aria-pressed="true"] {
   box-shadow: inset 0 0 0 999px var(--color-accent-ghost, #8881);
 }
-.dtg.dtg-Player .part-inventory .item-row .item-actions .btn-action.danger {
-  border-color: #c44a;
-}
 .dtg.dtg-Player .part-inventory .inv-currency {
   display: flex;
   justify-content: center;
@@ -815,6 +819,9 @@
   --actions-item-h: 34px;
   --actions-items-q: 6;
   --actions-drift-per-item: 2px;
+}
+.dtg.dtg-Player .part-quick-access .panel-body .btn-action {
+  width: 26px;
 }
 .dtg.dtg-Player .part-quick-access .panel-body .actions-section {
   display: flex;

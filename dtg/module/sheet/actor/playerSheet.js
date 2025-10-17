@@ -42,11 +42,15 @@ export class PlayerSheet extends DtgActorSheet {
                     openItem: PlayerSheet.#openItem,
                     attachItem: PlayerSheet.#attachItem,
                     setResource: PlayerSheet.#setResource,
+                    deleteExperience: PlayerSheet.#deleteExperience,
+                    addExperience: PlayerSheet.#addExperience,
                 },
                 form: { handler: PlayerSheet.#onSubmitForm },
                 window: { title: 'Player Sheet' },
             };
     }
+
+    static EMPTY_EXPERIENCE = { description: '', bonus: '' };
 
     get title(){
         return `${super.title} - ${this.document.name}`;
@@ -220,8 +224,8 @@ export class PlayerSheet extends DtgActorSheet {
                 part.experiences.push({ description: experience.description, bonus: experience.bonus });
             }
 
-            while (part.experiences.length < 5){
-                part.experiences.push({ description: '', bonus: '' });
+            if (part.experiences.length === 0){
+                part.experiences.push(this.constructor.EMPTY_EXPERIENCE);
             }
         }
 
@@ -589,6 +593,24 @@ export class PlayerSheet extends DtgActorSheet {
             default:
                 ui.notifications.error('Item type not set on #equipItem.')
         }
+    }
+
+    static async #deleteExperience(event){
+        event.preventDefault();
+        const experiences = this.document.system.experiences.toSpliced(event.target.dataset.index,1);
+        await this.document.update({"system.experiences": experiences}, {render: false});
+        this.render({ parts: ["quickAccess"] });
+    }
+
+    static async #addExperience(event){
+        event.preventDefault();
+        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, this.constructor.EMPTY_EXPERIENCE);
+        if(experiences.length === 1){
+            experiences.push(this.constructor.EMPTY_EXPERIENCE);
+        }
+        await this.document.update({"system.experiences": experiences}, {render: false});
+        Utils.log(this.document.system.experiences);
+        this.render({ parts: ["quickAccess"] });
     }
 
     async _onFirstRender(context, options) {
