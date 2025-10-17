@@ -609,7 +609,6 @@ export class PlayerSheet extends DtgActorSheet {
             experiences.push(this.constructor.EMPTY_EXPERIENCE);
         }
         await this.document.update({"system.experiences": experiences}, {render: false});
-        Utils.log(this.document.system.experiences);
         this.render({ parts: ["quickAccess"] });
     }
 
