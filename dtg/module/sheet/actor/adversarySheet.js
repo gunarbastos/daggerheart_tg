@@ -20,22 +20,17 @@ export class AdversarySheet extends DtgActorSheet {
         return {
             position: {width: 1200, height: 1200},
             classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.ADVERSARY}`],
-            // actions: {
-            //     ...base.actions,
-            //     equipItem: PlayerSheet.#equipItem,
-            //     unequipItem: PlayerSheet.#unequipItem,
-            //     consumeItem: PlayerSheet.#consumeItem,
-            //     activateItem: PlayerSheet.#activateItem,
-            //     filterItems: PlayerSheet.#filterItems,
-            //     deleteItem: PlayerSheet.#deleteItem,
-            //     openItem: PlayerSheet.#openItem,
-            //     attachItem: PlayerSheet.#attachItem,
-            //     setResource: PlayerSheet.#setResource,
-            // },
+             actions: {
+                 deleteExperience: AdversarySheet.#deleteExperience,
+                 addExperience: AdversarySheet.#addExperience,
+                 //setResource: AdversarySheet.#setResource,
+             },
             //form: { handler: PlayerSheet.#onSubmitForm },
             window: { title: 'Adversary Sheet' },
         };
     }
+
+    static EMPTY_EXPERIENCE = { description: '', bonus: '' };
 
     async _prepareContext(options) {
         const base = await super._prepareContext(options);
@@ -86,7 +81,7 @@ export class AdversarySheet extends DtgActorSheet {
                     part.experiences.push({ description: experience.description, bonus: experience.bonus });
                 }
 
-                while (part.experiences.length < 5){
+                if (part.experiences.length === 0){
                     part.experiences.push({ description: '', bonus: '' });
                 }
                 break;
@@ -112,6 +107,23 @@ export class AdversarySheet extends DtgActorSheet {
         const bonus = event.target.dataset.bonus;
         const rollMod = this.document.getFlag(CONSTANTS.SYSTEM_ID, "rollMod");
         await DtgEngine.adversaryRoll({bonus: [bonus], advDisad: rollMod});
+    }
+
+    static async #deleteExperience(event){
+        event.preventDefault();
+        const experiences = this.document.system.experiences.toSpliced(event.target.dataset.index,1);
+        await this.document.update({"system.experiences": experiences}, {render: false});
+        this.render({ parts: ["combatInfo"] });
+    }
+
+    static async #addExperience(event){
+        event.preventDefault();
+        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, this.constructor.EMPTY_EXPERIENCE);
+        if(experiences.length === 1){
+            experiences.push(this.constructor.EMPTY_EXPERIENCE);
+        }
+        await this.document.update({"system.experiences": experiences}, {render: false});
+        this.render({ parts: ["combatInfo"] });
     }
 
 

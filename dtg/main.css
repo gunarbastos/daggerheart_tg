@@ -526,6 +526,9 @@
 .dtg.dtg-Adversary .part-combat-info .experience {
   display: flex;
 }
+.dtg.dtg-Adversary .part-combat-info .experience .btn-action {
+  width: 26px;
+}
 .dtg.dtg-Adversary .part-resources {
   display: grid;
   grid-template-columns: max-content auto;
