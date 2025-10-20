@@ -124,6 +124,9 @@
 .dtg .section-header .section-filter .btn-filter[aria-pressed="true"]:hover {
   background: rgba(94, 214, 255, 0.28);
 }
+.dtg .section-body {
+  margin-top: 0.2em;
+}
 .dtg .dmg-threshold {
   position: relative;
   display: grid;
@@ -185,6 +188,57 @@
   background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
   border: 1px solid var(--color-warm-1, #8882);
   margin: 2px;
+}
+.dtg .switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.dtg .switch-input {
+  appearance: none;
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+.dtg .switch-track {
+  --w: 36px;
+  --h: 20px;
+  --pad: 2px;
+  --off: #666;
+  --on: rgba(94, 214, 255, 0.65);
+  --margin: 0.3em;
+  position: relative;
+  display: inline-block;
+  inline-size: var(--w);
+  block-size: var(--h);
+  background: var(--off);
+  border-radius: calc(var(--h) / 2);
+  transition: background 160ms ease;
+}
+.dtg .switch-track::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--pad);
+  inset-inline-start: var(--pad);
+  inline-size: calc(var(--h) - 2 * var(--pad));
+  block-size: calc(var(--h) - 2 * var(--pad));
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 160ms ease;
+}
+.dtg .switch-input:checked + .switch-track {
+  background: var(--on);
+}
+.dtg .switch-input:checked + .switch-track::before {
+  transform: translateX(calc(var(--w) - var(--h)));
+}
+.dtg .switch-input:focus-visible + .switch-track {
+  outline: 2px solid #8cf;
+  outline-offset: 2px;
+  margin-left: var(--margin);
 }
 .dtg button {
   border-radius: 8px;
@@ -711,6 +765,22 @@
   padding: 6px 8px;
   border: 1px solid var(--color-border, #8882);
   border-radius: 8px;
+  --h: auto;
+  max-height: var(--h);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 180ms ease, transform 240ms ease, margin 240ms ease, padding 240ms ease, max-height 240ms ease;
+  overflow: hidden;
+}
+.dtg.dtg-Player .part-inventory .item-row.is-collapsed {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  pointer-events: none;
 }
 .dtg.dtg-Player .part-inventory .item-row .qty-ctrl {
   display: inline-flex;
@@ -809,6 +879,12 @@
   border-radius: 8px;
   padding: 4px 6px;
 }
+@media (prefers-reduced-motion: reduce) {
+  .item-row,
+  .item-row.is-collapsed {
+    transition: none !important;
+  }
+}
 .dtg.dtg-Player .part-quick-access {
   width: 100%;
   padding: 8px 10px;
@@ -836,7 +912,7 @@
 }
 .dtg.dtg-Player .part-quick-access .panel-body .info-section .section-body {
   height: 100%;
-  padding: 5px;
+  padding: 5px 0;
   border-right: 1px solid var(--color-border, #8882);
 }
 .dtg.dtg-Player .part-quick-access .panel-body .actions {
@@ -870,12 +946,11 @@
   margin-right: auto;
 }
 .dtg.dtg-Player .part-quick-access .panel-body .actions .roll-btn {
-  border: 1px solid var(--color-border, #8882);
   border-radius: 4px;
   background: var(--color-bg-btn-minor-inactive, transparent);
 }
 .dtg.dtg-Player .part-quick-access .panel-body .actions .roll-btn:hover {
-  background: var(--color-bg-btn-minor-active, transparent);
+  background: revert-layer;
 }
 .dtg.dtg-Player .part-quick-access .panel-body .info {
   display: flex;

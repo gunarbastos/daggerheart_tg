@@ -37,7 +37,7 @@ export class PlayerSheet extends DtgActorSheet {
                     unequipItem: PlayerSheet.#unequipItem,
                     consumeItem: PlayerSheet.#consumeItem,
                     activateItem: PlayerSheet.#activateItem,
-                    filterItems: PlayerSheet.#filterItems,
+                    filterItems: PlayerSheet.#filterBackpackItems,
                     deleteItem: PlayerSheet.#deleteItem,
                     openItem: PlayerSheet.#openItem,
                     attachItem: PlayerSheet.#attachItem,
@@ -65,202 +65,205 @@ export class PlayerSheet extends DtgActorSheet {
         };
     }
 
+    #backpackItems = new Map();
+
     async _preparePartContext(partId, context, options) {
         const part = {};
 
-        if (partId === "inventory") {
-            part.equippedItems = {
-                armor: undefined,
-                primaryWeapon: undefined,
-                secondaryWeapon: undefined,
-                cards: []
-            };
+        switch(partId) {
+            case "inventory":
+                const cards = this.document.system.domainCards;
 
-            part.equippedItems.cards = [...this.document.system.equippedDomainCards.values()];
-            const cards = this.document.system.domainCards;
+                const itemTypes = [];
+                const itemFilter = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
 
-            const itemTypes = [];
-            const filteredItems = [];
-            const itemFilter = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
-            let includeAll = true;
-            for (const filter of Object.values(itemFilter)) {
-                if (filter === true){
-                    includeAll = false;
-                    break;
+                const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
+                for(const item of [...this.document.items, ...cards.values()]){
+                    itemTypes.push(item.type);
+                    let kind = "";
+                    let equipped = false;
+                    let equipable = false;
+                    let itemId = item._id;
+                    if(item instanceof DomainCardDocument){
+                        kind = CONSTANTS.ITEM_TYPES.DOMAIN_CARD;
+                        equipped = equippedDomainCardsUUIDs.has(item.uuid);
+                        equipable = true;
+                        itemId = item.uuid;
+                    } else {
+                        kind = "embed";
+                        equipped = item.getFlag(CONSTANTS.SYSTEM_ID, "equipped");
+                        equipable = item.system.equipable;
+                    }
+
+                    //shownItems.push({ kind: kind, equipped: equipped, equipable: equipable, id: itemId, item: item});
+                    if(!this.#backpackItems.has(itemId)){
+                        const currSize = this.#backpackItems.size;
+                        const dom = await foundry.applications.handlebars.renderTemplate(
+                            `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/partial/backpackRow.hbs`,
+                            {
+                                backpackItem: {
+                                    kind: kind,
+                                    equipped: equipped,
+                                    equipable: equipable,
+                                    id: itemId,
+                                    item: item},
+                                order: currSize
+                            });
+                        const elementHolder = document.createElement('template');
+                        elementHolder.innerHTML = dom.trim();
+                        this.#backpackItems.set(
+                            itemId,
+                            {
+                                item: item,
+                                dom: elementHolder.content.firstElementChild,
+                                order: currSize,
+                                isNew: true,
+                            });
+                    } else {
+                        this.#backpackItems.get(item.id).isNew = false;
+                    }
+
+                    if(item instanceof DomainCardDocument) continue;
+
                 }
-            }
-
-            const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
-            for(const item of [...this.document.items, ...cards.values()]){
-                itemTypes.push(item.type);
-                let kind = "";
-                let equipped = false;
-                let equipable = false;
-                let itemId = item._id;
-                if(item instanceof DomainCardDocument){
-                    kind = CONSTANTS.ITEM_TYPES.DOMAIN_CARD;
-                    equipped = equippedDomainCardsUUIDs.has(item.uuid);
-                    equipable = true;
-                    itemId = item.uuid;
-                } else {
-                    kind = "embed";
-                    equipped = item.getFlag(CONSTANTS.SYSTEM_ID, "equipped");
-                    equipable = item.system.equipable;
+                part.itemTypes = [];
+                const itemTypesNames = Utils.unique(itemTypes).sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" }));
+                for(const itemTypeName of itemTypesNames){
+                    part.itemTypes.push(
+                        {
+                            name: itemTypeName,
+                            active: itemFilter[itemTypeName] === true,
+                            ...(itemFilter[itemTypeName] === true ? {icon: 'bi-check-lg'} : {})
+                        });
+                }
+                break;
+            case "resources":
+                part.resources = {
+                    hp: {},
+                    armor: {},
+                    stress: {},
+                    hope: {}
                 }
 
-                if (includeAll || itemFilter[item.type] === true){
-                    filteredItems.push({ kind: kind, equipped: equipped, equipable: equipable, id: itemId, item: item});
-                }
+                const iconSetting = Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE);
 
-                if(item instanceof DomainCardDocument) continue;
-
-                if (equipped === true){
-                    switch(item.type){
-                        case CONSTANTS.ITEM_TYPES.WEAPON:
-                            switch (item.system.slot){
-                                case CONSTANTS.WEAPON_SLOT.PRIMARY:
-                                    part.equippedItems.primaryWeapon = item;
-                                    break;
-                                case CONSTANTS.WEAPON_SLOT.SECONDARY:
-                                    part.equippedItems.secondaryWeapon = item;
-                                    break;
+                for (const [k, v] of Object.entries(part.resources)) {
+                    v.resourceName = k.capitalize();
+                    v.resourceList = [];
+                    switch(k){
+                        case 'hp':
+                            const usedHp = this.document.system.resources.hp.max - this.document.system.resources.hp.value;
+                            v.resourceList = [...Utils.getListOfResources(this.document.system.resources.hp.max, usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting], CONSTANTS.ASSETS.ICONS.HP.AVAILABLE)];
+                            break;
+                        case 'armor':
+                            const usedArmor = this.document.system.resources.armor.max - this.document.system.resources.armor.value;
+                            v.resourceList = [...Utils.getListOfResources(this.document.system.resources.armor.max, usedArmor, "armor", CONSTANTS.ASSETS.ICONS.ARMOR.USED[iconSetting], CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE)];
+                            break;
+                        case 'stress':
+                            const usedStress = this.document.system.resources.stress.max - this.document.system.resources.stress.value;
+                            v.resourceList = [...Utils.getListOfResources(this.document.system.resources.stress.max, usedStress, "stress", CONSTANTS.ASSETS.ICONS.STRESS.USED, CONSTANTS.ASSETS.ICONS.STRESS.AVAILABLE)];
+                            break;
+                        case 'hope':
+                            const maxFinalHope = this.document.system.resources.hope.max - this.document.system.scars;
+                            const usedHope = maxFinalHope - this.document.system.resources.hope.value;
+                            const scars = Utils.getListOfResources(this.document.system.scars, 0, "hope", CONSTANTS.ASSETS.ICONS.SCAR, CONSTANTS.ASSETS.ICONS.SCAR, {invertValues: true, canClick: false});
+                            for(const scar of scars){
+                                scar.value += maxFinalHope;
                             }
-                            break;
-                        case CONSTANTS.ITEM_TYPES.ARMOR:
-                            part.equippedItems.armor = item;
+                            v.resourceList =  [...Utils.getListOfResources(maxFinalHope, usedHope, "hope", CONSTANTS.ASSETS.ICONS.HOPE.USED, CONSTANTS.ASSETS.ICONS.HOPE.AVAILABLE, {invertValues: true}),
+                                ...scars];
                             break;
                     }
                 }
-            }
-            part.itemTypes = [];
-            const itemTypesNames = Utils.unique(itemTypes).sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" }));
-            for(const itemTypeName of itemTypesNames){
-                part.itemTypes.push({ name: itemTypeName, active: itemFilter[itemTypeName] === true });
-            }
-            part.backpackItems = filteredItems;
-        }
-
-        if (partId === "resources") {
-            part.resources = {
-                hp: {},
-                armor: {},
-                stress: {},
-                hope: {}
-            }
-
-            const iconSetting = Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE);
-
-            for (const [k, v] of Object.entries(part.resources)) {
-                v.resourceName = k.capitalize();
-                v.resourceList = [];
-                switch(k){
-                    case 'hp':
-                        const usedHp = this.document.system.resources.hp.max - this.document.system.resources.hp.value;
-                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.hp.max, usedHp, "hp", CONSTANTS.ASSETS.ICONS.HP.USED[iconSetting], CONSTANTS.ASSETS.ICONS.HP.AVAILABLE)];
-                        break;
-                    case 'armor':
-                        const usedArmor = this.document.system.resources.armor.max - this.document.system.resources.armor.value;
-                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.armor.max, usedArmor, "armor", CONSTANTS.ASSETS.ICONS.ARMOR.USED[iconSetting], CONSTANTS.ASSETS.ICONS.ARMOR.AVAILABLE)];
-                        break;
-                    case 'stress':
-                        const usedStress = this.document.system.resources.stress.max - this.document.system.resources.stress.value;
-                        v.resourceList = [...Utils.getListOfResources(this.document.system.resources.stress.max, usedStress, "stress", CONSTANTS.ASSETS.ICONS.STRESS.USED, CONSTANTS.ASSETS.ICONS.STRESS.AVAILABLE)];
-                        break;
-                    case 'hope':
-                        const maxFinalHope = this.document.system.resources.hope.max - this.document.system.scars;
-                        const usedHope = maxFinalHope - this.document.system.resources.hope.value;
-                        const scars = Utils.getListOfResources(this.document.system.scars, 0, "hope", CONSTANTS.ASSETS.ICONS.SCAR, CONSTANTS.ASSETS.ICONS.SCAR, {invertValues: true, canClick: false});
-                        for(const scar of scars){
-                            scar.value += maxFinalHope;
-                        }
-                        v.resourceList =  [...Utils.getListOfResources(maxFinalHope, usedHope, "hope", CONSTANTS.ASSETS.ICONS.HOPE.USED, CONSTANTS.ASSETS.ICONS.HOPE.AVAILABLE, {invertValues: true}),
-                            ...scars];
-                        break;
-                }
-            }
-        }
-
-        if (partId === "quickAccess") {
-            part.actions = [];
-            part.experiences = [];
-            part.actionFilters = [
-                {name: "weapon", active: false},
-                {name: "spell", active: false},
-                {name: "class card", active: false},
-                {name: "non-class card", active: false},
-                {name: "borrowed power", active: false},
-            ];
-
-            //attacks from equipped weapons
-            for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
-                part.actions.push({
-                    isAttack: true,
-                    isBorrowedPower: false,
-                    name: weapon.name,
-                    trait: weapon.system.trait,
-                    damageFormula: weapon.system.damage,
-                    damageType: weapon.system.damageType,
-                })
-            }
-
-            //attacks from equipped spells (later, spells granted by equipped cards)
-            for(const spell of this.document.items.filter(i => i instanceof SpellDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
-                /*part.actions.push({
-                    isAttack: true,
-                    isBorrowedPower: false,
-                    name: spell.name,
-                    trait: spell.system.trait,
-                    damageFormula: spell.system.damage,
-                    damageType: spell.system.damageType,
-                })*/
-            }
-
-            //Features description
-
-            //borrowed powers
-
-            //experiences
-            for (const experience of this.document.system.experiences) {
-                part.experiences.push({ description: experience.description, bonus: experience.bonus });
-            }
-
-            if (part.experiences.length === 0){
-                part.experiences.push(this.constructor.EMPTY_EXPERIENCE);
-            }
-        }
-
-        if(partId === 'characterInfo') {
-            part.classText = 'None';
-            part.origin = 'None';
-            part.ancestry = 'None';
-
-            const ancestries = Array.from(this.document.system.ancestries.values()).reduce((arr, ancestry) => {
-                arr.push(ancestry.name);
-                return arr;
-            }, []);
-
-            const communities = Array.from(this.document.system.communities.values()).reduce((arr, community) => {
-                arr.push(community.name);
-                return arr;
-            }, []);
-
-            const classes = Array.from(this.document.system.classes.values()).reduce((arr, rpgClass) => {
-                if(rpgClass){
-                    let classDescriptor = rpgClass.name;
-                    for(const [k, v] of this.document.system.subclasses){
-                        if(v.document.system.classUUID === rpgClass.uuid){
-                            classDescriptor += ` (${v.masteryLevel} ${v.document.name})`;
-                            break;
-                        }
+                break;
+            case "quickAccess":
+                part.actions = [];
+                part.experiences = [];
+                part.experienceButtons = [
+                    {
+                        name: "Add",
+                        icon: "bi-plus-lg",
+                        action: "addExperience",
                     }
-                    arr.push(classDescriptor);
-                }
-                return arr;
-            }, []);
+                ];
+                part.actionFilters = [
+                    {name: "weapon", active: false},
+                    {name: "spell", active: false},
+                    {name: "class card", active: false},
+                    {name: "non-class card", active: false},
+                    {name: "borrowed power", active: false},
+                ];
 
-            if(ancestries.length > 0){ part.ancestry = Utils.joinHelper(ancestries, ' / '); }
-            if(communities.length > 0){ part.origin = Utils.joinHelper(communities, ' / '); }
-            if(classes.length > 0){ part.classText = Utils.joinHelper(classes, ' / '); }
+                //attacks from equipped weapons
+                for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
+                    part.actions.push({
+                        isAttack: true,
+                        isBorrowedPower: false,
+                        name: weapon.name,
+                        trait: weapon.system.trait,
+                        damageFormula: weapon.system.damage,
+                        damageType: weapon.system.damageType,
+                    })
+                }
+
+                //attacks from equipped spells (later, spells granted by equipped cards)
+                for(const spell of this.document.items.filter(i => i instanceof SpellDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
+                    /*part.actions.push({
+                        isAttack: true,
+                        isBorrowedPower: false,
+                        name: spell.name,
+                        trait: spell.system.trait,
+                        damageFormula: spell.system.damage,
+                        damageType: spell.system.damageType,
+                    })*/
+                }
+
+                //Features description
+
+                //borrowed powers
+
+                //experiences
+                for (const experience of this.document.system.experiences) {
+                    part.experiences.push({ description: experience.description, bonus: experience.bonus });
+                }
+
+                if (part.experiences.length === 0){
+                    part.experiences.push(this.constructor.EMPTY_EXPERIENCE);
+                }
+                break;
+            case "characterInfo":
+                part.classText = 'None';
+                part.origin = 'None';
+                part.ancestry = 'None';
+
+                const ancestries = Array.from(this.document.system.ancestries.values()).reduce((arr, ancestry) => {
+                    arr.push(ancestry.name);
+                    return arr;
+                }, []);
+
+                const communities = Array.from(this.document.system.communities.values()).reduce((arr, community) => {
+                    arr.push(community.name);
+                    return arr;
+                }, []);
+
+                const classes = Array.from(this.document.system.classes.values()).reduce((arr, rpgClass) => {
+                    if(rpgClass){
+                        let classDescriptor = rpgClass.name;
+                        for(const [k, v] of this.document.system.subclasses){
+                            if(v.document.system.classUUID === rpgClass.uuid){
+                                classDescriptor += ` (${v.masteryLevel} ${v.document.name})`;
+                                break;
+                            }
+                        }
+                        arr.push(classDescriptor);
+                    }
+                    return arr;
+                }, []);
+
+                if(ancestries.length > 0){ part.ancestry = Utils.joinHelper(ancestries, ' / '); }
+                if(communities.length > 0){ part.origin = Utils.joinHelper(communities, ' / '); }
+                if(classes.length > 0){ part.classText = Utils.joinHelper(classes, ' / '); }
+                break;
         }
 
         return Utils.mergeObjects(context, part);
@@ -286,7 +289,7 @@ export class PlayerSheet extends DtgActorSheet {
             path === "system.communityUUID" ||
             path === "system.playerClassesUUIDs" ||
             path.startsWith("system.playerSubclasses.") ||
-            path.startsWith("flags.")
+            path === `flags.${CONSTANTS.SYSTEM_ID}.${PlayerSheet.FLAG_NAMES.rollMod}`
         ) result.push("characterInfo");
 
         if (path.startsWith("system.resources.") ||
@@ -322,6 +325,7 @@ export class PlayerSheet extends DtgActorSheet {
         const listOfPaths = Object.keys(flat);
         const parts = new Set();
         for (const path of listOfPaths) for (const part of PlayerSheet.#partsForPath(path)) parts.add(part);
+
         const result = {
             requires: parts.size && parts.size > 0,
             options: {}
@@ -462,7 +466,7 @@ export class PlayerSheet extends DtgActorSheet {
             delete data._id;
 
             const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
-            await this.render({ parts: ["inventory"] });
+            //await this.render({ parts: ["inventory"] });
             return created;
         } else {
             ui.notifications.warn('this item is not supported for this sheet yet.');
@@ -543,7 +547,7 @@ export class PlayerSheet extends DtgActorSheet {
         const item = this.document.items.get(event.target.closest("[data-item-id]")?.dataset.itemId);
     }
 
-    static async #filterItems(event) {
+    static async #filterBackpackItems(event) {
         event.preventDefault();
         const itemFilter = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
         if(itemFilter[event.target.dataset.filter] === true) {
@@ -551,9 +555,11 @@ export class PlayerSheet extends DtgActorSheet {
         } else {
             itemFilter[event.target.dataset.filter] = true;
         }
+        event.target.setAttribute('aria-pressed', String(itemFilter[event.target.dataset.filter]));
+        event.target.querySelector('i').classList.toggle('bi-check-lg');
         await this.document.update({[`flags.${CONSTANTS.SYSTEM_ID}.itemFilter`]: itemFilter}, {render: false});
 
-        this.render({ parts: ["inventory"]});
+        await this.#applyBackpackFilter(itemFilter);
     }
 
     static async #openItem(event) {
@@ -580,14 +586,19 @@ export class PlayerSheet extends DtgActorSheet {
         const element = event.target.closest("[data-item-id]");
         switch(element.dataset.itemKind){
             case "embed":
-                const id = element?.dataset.itemId;
-                await this.document.deleteEmbeddedDocuments("Item", [id], {render: false});
+                const idEmbed = element?.dataset.itemId;
+                this.#backpackItems.delete(idEmbed);
+                await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
+                await this.document.deleteEmbeddedDocuments("Item", [idEmbed], {render: false});
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
+                const idCard = element?.dataset.itemId;
+                this.#backpackItems.delete(idCard);
+                await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
-                equippedDomainCardsUUIDs.delete(element?.dataset.itemId);
+                equippedDomainCardsUUIDs.delete(idCard);
                 const domainCardsUUIDs = this.document.system.domainCardsUUIDs;
-                domainCardsUUIDs.delete(element?.dataset.itemId);
+                domainCardsUUIDs.delete(idCard);
                 await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs], 'system.domainCardsUUIDs': [...domainCardsUUIDs]}, { render: false });
                 break;
             default:
@@ -599,7 +610,7 @@ export class PlayerSheet extends DtgActorSheet {
         event.preventDefault();
         const experiences = this.document.system.experiences.toSpliced(event.target.dataset.index,1);
         await this.document.update({"system.experiences": experiences}, {render: false});
-        this.render({ parts: ["quickAccess"] });
+        //this.render({ parts: ["quickAccess"] });
     }
 
     static async #addExperience(event){
@@ -619,6 +630,7 @@ export class PlayerSheet extends DtgActorSheet {
 
         this._onQtyChange ??= this.#onQtyChange.bind(this);
         this.element.addEventListener("change", this._onQtyChange);
+        this.#populateInventoryItems();
     }
 
     async #handleDoubleClick(event) {
@@ -666,5 +678,156 @@ export class PlayerSheet extends DtgActorSheet {
             [this.element]);
     }
 
+    #populateInventoryItems({excludeNew = false} = {}) {
+        const filters = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
+        const isAll = !Object.values(filters)?.some(Boolean);
+        const container = this.#getInventoryContainer();
+        if (!container) return;
+
+        // container starts empty (we render just the shell), so just insert what should be visible
+        for (const row of [...this.#backpackItems.values()].sort((a, b) => a.order - b.order)) {
+            if (row.isNew && excludeNew) continue;
+            if (isAll || filters?.[row.item.type]) {
+                if (!row.dom.isConnected) this.#insertRow(row);
+            }
+        }
+    }
+
+    #getInventoryContainer() {
+        return this.element.querySelector('div.item-list');
+    }
+
+    #insertRow(row) {
+        const container = this.#getInventoryContainer();
+        if (!container) return;
+
+        // row.dom.classList.add('collapsible', 'item-row');
+        // row.dom.classList.add('is-collapsed');
+
+        // find the first attached sibling with higher order
+        const kids = Array.from(container.children).filter(el => el.matches('.item-row'));
+        const before = kids.find(el => (+el.dataset.order || 0) > row.order) ?? null;
+
+        container.insertBefore(row.dom, before);
+
+        // expand on the next frame
+        //requestAnimationFrame(() => row.dom.classList.remove('is-collapsed'));
+    }
+
+    // async #flipList(list, filters, mutateFn, { duration = 250, easing = 'ease' } = {}) {
+    //     //const list = this.#getInventoryContainer();
+    //     if (!list) return Promise.resolve();
+    //
+    //     // FIRST: measure current children
+    //     const beforeKids = Array.from(list.children);
+    //     const before = new Map(beforeKids.map(el => [el, el.getBoundingClientRect()]));
+    //
+    //     // Let the caller mark removals / insert additions
+    //     mutateFn(list, filters);
+    //
+    //     // LAST: measure children after mutate
+    //     const afterKids = Array.from(list.children);
+    //     const after = new Map(afterKids.map(el => [el, el.getBoundingClientRect()]));
+    //
+    //     const animations = [];
+    //
+    //     // moved / stayed: animate from delta
+    //     for (const el of afterKids) {
+    //         const a = after.get(el);
+    //         const f = before.get(el);
+    //         if (!a || !f) continue; // new elements handled below
+    //         const dx = f.left - a.left;
+    //         const dy = f.top  - a.top;
+    //         if (dx || dy) {
+    //             el.animate(
+    //                 [
+    //                     { transform: `translate(${dx}px, ${dy}px)` },
+    //                     { transform: 'translate(0, 0)' }
+    //                 ],
+    //                 { duration, easing }
+    //             );
+    //         }
+    //     }
+    //
+    //     // new: fade in a bit
+    //     for (const el of afterKids) {
+    //         if (!before.has(el)) {
+    //             el.animate(
+    //                 [
+    //                     { opacity: 0, transform: 'translateY(-4px)' },
+    //                     { opacity: 1, transform: 'translateY(0)' }
+    //                 ],
+    //                 { duration, easing }
+    //             );
+    //         }
+    //     }
+    //
+    //     // removed: fade out THEN remove (they're still in the DOM, marked by mutateFn)
+    //     for (const el of beforeKids) {
+    //         if (el.dataset.remove === 'true') {
+    //             const animation = el.animate(
+    //                 [
+    //                     { opacity: 1, transform: 'translateY(0)' },
+    //                     { opacity: 0, transform: 'translateY(-4px)' }
+    //                 ],
+    //                 { duration, easing }
+    //             );
+    //             animation.addEventListener('finish', () => el.remove());
+    //             animations.push(animation.finished);
+    //         }
+    //     }
+    //
+    //     return await Promise.all(animations);
+    // }
+
+    async #applyBackpackFilter(filters) {
+        const list = this.#getInventoryContainer();
+        if (!list) return;
+
+        await Utils.flipList(list, filters, this.#flipBackpackMutator.bind(this));
+    }
+
+    #flipBackpackMutator(list, filters) {
+        const isAll = !Object.values(filters)?.some(Boolean);
+        const sortedRows = [...this.#backpackItems.values()].sort((a, b) => a.order - b.order);
+
+        // A) mark current DOM rows that should be removed (don't remove yet)
+        for (const element of Array.from(list.querySelectorAll('.item-row'))) {
+            const id = element.dataset.itemId;
+            const row = this.#backpackItems.get(id);
+            const keep = row && (isAll || !!filters?.[row.item.type]);
+            element.dataset.remove = keep ? 'false' : 'true';
+        }
+
+        // B) insert any rows that should be visible but aren't in the DOM yet
+        for (const row of sortedRows) {
+            const keep = isAll || !!filters?.[row.item.type];
+            if (!keep) continue;
+            if (row.dom.isConnected) continue;
+
+            // make it start a little transparent so FLIP will fade it in
+            row.dom.style.opacity = '0';
+
+            // ensure metadata for order (if your HBS doesn't already set this)
+            //row.dom.dataset.order ??= String(row.order);
+
+            // insert before the first DOM child with a greater order that is NOT being removed
+            const before = Array
+                .from(list.children)
+                .find(el => el.matches('.item-row')
+                    && el.dataset.remove !== 'true'
+                    && ((+el.dataset.order || 0) > row.order)) ?? null;
+
+            list.insertBefore(row.dom, before);
+            // cleanup inline opacity after animation finishes (harmless if left)
+            queueMicrotask(() => row.dom.style.removeProperty('opacity'));
+        }
+    }
+
+    async _onRender(context, options) {
+        super._onRender(context, options);
+        this.#populateInventoryItems({excludeNew: true});
+        await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
+    }
 
 }

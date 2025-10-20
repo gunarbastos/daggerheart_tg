@@ -1,0 +1,48 @@
+<div class="item-row" data-item-id="{{backpackItem.id}}" data-item-type="{{backpackItem.item.type}}" data-item-kind="{{backpackItem.kind}}" data-order="{{order}}">
+    <div class="item-main">
+        <span class="item-name" data-action="openItem">{{backpackItem.item.name}}</span>
+        <span class="item-type">{{backpackItem.item.type}}</span>
+    </div>
+
+    <div class="item-meta">
+        {{#if (or (eq backpackItem.item.system.quantity 0) backpackItem.item.system.quantity)}}
+            <div class="qty-ctrl">
+                {{#> numberField }} class="field-input" value="{{backpackItem.item.system.quantity}}" {{/numberField}}
+            </div>
+        {{/if}}
+    </div>
+
+    <div class="item-actions">
+        <button type="button"
+                class="btn-action bi bi-pencil-fill"
+                data-action="openItem" title="Open"></button>
+        {{#if backpackItem.equipable}}
+            <button type="button"
+                    class="btn-action bi{{#if backpackItem.equipped}} bi-person-fill{{else}} bi-backpack3-fill{{/if}}"
+                    data-action="{{#if backpackItem.equipped}}unequipItem{{else}}equipItem{{/if}}"
+                    aria-pressed="{{backpackItem.equipped}}" title="Equip/Unequip"></button>
+        {{/if}}
+        {{#if backpackItem.item.system.activatable}}
+            <button type="button"
+                    class="btn-action bi bi-lightning-fill"
+                    data-action="activateItem"
+                    title="Activate"></button>
+        {{/if}}
+        {{#if backpackItem.item.system.consumable}}
+            <button type="button"
+                    class="btn-action bi bi-flask-florence-fill"
+                    data-action="consumeItem"
+                    title="Consume"></button>
+        {{/if}}
+        {{#if backpackItem.item.system.attachable}}
+            <button type="button"
+                    class="btn-action bi bi-link-45deg"
+                    data-action="attachItem"
+                    title="Attach"></button>
+        {{/if}}
+        <button type="button"
+                class="btn-action danger bi bi-trash-fill"
+                data-action="deleteItem"
+                title="Remove"></button>
+    </div>
+</div>

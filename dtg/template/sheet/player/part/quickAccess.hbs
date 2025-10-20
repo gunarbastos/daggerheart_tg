@@ -1,20 +1,19 @@
 <section class="dtg-part part-quick-access" data-part-id="quick-access" data-drop-scope="quick-access" aria-label="quick-access">
     <div class="panel-body">
         <div class="info-section">
-            {{#> sheetSection name="Experiences"}}
+            {{#> sheetSection name="Experiences" buttons=experienceButtons}}
                 <div class="info">
                     {{#each experiences as |e|}}
                         <div class="experience" id="exp-{{@index}}">
-                            <input type="checkbox" />
-                            {{#> numberField }} class="field-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
+                            <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus">
+                                <input id="setting-x" type="checkbox" class="switch-input">
+                                <span class="switch-track" aria-hidden="true"></span>
+                            </label>
+                            {{#> numberField }} class="field-input small-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
                             {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
-                            <button type="button" class="btn-action danger preserve-width" data-action="deleteExperience" data-index="{{@index}}"><i class="bi bi-trash-fill"></i></button>
+                            <button type="button" class="btn-action danger preserve-width" data-tooltip="BEWARE! This action is permanent" data-action="deleteExperience" data-index="{{@index}}"><i class="bi bi-trash-fill"></i></button>
                         </div>
                     {{/each}}
-                    <div class="items-button-row">
-                        <button type="button" class="full-width" data-action="addExperience"><i class="bi bi-plus-lg"></i></button>
-                        <!--<button type="button" class="preserve-width"><i class="bi bi-unlock-fill"></i></button>-->
-                    </div>
                 </div>
             {{/sheetSection}}
         </div>
@@ -26,8 +25,8 @@
                         <div class="{{#if a.isAttack}}attack {{else}}{{#if a.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action">
                             <span class="action-name">{{a.name}}</span>
                             {{#if a.isAttack}}
-                                <button type="button" class="roll-btn" data-action="rollDuality" data-trait="{{a.trait}}"><i class="bi bi-crosshair"></i></button>
-                                <button type="button" class="roll-btn" data-action="rollDamage" data-formula="{{a.damageFormula}}" data-type="{{a.damageType}}"><i class="bi bi-droplet"></i></button>
+                                <button type="button" class="roll-btn" data-hint="Hit" data-action="rollDuality" data-trait="{{a.trait}}"><i class="bi bi-crosshair"></i></button>
+                                <button type="button" class="roll-btn" data-hint="Damage" data-action="rollDamage" data-formula="{{a.damageFormula}}" data-type="{{a.damageType}}"><i class="bi bi-fire"></i></button>
                             {{else}}
                                 <button type="button" class="roll-btn" data-action="activatePower"><i class="bi {{#if a.isBorrowedPower}}bi-hurricane{{else}}bi-crosshair{{/if}}"></i></button>
                             {{/if}}

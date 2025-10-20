@@ -23,7 +23,7 @@
 
       .section-body {
         height: 100%;
-        padding: 5px;
+        padding: 5px 0;
         border-right: 1px solid var(--color-border, #8882);
       }
     }
@@ -71,12 +71,13 @@
       }
 
       .roll-btn {
-        border: 1px solid var(--color-border, #8882);
+        //border: 1px solid var(--color-border, #8882);
         border-radius: 4px;
         background: var(--color-bg-btn-minor-inactive, transparent);
 
         &:hover {
-          background: var(--color-bg-btn-minor-active, transparent);
+          //background: var(--color-bg-btn-minor-active, transparent);
+          background: revert-layer;
         }
       }
     }

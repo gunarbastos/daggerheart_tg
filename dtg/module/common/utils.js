@@ -4,6 +4,72 @@ export class Utils {
 
     static _document_cache = new Map();
 
+    static async flipList(list, filters, mutateFn, { duration = 250, easing = 'ease' } = {}) {
+        //const list = this.#getInventoryContainer();
+        if (!list) return Promise.resolve();
+
+        // FIRST: measure current children
+        const beforeKids = Array.from(list.children);
+        const before = new Map(beforeKids.map(el => [el, el.getBoundingClientRect()]));
+
+        // Let the caller mark removals / insert additions
+        mutateFn(list, filters);
+
+        // LAST: measure children after mutate
+        const afterKids = Array.from(list.children);
+        const after = new Map(afterKids.map(el => [el, el.getBoundingClientRect()]));
+
+        const animations = [];
+
+        // moved / stayed: animate from delta
+        for (const el of afterKids) {
+            const a = after.get(el);
+            const f = before.get(el);
+            if (!a || !f) continue; // new elements handled below
+            const dx = f.left - a.left;
+            const dy = f.top  - a.top;
+            if (dx || dy) {
+                el.animate(
+                    [
+                        { transform: `translate(${dx}px, ${dy}px)` },
+                        { transform: 'translate(0, 0)' }
+                    ],
+                    { duration, easing }
+                );
+            }
+        }
+
+        // new: fade in a bit
+        for (const el of afterKids) {
+            if (!before.has(el)) {
+                el.animate(
+                    [
+                        { opacity: 0, transform: 'translateY(-4px)' },
+                        { opacity: 1, transform: 'translateY(0)' }
+                    ],
+                    { duration, easing }
+                );
+            }
+        }
+
+        // removed: fade out THEN remove (they're still in the DOM, marked by mutateFn)
+        for (const el of beforeKids) {
+            if (el.dataset.remove === 'true') {
+                const animation = el.animate(
+                    [
+                        { opacity: 1, transform: 'translateY(0)' },
+                        { opacity: 0, transform: 'translateY(-4px)' }
+                    ],
+                    { duration, easing }
+                );
+                animation.addEventListener('finish', () => el.remove());
+                animations.push(animation.finished);
+            }
+        }
+
+        return await Promise.all(animations);
+    }
+
     static updateResourcePips(document, resource, newValue, rowClass, rowSelectorProperty, rowSelectorValue, buttonClass, buttonAction, iconType, elementRoots){
         let usedImage = '';
         let availableImage = '';

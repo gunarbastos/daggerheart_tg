@@ -30,6 +30,25 @@ export class AdversarySheet extends DtgActorSheet {
         };
     }
 
+    static FEATURE_DISPLAY_MODES = {
+        list: 'list',
+        card: 'card',
+    }
+
+    static get FLAG_NAMES()  {
+        return {
+            ...super.FLAG_NAMES,
+            featureDisplayMode: 'featureDisplayMode',
+        }
+    }
+
+    static get FLAG_DEFAULT_VALUES() {
+        return {
+            ...super.FLAG_DEFAULT_VALUES,
+            featureDisplayMode: AdversarySheet.FEATURE_DISPLAY_MODES.list
+        }
+    }
+
     static EMPTY_EXPERIENCE = { description: '', bonus: '' };
 
     async _prepareContext(options) {
@@ -45,7 +64,7 @@ export class AdversarySheet extends DtgActorSheet {
     }
 
     async _preparePartContext(partId, context, options) {
-        const part = {};
+        let part = {};
         switch(partId) {
             case "resources":
                 part.resources = {
@@ -82,7 +101,31 @@ export class AdversarySheet extends DtgActorSheet {
                 }
 
                 if (part.experiences.length === 0){
-                    part.experiences.push({ description: '', bonus: '' });
+                    part.experiences.push(AdversarySheet.EMPTY_EXPERIENCE);
+                }
+                break;
+            case "features":
+                const featureDisplayMode = this._getFlag(AdversarySheet.FLAG_NAMES.featureDisplayMode);
+
+                part = {
+                    ...part,
+                    gridMode: featureDisplayMode === AdversarySheet.FEATURE_DISPLAY_MODES.list,
+                    cardMode: featureDisplayMode === AdversarySheet.FEATURE_DISPLAY_MODES.card,
+                    featureBtns: [
+                        {
+                            name: 'list',
+                            active: false,
+                            icon: 'bi-list-columns',
+                            action: 'changeFeatureViewMode',
+                        },
+                        {
+                            name: 'card',
+                            active: false,
+                            icon: 'bi-postcard-fill',
+                            action: 'changeFeatureViewMode'
+                        },
+                    ],
+                    features: [],
                 }
                 break;
         }
@@ -118,9 +161,9 @@ export class AdversarySheet extends DtgActorSheet {
 
     static async #addExperience(event){
         event.preventDefault();
-        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, this.constructor.EMPTY_EXPERIENCE);
+        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, AdversarySheet.EMPTY_EXPERIENCE);
         if(experiences.length === 1){
-            experiences.push(this.constructor.EMPTY_EXPERIENCE);
+            experiences.push(AdversarySheet.EMPTY_EXPERIENCE);
         }
         await this.document.update({"system.experiences": experiences}, {render: false});
         this.render({ parts: ["combatInfo"] });

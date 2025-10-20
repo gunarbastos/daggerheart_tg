@@ -102,17 +102,17 @@ export class PlayerDocument extends CombatActorDocument {
 
     _onCreateDescendantDocuments(parent, collection, documents, data, options, userId){
         if(parent !== this) return null;
-        this._updateApps({'items': true}, userId,  false, undefined);
+        this._updateApps({'items': {operation: 'create', documents: documents} }, userId,  false, undefined);
     }
 
     _onDeleteDescendantDocuments(parent, collection, documents, ids, options, userId){
         if(parent !== this) return null;
-        this._updateApps({'items': true}, userId,  false, undefined);
+        this._updateApps({'items': {operation: 'delete', ids: ids}}, userId,  false, undefined);
     }
 
     _onUpdateDescendantDocuments(parent, collection, documents, changes, options, userId){
         if(parent !== this) return null;
-        this._updateApps({'items': true}, userId,  false, undefined);
+        this._updateApps({'items': {operation: 'update', documents: documents}}, userId,  false, undefined);
     }
 
 }

@@ -3,8 +3,14 @@
     <span class="section-line" aria-hidden="true"></span>
     {{#if buttons}}
         <div class="section-filter" role="toolbar" aria-label="{{buttonsDescription}}">
-            {{#each buttons as |buttons|}}
-                <button type="button" class="btn-filter" data-action="{{../buttonsAction}}" data-filter="{{buttons.name}}" aria-pressed="{{buttons.active}}">{{#if buttons.active}}<i class="bi bi-check-lg"></i> {{/if}}{{capitalize buttons.name}}</button>
+            {{#each buttons as |btn|}}
+                <button type="button"
+                        class="btn-filter"
+                        data-action="{{#if btn.action}}{{btn.action}}{{else}}{{../buttonsAction}}{{/if}}"
+                        data-filter="{{btn.name}}"
+                        aria-pressed="{{btn.active}}">
+                    <i class="bi {{btn.icon}}"></i> {{capitalize btn.name}}
+                </button>
             {{/each}}
         </div>
     {{/if}}

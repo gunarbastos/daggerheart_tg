@@ -103,7 +103,7 @@ export class Mixins {
                 restore: false,
             }
 
-            #flagDefaultValues = {
+            static FLAG_DEFAULT_VALUES = {
                 rollMod: '',
                 hopeDie: '1d12',
                 fearDice: '1d12',
@@ -116,7 +116,7 @@ export class Mixins {
                     ui.notifications.error(`Flag ${flag} is a boxed primitive.`);
                     value = undefined;
                 }
-                if(!value && this.#flagDefaultValues[flag]) value = this.#flagDefaultValues[flag];
+                if(!value && this.constructor.FLAG_DEFAULT_VALUES[flag]) value = this.constructor.FLAG_DEFAULT_VALUES[flag];
 
                 return value;
             }

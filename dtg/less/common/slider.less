@@ -1,0 +1,53 @@
+.dtg{
+  // layout
+  .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+
+  // hide the default box but keep it focusable/accessible
+  .switch-input {
+    appearance: none;           // remove default checkbox UI
+    position: absolute;         // take it out of flow, label still toggles it
+    inline-size: 1px; block-size: 1px; clip-path: inset(50%); overflow: hidden;
+  }
+
+  // the visual track
+  .switch-track {
+    --w: 36px;        // track width
+    --h: 20px;        // track height (also thumb diameter)
+    --pad: 2px;       // inner padding
+    --off: #666;      // off color
+    --on:  rgba(94, 214, 255, 0.65);      // on color
+    --margin: 0.3em;
+
+    position: relative;
+    display: inline-block;
+    inline-size: var(--w);
+    block-size: var(--h);
+    background: var(--off);
+    border-radius: calc(var(--h) / 2);
+    transition: background 160ms ease;
+
+    // the thumb
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: var(--pad);
+      inset-inline-start: var(--pad);
+      inline-size: calc(var(--h) - 2 * var(--pad));
+      block-size:  calc(var(--h) - 2 * var(--pad));
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 160ms ease;
+    }
+  }
+
+  // checked state
+  .switch-input:checked + .switch-track { background: var(--on); }
+  .switch-input:checked + .switch-track::before { transform: translateX(calc(var(--w) - var(--h))); }
+
+  // focus ring
+  .switch-input:focus-visible + .switch-track {
+    outline: 2px solid #8cf;
+    outline-offset: 2px;
+    margin-left: var(--margin);
+  }
+}

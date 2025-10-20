@@ -24,6 +24,31 @@
     border: 1px solid var(--color-border, #8882);
     border-radius: 8px;
 
+    --h: auto;                 // natural height injected from JS
+    // Animate collapse + fade + slight slide
+    max-height: var(--h);
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+            opacity    180ms ease,
+            transform  240ms ease,
+            margin     240ms ease,
+            padding    240ms ease,
+            max-height 240ms ease;
+    overflow: hidden;          // required so max-height hides content
+
+    &.is-collapsed {
+      max-height: 0;             // collapses the row’s space
+      opacity: 0;                // fade out
+      transform: translateY(-6px); // subtle slide up
+      margin-top: 0;             // optional: remove outer gaps while hidden
+      margin-bottom: 0;
+      padding-top: 0;            // optional: remove inner padding while hidden
+      padding-bottom: 0;
+      pointer-events: none;      // ignore clicks while hidden
+
+    }
+
     .qty-ctrl {
       display: inline-flex;
       align-items: center;
@@ -136,7 +161,12 @@
     }
   }
 
+}
 
-
-
+// Respect OS “reduced motion”
+@media (prefers-reduced-motion: reduce) {
+  .item-row,
+  .item-row.is-collapsed {
+    transition: none !important;
+  }
 }
