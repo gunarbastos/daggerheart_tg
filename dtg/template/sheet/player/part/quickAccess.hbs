@@ -1,19 +1,19 @@
 <section class="dtg-part part-quick-access" data-part-id="quick-access" data-drop-scope="quick-access" aria-label="quick-access">
     <div class="panel-body">
         <div class="info-section">
-            {{#> sheetSection name="Experiences" buttons=experienceButtons}}
+            {{#> sheetSection name="Experiences" buttons=experienceButtons id="experiences"}}
                 <div class="info">
                     {{#each experiences as |e|}}
-                        <div class="experience" id="exp-{{@index}}">
+                        <div class="experience experience-row" id="exp-{{@index}}" data-order="{{@index}}">
                             <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus">
-                                <input id="setting-x" type="checkbox" class="switch-input">
+                                <input type="checkbox" class="switch-input">
                                 <span class="switch-track" aria-hidden="true"></span>
                             </label>
                             {{#> numberField }} class="field-input small-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
                             {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
                             <button type="button" class="btn-action danger preserve-width" data-tooltip="BEWARE! This action is permanent" data-action="deleteExperience" data-index="{{@index}}"><i class="bi bi-trash-fill"></i></button>
                         </div>
-                    {{/each}}
+                    {{/each}}{{!----}}
                 </div>
             {{/sheetSection}}
         </div>

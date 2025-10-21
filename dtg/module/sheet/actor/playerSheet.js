@@ -66,6 +66,8 @@ export class PlayerSheet extends DtgActorSheet {
     }
 
     #backpackItems = new Map();
+    //#experienceItems = [];
+    #ActionItems = new Map();
 
     async _preparePartContext(partId, context, options) {
         const part = {};
@@ -223,13 +225,26 @@ export class PlayerSheet extends DtgActorSheet {
                 //borrowed powers
 
                 //experiences
-                for (const experience of this.document.system.experiences) {
-                    part.experiences.push({ description: experience.description, bonus: experience.bonus });
+                part.experiences = [];
+                for(const experience in this.document.system.experiences) {
+                    part.experiences.push(experience);
                 }
 
-                if (part.experiences.length === 0){
-                    part.experiences.push(this.constructor.EMPTY_EXPERIENCE);
+                if(part.experiences.length === 0){
+                    part.experiences.push(PlayerSheet.EMPTY_EXPERIENCE);
                 }
+
+
+                // for (const [index, experience] of this.document.system.experiences.entries()) {
+                //     Utils.log(index, experience);
+                //     if (this.#experienceItems.length <= index){
+                //         this.#experienceItems.push(await this.#buildDomForExperience(index, experience));
+                //         Utils.log('tag', index, this.#experienceItems);
+                //     } else {
+                //         this.#experienceItems[index].isNew = false;
+                //     }
+                // }
+
                 break;
             case "characterInfo":
                 part.classText = 'None';
@@ -267,6 +282,24 @@ export class PlayerSheet extends DtgActorSheet {
         }
 
         return Utils.mergeObjects(context, part);
+    }
+
+    async #buildDomForExperience(index, experience) {
+        const dom = await foundry.applications.handlebars.renderTemplate(
+            `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/partial/experienceRow.hbs`,
+            {
+                index: index,
+                experience: experience
+            });
+        const elementHolder = document.createElement('template');
+        elementHolder.innerHTML = dom.trim();
+        return elementHolder.content.firstElementChild;
+        // return {
+        //     experience: experience,
+        //     order: index,
+        //     dom: elementHolder.content.firstElementChild,
+        //     isNew: true,
+        // };
     }
 
     static #partsForPath(path){
@@ -609,18 +642,28 @@ export class PlayerSheet extends DtgActorSheet {
     static async #deleteExperience(event){
         event.preventDefault();
         const experiences = this.document.system.experiences.toSpliced(event.target.dataset.index,1);
+        //this.#experienceItems.splice(event.target.dataset.index, 1);//delete(Number(event.target.dataset.index));
+        await this.#animateExperiences({deleted: event.target.dataset.index});
+        // for (let index = event.target.dataset.index; index <= this.#experienceItems.length-1; index++ ) {
+        //     const fixedExperience = await this.#buildDomForExperience(index, this.#experienceItems[index].experience);
+        //     Utils.log(index, this.#experienceItems[index].dom.isConnected);
+        //     this.#experienceItems[index].dom.replaceWith(fixedExperience.dom);
+        //     Utils.log(index, fixedExperience.dom, this.#experienceItems[index].dom);
+        // }
+        //await this.#fixShit(event.target.dataset.index);
+        //this.#experienceItems.push(await this.#buildDomForExperience(index, experience))
         await this.document.update({"system.experiences": experiences}, {render: false});
-        //this.render({ parts: ["quickAccess"] });
     }
 
     static async #addExperience(event){
         event.preventDefault();
-        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, this.constructor.EMPTY_EXPERIENCE);
+        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, PlayerSheet.EMPTY_EXPERIENCE);
         if(experiences.length === 1){
-            experiences.push(this.constructor.EMPTY_EXPERIENCE);
+            experiences.push(PlayerSheet.EMPTY_EXPERIENCE);
         }
-        await this.document.update({"system.experiences": experiences}, {render: false});
-        this.render({ parts: ["quickAccess"] });
+        await this.#animateExperiences({inserted: await this.#buildDomForExperience(experiences.length-1, PlayerSheet.EMPTY_EXPERIENCE)});
+        this.document.update({"system.experiences": experiences}, {render: false, skipRequester: true, appId: this.id});
+        //this.render({ parts: ["quickAccess"] });
     }
 
     async _onFirstRender(context, options) {
@@ -631,6 +674,7 @@ export class PlayerSheet extends DtgActorSheet {
         this._onQtyChange ??= this.#onQtyChange.bind(this);
         this.element.addEventListener("change", this._onQtyChange);
         this.#populateInventoryItems();
+        //this.#populateExperiences();
     }
 
     async #handleDoubleClick(event) {
@@ -688,7 +732,7 @@ export class PlayerSheet extends DtgActorSheet {
         for (const row of [...this.#backpackItems.values()].sort((a, b) => a.order - b.order)) {
             if (row.isNew && excludeNew) continue;
             if (isAll || filters?.[row.item.type]) {
-                if (!row.dom.isConnected) this.#insertRow(row);
+                if (!row.dom.isConnected) this.#insertBackpackRow(container, row);
             }
         }
     }
@@ -697,97 +741,22 @@ export class PlayerSheet extends DtgActorSheet {
         return this.element.querySelector('div.item-list');
     }
 
-    #insertRow(row) {
-        const container = this.#getInventoryContainer();
-        if (!container) return;
-
-        // row.dom.classList.add('collapsible', 'item-row');
-        // row.dom.classList.add('is-collapsed');
-
+    #insertBackpackRow(container, row) {
         // find the first attached sibling with higher order
         const kids = Array.from(container.children).filter(el => el.matches('.item-row'));
         const before = kids.find(el => (+el.dataset.order || 0) > row.order) ?? null;
 
         container.insertBefore(row.dom, before);
-
-        // expand on the next frame
-        //requestAnimationFrame(() => row.dom.classList.remove('is-collapsed'));
     }
-
-    // async #flipList(list, filters, mutateFn, { duration = 250, easing = 'ease' } = {}) {
-    //     //const list = this.#getInventoryContainer();
-    //     if (!list) return Promise.resolve();
-    //
-    //     // FIRST: measure current children
-    //     const beforeKids = Array.from(list.children);
-    //     const before = new Map(beforeKids.map(el => [el, el.getBoundingClientRect()]));
-    //
-    //     // Let the caller mark removals / insert additions
-    //     mutateFn(list, filters);
-    //
-    //     // LAST: measure children after mutate
-    //     const afterKids = Array.from(list.children);
-    //     const after = new Map(afterKids.map(el => [el, el.getBoundingClientRect()]));
-    //
-    //     const animations = [];
-    //
-    //     // moved / stayed: animate from delta
-    //     for (const el of afterKids) {
-    //         const a = after.get(el);
-    //         const f = before.get(el);
-    //         if (!a || !f) continue; // new elements handled below
-    //         const dx = f.left - a.left;
-    //         const dy = f.top  - a.top;
-    //         if (dx || dy) {
-    //             el.animate(
-    //                 [
-    //                     { transform: `translate(${dx}px, ${dy}px)` },
-    //                     { transform: 'translate(0, 0)' }
-    //                 ],
-    //                 { duration, easing }
-    //             );
-    //         }
-    //     }
-    //
-    //     // new: fade in a bit
-    //     for (const el of afterKids) {
-    //         if (!before.has(el)) {
-    //             el.animate(
-    //                 [
-    //                     { opacity: 0, transform: 'translateY(-4px)' },
-    //                     { opacity: 1, transform: 'translateY(0)' }
-    //                 ],
-    //                 { duration, easing }
-    //             );
-    //         }
-    //     }
-    //
-    //     // removed: fade out THEN remove (they're still in the DOM, marked by mutateFn)
-    //     for (const el of beforeKids) {
-    //         if (el.dataset.remove === 'true') {
-    //             const animation = el.animate(
-    //                 [
-    //                     { opacity: 1, transform: 'translateY(0)' },
-    //                     { opacity: 0, transform: 'translateY(-4px)' }
-    //                 ],
-    //                 { duration, easing }
-    //             );
-    //             animation.addEventListener('finish', () => el.remove());
-    //             animations.push(animation.finished);
-    //         }
-    //     }
-    //
-    //     return await Promise.all(animations);
-    // }
 
     async #applyBackpackFilter(filters) {
         const list = this.#getInventoryContainer();
         if (!list) return;
 
-        await Utils.flipList(list, filters, this.#flipBackpackMutator.bind(this));
+        await Utils.flipList(list, this.#flipBackpackMutator.bind(this), { filters });
     }
 
-    #flipBackpackMutator(list, filters) {
+    #flipBackpackMutator(list, { filters }) {
         const isAll = !Object.values(filters)?.some(Boolean);
         const sortedRows = [...this.#backpackItems.values()].sort((a, b) => a.order - b.order);
 
@@ -828,6 +797,79 @@ export class PlayerSheet extends DtgActorSheet {
         super._onRender(context, options);
         this.#populateInventoryItems({excludeNew: true});
         await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
+        //this.#populateExperiences({excludeNew: true});
+        //await this.#animateExperiences();
     }
+
+    #getExperiencesContainer() {
+        return this.element.querySelector('div.section-body#experiences-body div.info');
+    }
+
+    // #populateExperiences({excludeNew = false} = {}) {
+    //     Utils.log('PlayerSheet', '#populateExperiences', this.#experienceItems);
+    //     const container = this.#getExperiencesContainer();
+    //     if (!container) return;
+    //
+    //     for (const row of this.#experienceItems) {
+    //         if (row.isNew && excludeNew) continue;
+    //         if (!row.dom.isConnected) this.#insertExperienceRow(container, row);
+    //     }
+    // }
+
+    // #insertExperienceRow(container, row) {
+    //     // find the first attached sibling with higher order
+    //     const kids = Array.from(container.children).filter(el => el.matches('.experience-row'));
+    //     const before = kids.find(el => (+el.dataset.order || 0) > row.order) ?? null;
+    //     container.insertBefore(row.dom, before);
+    // }
+
+    async #animateExperiences({deleted = false, inserted = false} = {}) {
+        const list = this.#getExperiencesContainer();
+        if (!list) return;
+
+        const opts = {};
+        if(deleted){
+            opts.deletedIndex = deleted;
+        }
+        if(inserted){
+            opts.added = inserted;
+        }
+
+        await Utils.flipList(list, this.#flipExperiencesMutator.bind(this), opts);
+        //await Utils.flipList(list, this.#flipExperiencesMutator.bind(this), deleted ? { deletedIndex: deleted } : {});
+    }
+
+    #flipExperiencesMutator(list, { deletedIndex = undefined, added = undefined } = {}) {
+        // A) mark current DOM rows that should be removed (don't remove yet)
+        if(deletedIndex) {
+            for (const element of Array.from(list.querySelectorAll('.experience-row'))) {
+                element.dataset.remove = element.dataset.order === deletedIndex ? 'true' : 'false';
+            }
+        }
+        // B) insert any rows that should be visible but aren't in the DOM yet
+        // for (const row of this.#experienceItems) {
+        //     if (row.dom.isConnected) continue;
+        //
+        //     // make it start a little transparent so FLIP will fade it in
+        //     row.dom.style.opacity = '0';
+        //
+        //     // insert before the first DOM child with a greater order that is NOT being removed
+        //     const before = Array
+        //         .from(list.children)
+        //         .find(el => el.matches('.experience-row')
+        //             && el.dataset.remove !== 'true'
+        //             && ((+el.dataset.order || 0) > row.order)) ?? null;
+        //
+        //     list.insertBefore(row.dom, before);
+        //     // cleanup inline opacity after animation finishes (harmless if left)
+        //     queueMicrotask(() => row.dom.style.removeProperty('opacity'));
+        // }
+        if (added && added instanceof Node){
+            added.style.opacity = '0';
+            list.insertBefore(added, null);
+            queueMicrotask(() => added.style.removeProperty('opacity'));
+        }
+    }
+
 
 }

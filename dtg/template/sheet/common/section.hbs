@@ -1,8 +1,8 @@
-<div class="section-header">
-    <span class="section-name">{{name}}</span>
-    <span class="section-line" aria-hidden="true"></span>
+<div class="section-header" {{#if id}}id="{{id}}-header"{{/if}}>
+    <span class="section-name" {{#if id}}id="{{id}}-name"{{/if}}>{{name}}</span>
+    <span class="section-line" aria-hidden="true" {{#if id}}id="{{id}}-line"{{/if}}></span>
     {{#if buttons}}
-        <div class="section-filter" role="toolbar" aria-label="{{buttonsDescription}}">
+        <div class="section-filter" role="toolbar" aria-label="{{buttonsDescription}}" {{#if id}}id="{{id}}-buttons"{{/if}}>
             {{#each buttons as |btn|}}
                 <button type="button"
                         class="btn-filter"
@@ -15,6 +15,6 @@
         </div>
     {{/if}}
 </div>
-<div class="section-body">
+<div class="section-body" {{#if id}}id="{{id}}-body"{{/if}}>
     {{~> @partial-block}}
 </div>
