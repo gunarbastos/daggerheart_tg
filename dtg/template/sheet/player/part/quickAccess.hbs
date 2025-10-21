@@ -4,22 +4,14 @@
             {{#> sheetSection name="Experiences" buttons=experienceButtons id="experiences"}}
                 <div class="info">
                     {{#each experiences as |e|}}
-                        <div class="experience experience-row" id="exp-{{@index}}" data-order="{{@index}}">
-                            <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus">
-                                <input type="checkbox" class="switch-input">
-                                <span class="switch-track" aria-hidden="true"></span>
-                            </label>
-                            {{#> numberField }} class="field-input small-input" name="system.experiences.{{@index}}.bonus" value="{{e.bonus}}" {{/numberField}}
-                            {{#> textField }} class="field-input" name="system.experiences.{{@index}}.description" value="{{e.description}}" {{/textField}}
-                            <button type="button" class="btn-action danger preserve-width" data-tooltip="BEWARE! This action is permanent" data-action="deleteExperience" data-index="{{@index}}"><i class="bi bi-trash-fill"></i></button>
-                        </div>
-                    {{/each}}{{!----}}
+                        {{> sheetExperienceRow experience=e index=@index }}
+                    {{/each}}
                 </div>
             {{/sheetSection}}
         </div>
 
         <div class="actions-section">
-            {{#> sheetSection name="Actions" buttonsDescription="Filter Action types" buttonsAction="filterActions" buttons=actionFilters}}
+            {{#> sheetSection name="Actions" buttonsDescription="Filter Action types" buttonsAction="filterActions" buttons=actionFilters id="actions"}}
                 <div class="actions">
                     {{#each actions as |a|}}
                         <div class="{{#if a.isAttack}}attack {{else}}{{#if a.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action">

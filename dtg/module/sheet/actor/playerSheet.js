@@ -66,7 +66,6 @@ export class PlayerSheet extends DtgActorSheet {
     }
 
     #backpackItems = new Map();
-    //#experienceItems = [];
     #ActionItems = new Map();
 
     async _preparePartContext(partId, context, options) {
@@ -97,11 +96,10 @@ export class PlayerSheet extends DtgActorSheet {
                         equipable = item.system.equipable;
                     }
 
-                    //shownItems.push({ kind: kind, equipped: equipped, equipable: equipable, id: itemId, item: item});
                     if(!this.#backpackItems.has(itemId)){
                         const currSize = this.#backpackItems.size;
                         const dom = await foundry.applications.handlebars.renderTemplate(
-                            `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/partial/backpackRow.hbs`,
+                            CONSTANTS.TEMPLATES.PLAYER_SHEET_BACKPACKROW.PATH,
                             {
                                 backpackItem: {
                                     kind: kind,
@@ -226,24 +224,13 @@ export class PlayerSheet extends DtgActorSheet {
 
                 //experiences
                 part.experiences = [];
-                for(const experience in this.document.system.experiences) {
+                for(const experience of this.document.system.experiences) {
                     part.experiences.push(experience);
                 }
 
                 if(part.experiences.length === 0){
                     part.experiences.push(PlayerSheet.EMPTY_EXPERIENCE);
                 }
-
-
-                // for (const [index, experience] of this.document.system.experiences.entries()) {
-                //     Utils.log(index, experience);
-                //     if (this.#experienceItems.length <= index){
-                //         this.#experienceItems.push(await this.#buildDomForExperience(index, experience));
-                //         Utils.log('tag', index, this.#experienceItems);
-                //     } else {
-                //         this.#experienceItems[index].isNew = false;
-                //     }
-                // }
 
                 break;
             case "characterInfo":
@@ -286,7 +273,7 @@ export class PlayerSheet extends DtgActorSheet {
 
     async #buildDomForExperience(index, experience) {
         const dom = await foundry.applications.handlebars.renderTemplate(
-            `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/partial/experienceRow.hbs`,
+            CONSTANTS.TEMPLATES.SHEET_EXPERIENCE_ROW.PATH,
             {
                 index: index,
                 experience: experience
@@ -294,12 +281,6 @@ export class PlayerSheet extends DtgActorSheet {
         const elementHolder = document.createElement('template');
         elementHolder.innerHTML = dom.trim();
         return elementHolder.content.firstElementChild;
-        // return {
-        //     experience: experience,
-        //     order: index,
-        //     dom: elementHolder.content.firstElementChild,
-        //     isNew: true,
-        // };
     }
 
     static #partsForPath(path){
@@ -347,8 +328,6 @@ export class PlayerSheet extends DtgActorSheet {
         ) result.push("inventory");
 
         if (path === "system.description") result.push("roleplay");
-
-        //if (path.startsWith("automation")) result.push("settings");
 
         return Utils.unique(result);
     }
@@ -422,12 +401,6 @@ export class PlayerSheet extends DtgActorSheet {
     }
 
     async _onDropItem(event, item) {
-        /*if(!(item instanceof InventoryItemDocument) && !(item instanceof FeatureDocument) && !(item instanceof DomainCardDocument)) {
-            ui.notifications.warn('this sheet only accepts Features and Inventory items for now');
-            event.preventDefault();
-            return;
-        }*/
-
         // If dragging within the same actor, ignore for now (no sort behavior yet)
         if (item.parent?.id === this.document.id) return undefined;
 
@@ -499,7 +472,6 @@ export class PlayerSheet extends DtgActorSheet {
             delete data._id;
 
             const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
-            //await this.render({ parts: ["inventory"] });
             return created;
         } else {
             ui.notifications.warn('this item is not supported for this sheet yet.');
@@ -577,7 +549,7 @@ export class PlayerSheet extends DtgActorSheet {
     static async #attachItem(event) {
         event.preventDefault();
         await DtgActorSheet._notYetImplemented(event);
-        const item = this.document.items.get(event.target.closest("[data-item-id]")?.dataset.itemId);
+        //const item = this.document.items.get(event.target.closest("[data-item-id]")?.dataset.itemId);
     }
 
     static async #filterBackpackItems(event) {
@@ -642,16 +614,7 @@ export class PlayerSheet extends DtgActorSheet {
     static async #deleteExperience(event){
         event.preventDefault();
         const experiences = this.document.system.experiences.toSpliced(event.target.dataset.index,1);
-        //this.#experienceItems.splice(event.target.dataset.index, 1);//delete(Number(event.target.dataset.index));
         await this.#animateExperiences({deleted: event.target.dataset.index});
-        // for (let index = event.target.dataset.index; index <= this.#experienceItems.length-1; index++ ) {
-        //     const fixedExperience = await this.#buildDomForExperience(index, this.#experienceItems[index].experience);
-        //     Utils.log(index, this.#experienceItems[index].dom.isConnected);
-        //     this.#experienceItems[index].dom.replaceWith(fixedExperience.dom);
-        //     Utils.log(index, fixedExperience.dom, this.#experienceItems[index].dom);
-        // }
-        //await this.#fixShit(event.target.dataset.index);
-        //this.#experienceItems.push(await this.#buildDomForExperience(index, experience))
         await this.document.update({"system.experiences": experiences}, {render: false});
     }
 
@@ -663,7 +626,6 @@ export class PlayerSheet extends DtgActorSheet {
         }
         await this.#animateExperiences({inserted: await this.#buildDomForExperience(experiences.length-1, PlayerSheet.EMPTY_EXPERIENCE)});
         this.document.update({"system.experiences": experiences}, {render: false, skipRequester: true, appId: this.id});
-        //this.render({ parts: ["quickAccess"] });
     }
 
     async _onFirstRender(context, options) {
@@ -674,7 +636,6 @@ export class PlayerSheet extends DtgActorSheet {
         this._onQtyChange ??= this.#onQtyChange.bind(this);
         this.element.addEventListener("change", this._onQtyChange);
         this.#populateInventoryItems();
-        //this.#populateExperiences();
     }
 
     async #handleDoubleClick(event) {
@@ -797,31 +758,11 @@ export class PlayerSheet extends DtgActorSheet {
         super._onRender(context, options);
         this.#populateInventoryItems({excludeNew: true});
         await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
-        //this.#populateExperiences({excludeNew: true});
-        //await this.#animateExperiences();
     }
 
     #getExperiencesContainer() {
         return this.element.querySelector('div.section-body#experiences-body div.info');
     }
-
-    // #populateExperiences({excludeNew = false} = {}) {
-    //     Utils.log('PlayerSheet', '#populateExperiences', this.#experienceItems);
-    //     const container = this.#getExperiencesContainer();
-    //     if (!container) return;
-    //
-    //     for (const row of this.#experienceItems) {
-    //         if (row.isNew && excludeNew) continue;
-    //         if (!row.dom.isConnected) this.#insertExperienceRow(container, row);
-    //     }
-    // }
-
-    // #insertExperienceRow(container, row) {
-    //     // find the first attached sibling with higher order
-    //     const kids = Array.from(container.children).filter(el => el.matches('.experience-row'));
-    //     const before = kids.find(el => (+el.dataset.order || 0) > row.order) ?? null;
-    //     container.insertBefore(row.dom, before);
-    // }
 
     async #animateExperiences({deleted = false, inserted = false} = {}) {
         const list = this.#getExperiencesContainer();
@@ -836,34 +777,15 @@ export class PlayerSheet extends DtgActorSheet {
         }
 
         await Utils.flipList(list, this.#flipExperiencesMutator.bind(this), opts);
-        //await Utils.flipList(list, this.#flipExperiencesMutator.bind(this), deleted ? { deletedIndex: deleted } : {});
     }
 
     #flipExperiencesMutator(list, { deletedIndex = undefined, added = undefined } = {}) {
-        // A) mark current DOM rows that should be removed (don't remove yet)
         if(deletedIndex) {
             for (const element of Array.from(list.querySelectorAll('.experience-row'))) {
                 element.dataset.remove = element.dataset.order === deletedIndex ? 'true' : 'false';
             }
         }
-        // B) insert any rows that should be visible but aren't in the DOM yet
-        // for (const row of this.#experienceItems) {
-        //     if (row.dom.isConnected) continue;
-        //
-        //     // make it start a little transparent so FLIP will fade it in
-        //     row.dom.style.opacity = '0';
-        //
-        //     // insert before the first DOM child with a greater order that is NOT being removed
-        //     const before = Array
-        //         .from(list.children)
-        //         .find(el => el.matches('.experience-row')
-        //             && el.dataset.remove !== 'true'
-        //             && ((+el.dataset.order || 0) > row.order)) ?? null;
-        //
-        //     list.insertBefore(row.dom, before);
-        //     // cleanup inline opacity after animation finishes (harmless if left)
-        //     queueMicrotask(() => row.dom.style.removeProperty('opacity'));
-        // }
+
         if (added && added instanceof Node){
             added.style.opacity = '0';
             list.insertBefore(added, null);

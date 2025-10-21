@@ -37,6 +37,13 @@
             max-height 240ms ease;
     overflow: hidden;          // required so max-height hides content
 
+    &:hover {
+      border-color: var(--color-form-label-hover) 1px solid;
+    }
+    &:focus-within {
+      border-color: var(--color-form-label-hover) 1px solid;
+    }
+
     &.is-collapsed {
       max-height: 0;             // collapses the row’s space
       opacity: 0;                // fade out

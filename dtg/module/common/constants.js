@@ -531,7 +531,9 @@ _rawConstants.TEMPLATES.NUMBER_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_D
 _rawConstants.TEMPLATES.TEXT_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/textField.hbs`, PRELOAD: true, ALIAS: "textField" };
 _rawConstants.TEMPLATES.RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "resourceRow" };
 _rawConstants.TEMPLATES.SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "sheetResourceRow" };
+_rawConstants.TEMPLATES.SHEET_EXPERIENCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/experienceRow.hbs`, PRELOAD: true, ALIAS: "sheetExperienceRow" };
 _rawConstants.TEMPLATES.PLAYER_SHEET_TRAIT = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/trait.hbs`, PRELOAD: true, ALIAS: "playerSheetTrait" };
+_rawConstants.TEMPLATES.PLAYER_SHEET_BACKPACKROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/backpackRow.hbs`, PRELOAD: false, ALIAS: "playerSheetBackpackRow" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
 _rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
 _rawConstants.TEMPLATES.SHEET_THRESHOLDS = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/thresholds.hbs`, PRELOAD: true, ALIAS: "sheetThresholds" }
@@ -557,8 +559,6 @@ for(const [settingKey, settingValue] of Object.entries(_rawConstants.SETTINGS)) 
 }
 
 for(const setting of [_rawConstants.SETTINGS.MEDIUM_ICONS_STYLE, _rawConstants.SETTINGS.SMALL_ICONS_STYLE]) {
-    console.log('setting', setting);
-    console.log('constant', _rawConstants.ASSETS.ICONS.HP.USED);
     setting.items['1'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['1']}`);
     setting.items['1'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.ARMOR.USED['1']}`);
     setting.items['2'].push(`${_rawConstants.ASSETS.ICON_DIR}/${_rawConstants.ASSETS.ICONS.HP.USED['2']}`);

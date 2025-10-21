@@ -772,6 +772,12 @@
   transition: opacity 180ms ease, transform 240ms ease, margin 240ms ease, padding 240ms ease, max-height 240ms ease;
   overflow: hidden;
 }
+.dtg.dtg-Player .part-inventory .item-row:hover {
+  border-color: var(--color-form-label-hover) 1px solid;
+}
+.dtg.dtg-Player .part-inventory .item-row:focus-within {
+  border-color: var(--color-form-label-hover) 1px solid;
+}
 .dtg.dtg-Player .part-inventory .item-row.is-collapsed {
   max-height: 0;
   opacity: 0;
@@ -964,6 +970,7 @@
   display: flex;
   gap: 4px;
   align-items: center;
+  margin-right: 0.2em;
 }
 .dtg.dtg-Player .part-quick-access .panel-body .info .experience .typable {
   border-bottom: 1px solid var(--color-border, #8882);

@@ -1,9 +1,9 @@
 <div class="experience experience-row" id="exp-{{index}}" data-order="{{index}}">
-    <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus">
+    <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus" inert>
         <input type="checkbox" class="switch-input">
         <span class="switch-track" aria-hidden="true"></span>
     </label>
     {{#> numberField }} class="field-input small-input" name="system.experiences.{{index}}.bonus" value="{{experience.bonus}}" {{/numberField}}
     {{#> textField }} class="field-input" name="system.experiences.{{index}}.description" value="{{experience.description}}" {{/textField}}
-    <button type="button" class="btn-action danger preserve-width" data-tooltip="BEWARE! This action is permanent" data-action="deleteExperience" data-index="{{index}}"><i class="bi bi-trash-fill"></i></button>
+    <button type="button" class="btn-action danger preserve-width" data-tooltip="BEWARE! This action is permanent" data-action="deleteExperience" data-index="{{index}}" tabindex="-1"><i class="bi bi-trash-fill"></i></button>
 </div>
