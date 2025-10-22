@@ -15,6 +15,7 @@ console.log(`Loaded: ${import.meta.url}`);
 
 export class PlayerSheet extends DtgActorSheet {
 
+    //#region Static var overrides
     static get PARTS() {
         const partsBasePath = `${CONSTANTS.TEMPLATES.ROOT_DIR}/sheet/player/part`;
         return {
@@ -30,32 +31,37 @@ export class PlayerSheet extends DtgActorSheet {
 
     static get DEFAULT_OPTIONS() {
         return {
-                position: {width: 1200, height: 1200},
-                classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.PLAYER}`],
-                actions: {
-                    equipItem: PlayerSheet.#equipItem,
-                    unequipItem: PlayerSheet.#unequipItem,
-                    consumeItem: PlayerSheet.#consumeItem,
-                    activateItem: PlayerSheet.#activateItem,
-                    filterItems: PlayerSheet.#filterBackpackItems,
-                    deleteItem: PlayerSheet.#deleteItem,
-                    openItem: PlayerSheet.#openItem,
-                    attachItem: PlayerSheet.#attachItem,
-                    setResource: PlayerSheet.#setResource,
-                    deleteExperience: PlayerSheet.#deleteExperience,
-                    addExperience: PlayerSheet.#addExperience,
-                },
-                form: { handler: PlayerSheet.#onSubmitForm },
-                window: { title: 'Player Sheet' },
-            };
+            position: {width: 1200, height: 1200},
+            classes: [`${CONSTANTS.SYSTEM_ID}-${CONSTANTS.ACTOR_TYPES.PLAYER}`],
+            actions: {
+                equipItem: PlayerSheet.#equipItem,
+                unequipItem: PlayerSheet.#unequipItem,
+                consumeItem: PlayerSheet.#consumeItem,
+                activateItem: PlayerSheet.#activateItem,
+                filterItems: PlayerSheet.#filterBackpackItems,
+                filterActions: PlayerSheet.#filterQuickActionsItems,
+                deleteItem: PlayerSheet.#deleteItem,
+                openItem: PlayerSheet.#openItem,
+                attachItem: PlayerSheet.#attachItem,
+                setResource: PlayerSheet.#setResource,
+                deleteExperience: PlayerSheet.#deleteExperience,
+                addExperience: PlayerSheet.#addExperience,
+            },
+            form: { handler: PlayerSheet.#onSubmitForm },
+            window: { title: 'Player Sheet' },
+        };
     }
+    //#endregion
 
+    //#region class variables
     static EMPTY_EXPERIENCE = { description: '', bonus: '' };
 
-    get title(){
-        return `${super.title} - ${this.document.name}`;
-    }
+    #backpackItems = new Map();
+    #quickActionItems = new Map();
+    #quickActionsContainer = undefined;
+    //#endregion
 
+    //#region method overrides
     async _prepareContext(options) {
         const base = await super._prepareContext(options);
         return {
@@ -65,9 +71,6 @@ export class PlayerSheet extends DtgActorSheet {
         };
     }
 
-    #backpackItems = new Map();
-    #ActionItems = new Map();
-
     async _preparePartContext(partId, context, options) {
         const part = {};
 
@@ -76,7 +79,7 @@ export class PlayerSheet extends DtgActorSheet {
                 const cards = this.document.system.domainCards;
 
                 const itemTypes = [];
-                const itemFilter = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
+                const itemFilter = this.#getBackpackFilters();
 
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
                 for(const item of [...this.document.items, ...cards.values()]){
@@ -98,29 +101,18 @@ export class PlayerSheet extends DtgActorSheet {
 
                     if(!this.#backpackItems.has(itemId)){
                         const currSize = this.#backpackItems.size;
-                        const dom = await foundry.applications.handlebars.renderTemplate(
-                            CONSTANTS.TEMPLATES.PLAYER_SHEET_BACKPACKROW.PATH,
-                            {
-                                backpackItem: {
-                                    kind: kind,
-                                    equipped: equipped,
-                                    equipable: equipable,
-                                    id: itemId,
-                                    item: item},
-                                order: currSize
-                            });
-                        const elementHolder = document.createElement('template');
-                        elementHolder.innerHTML = dom.trim();
                         this.#backpackItems.set(
                             itemId,
                             {
                                 item: item,
-                                dom: elementHolder.content.firstElementChild,
+                                dom: await this.#buildDomForInventoryRow(item, kind, equipped, equipable, itemId, currSize),
                                 order: currSize,
                                 isNew: true,
                             });
                     } else {
-                        this.#backpackItems.get(item.id).isNew = false;
+                        const backpackItem = this.#backpackItems.get(item.id);
+                        backpackItem.isNew = false;
+                        backpackItem.dom.replaceChildren(...(await this.#buildDomForInventoryRow(item, kind, equipped, equipable, itemId, backpackItem.order)).children);
                     }
 
                     if(item instanceof DomainCardDocument) continue;
@@ -177,7 +169,6 @@ export class PlayerSheet extends DtgActorSheet {
                 }
                 break;
             case "quickAccess":
-                part.actions = [];
                 part.experiences = [];
                 part.experienceButtons = [
                     {
@@ -186,29 +177,40 @@ export class PlayerSheet extends DtgActorSheet {
                         action: "addExperience",
                     }
                 ];
+                const filters = this.#getQuickActionFilters();
                 part.actionFilters = [
-                    {name: "weapon", active: false},
-                    {name: "spell", active: false},
-                    {name: "class card", active: false},
-                    {name: "non-class card", active: false},
-                    {name: "borrowed power", active: false},
+                    {name: "weapon", active: !!filters?.["weapon"]},
+                    {name: "spell", active: !!filters?.["spell"]},
+                    {name: "class card", active: !!filters?.["class card"]},
+                    {name: "non-class card", active: !!filters?.["non-class card"]},
+                    {name: "borrowed power", active: !!filters?.["borrowed power"]},
                 ];
 
                 //attacks from equipped weapons
-                for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
-                    part.actions.push({
-                        isAttack: true,
-                        isBorrowedPower: false,
-                        name: weapon.name,
-                        trait: weapon.system.trait,
-                        damageFormula: weapon.system.damage,
-                        damageType: weapon.system.damageType,
-                    })
+                for(const weapon of this.document.items.filter(i => i instanceof WeaponDocument)){
+                    if (weapon.getFlag(CONSTANTS.SYSTEM_ID, "equipped")){
+                        this.#quickActionItems.set(
+                            weapon._id,
+                            await this.#buildAction({
+                                type: 'weapon',
+                                id: weapon._id,
+                                originId: weapon._id,
+                                isAttack: true,
+                                isBorrowedPower: false,
+                                name: weapon.name,
+                                trait: weapon.system.trait,
+                                damageFormula: weapon.system.damage,
+                                damageType: weapon.system.damageType,
+                            })
+                        );
+                    } else {
+                        this.#quickActionItems.delete(weapon._id);
+                    }
                 }
 
                 //attacks from equipped spells (later, spells granted by equipped cards)
                 for(const spell of this.document.items.filter(i => i instanceof SpellDocument && i.getFlag(CONSTANTS.SYSTEM_ID, "equipped"))){
-                    /*part.actions.push({
+                    /*actions.push({
                         isAttack: true,
                         isBorrowedPower: false,
                         name: spell.name,
@@ -218,7 +220,7 @@ export class PlayerSheet extends DtgActorSheet {
                     })*/
                 }
 
-                //Features description
+                //Features
 
                 //borrowed powers
 
@@ -271,18 +273,111 @@ export class PlayerSheet extends DtgActorSheet {
         return Utils.mergeObjects(context, part);
     }
 
-    async #buildDomForExperience(index, experience) {
-        const dom = await foundry.applications.handlebars.renderTemplate(
-            CONSTANTS.TEMPLATES.SHEET_EXPERIENCE_ROW.PATH,
-            {
-                index: index,
-                experience: experience
-            });
-        const elementHolder = document.createElement('template');
-        elementHolder.innerHTML = dom.trim();
-        return elementHolder.content.firstElementChild;
+    async _onDropItem(event, item) {
+        // If dragging within the same actor, ignore for now (no sort behavior yet)
+        if (item.parent?.id === this.document.id) return undefined;
+
+        // Ensure we have a full Item document (handles compendium/UUID drops)
+        if (typeof item?.toObject !== "function" && item?.uuid && !await Utils.fromUuid(item.uuid)) {
+            ui.notifications.warn("Could not resolve dropped item.");
+            return undefined;
+        }
+
+        if(item instanceof InventoryItemDocument){
+            const data = item.toObject();
+            delete data._id;
+
+            const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
+            return created;
+        } else if(item instanceof DomainCardDocument){
+            const currentCards = [...this.document.system.domainCardsUUIDs];
+            currentCards.push(item.uuid);
+            await this.document.update({'system.domainCardsUUIDs': Utils.unique(currentCards)}, { render: false });
+            return undefined;
+        } else if(item instanceof AncestryDocument){
+            await this.document.update({'system.ancestryUUIDs': [item.uuid],}, { render: false })
+            //await this.render({ parts: ["characterInfo"]});
+            return undefined;
+        } else if(item instanceof CommunityDocument){
+            await this.document.update({'system.communityUUIDs': [item.uuid],}, { render: false })
+            //await this.render({ parts: ["characterInfo"]});
+            return undefined;
+        } else if(item instanceof ClassDocument){
+            const paths = {
+                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
+            };
+            paths["system.playerClassesUUIDs"].push(item.uuid);
+            paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
+
+            await this.document.update(paths, { render: false })
+            //await this.render({ parts: ["characterInfo"]});
+            return undefined;
+        } else if(item instanceof SubclassDocument){
+            const paths = {
+                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
+                "system.playerSubclasses": [...this.document.system.playerSubclasses]
+            };
+            if(item.system.classUUID ){
+                for(const subclass in this.document.system.playerSubclasses){
+                    if(subclass.UUID === item.uuid){
+                        ui.notifications.warn('Subclass already present.');
+                        event.preventDefault();
+                        return undefined;
+                    }
+                }
+
+                paths["system.playerClassesUUIDs"].push(item.system.classUUID);
+                paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
+                paths["system.playerSubclasses"].push({
+                    UUID: item.uuid,
+                    masteryLevel: CONSTANTS.DEFAULTS.SUBCLASS_MASTERY_LEVEL
+                });
+
+                await this.document.update(paths, { render: false });
+                //await this.render({ parts: ["characterInfo"]});
+            } else {
+                ui.notifications.warn('Subclass has no class associated with it.');
+                event.preventDefault();
+            }
+            return undefined;
+        } else if(item instanceof SpellDocument || item instanceof FeatureDocument){
+            const data = item.toObject();
+            delete data._id;
+
+            const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
+            return created;
+        } else {
+            ui.notifications.warn('this item is not supported for this sheet yet.');
+            event.preventDefault();
+            return undefined;
+        }
     }
 
+    async _onFirstRender(context, options) {
+        await super._onFirstRender(context, options);
+        this._handleDoubleClick ??= this.#handleDoubleClick.bind(this); // keep app as `this`
+        this.element.addEventListener("dblclick", this._handleDoubleClick);
+
+        this._onQtyChange ??= this.#onQtyChange.bind(this);
+        this.element.addEventListener("change", this._onQtyChange);
+        this.#populateInventoryItems();
+        this.#setQuickActionsContainer();
+        Utils.log('PlayerSheet', '_onFirstRender');
+        this.#populateQuickActions();
+    }
+
+    async _onRender(context, options) {
+        super._onRender(context, options);
+        this.#populateInventoryItems({excludeNew: true});
+        await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
+
+        this.#reconnectContainer();
+
+        await this.#animateQuickActions();
+    }
+    //#endregion
+
+    //#region form submission and outside update integration
     static #partsForPath(path){
         const result = [];
         if (!path) return [];
@@ -399,87 +494,9 @@ export class PlayerSheet extends DtgActorSheet {
             await this.document.update(diff);
 
     }
+    //#endregion
 
-    async _onDropItem(event, item) {
-        // If dragging within the same actor, ignore for now (no sort behavior yet)
-        if (item.parent?.id === this.document.id) return undefined;
-
-        // Ensure we have a full Item document (handles compendium/UUID drops)
-        if (typeof item?.toObject !== "function" && item?.uuid && !await Utils.fromUuid(item.uuid)) {
-            ui.notifications.warn("Could not resolve dropped item.");
-            return undefined;
-        }
-
-        if(item instanceof InventoryItemDocument){
-            const data = item.toObject();
-            delete data._id;
-
-            const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
-            return created;
-        } else if(item instanceof DomainCardDocument){
-            const currentCards = [...this.document.system.domainCardsUUIDs];
-            currentCards.push(item.uuid);
-            await this.document.update({'system.domainCardsUUIDs': Utils.unique(currentCards)}, { render: false });
-            return undefined;
-        } else if(item instanceof AncestryDocument){
-            await this.document.update({'system.ancestryUUIDs': [item.uuid],}, { render: false })
-            await this.render({ parts: ["characterInfo"]});
-            return undefined;
-        } else if(item instanceof CommunityDocument){
-            await this.document.update({'system.communityUUIDs': [item.uuid],}, { render: false })
-            await this.render({ parts: ["characterInfo"]});
-            return undefined;
-        } else if(item instanceof ClassDocument){
-            const paths = {
-                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
-            };
-            paths["system.playerClassesUUIDs"].push(item.uuid);
-            paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
-
-            await this.document.update(paths, { render: false })
-            await this.render({ parts: ["characterInfo"]});
-            return undefined;
-        } else if(item instanceof SubclassDocument){
-            const paths = {
-                "system.playerClassesUUIDs": [...this.document.system.playerClassesUUIDs],
-                "system.playerSubclasses": [...this.document.system.playerSubclasses]
-            };
-            if(item.system.classUUID ){
-                for(const subclass in this.document.system.playerSubclasses){
-                    if(subclass.UUID === item.uuid){
-                        ui.notifications.warn('Subclass already present.');
-                        event.preventDefault();
-                        return undefined;
-                    }
-                }
-
-                paths["system.playerClassesUUIDs"].push(item.system.classUUID);
-                paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
-                paths["system.playerSubclasses"].push({
-                    UUID: item.uuid,
-                    masteryLevel: CONSTANTS.DEFAULTS.SUBCLASS_MASTERY_LEVEL
-                });
-
-                await this.document.update(paths, { render: false });
-                await this.render({ parts: ["characterInfo"]});
-            } else {
-                ui.notifications.warn('Subclass has no class associated with it.');
-                event.preventDefault();
-            }
-            return undefined;
-        } else if(item instanceof SpellDocument || item instanceof FeatureDocument){
-            const data = item.toObject();
-            delete data._id;
-
-            const [created] = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
-            return created;
-        } else {
-            ui.notifications.warn('this item is not supported for this sheet yet.');
-            event.preventDefault();
-            return undefined;
-        }
-    }
-
+    //#region actions
     static async _actionSetFlag(event) {
         const preventRender = event.target.dataset.name === "rollMod";
         await super._actionSetFlag(event, {preventRender: preventRender});
@@ -503,7 +520,6 @@ export class PlayerSheet extends DtgActorSheet {
             default:
                 ui.notifications.error('Item type not set on #equipItem.')
         }
-        await this.render({parts: ["inventory", "quickAccess"]});
     }
 
     static async #unequipItem(event) {
@@ -524,7 +540,6 @@ export class PlayerSheet extends DtgActorSheet {
             default:
                 ui.notifications.error('Item type not set on #equipItem.')
         }
-        await this.render({ parts: ["inventory", "quickAccess"] });
     }
 
     static async #consumeItem(event) {
@@ -536,7 +551,7 @@ export class PlayerSheet extends DtgActorSheet {
             await this.document.deleteEmbeddedDocuments("Item", [id], {render: false});
         } else {
             await item.update({'system.quantity': qtd - 1}, {render: false});
-            await this.render({ parts: ["inventory"] });
+            //await this.render({ parts: ["inventory"] });
         }
     }
 
@@ -554,7 +569,7 @@ export class PlayerSheet extends DtgActorSheet {
 
     static async #filterBackpackItems(event) {
         event.preventDefault();
-        const itemFilter = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
+        const itemFilter = this.#getBackpackFilters();
         if(itemFilter[event.target.dataset.filter] === true) {
             itemFilter[event.target.dataset.filter] = false;
         } else {
@@ -593,12 +608,14 @@ export class PlayerSheet extends DtgActorSheet {
             case "embed":
                 const idEmbed = element?.dataset.itemId;
                 this.#backpackItems.delete(idEmbed);
+                this.#quickActionItems.delete(idEmbed);
                 await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
                 await this.document.deleteEmbeddedDocuments("Item", [idEmbed], {render: false});
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
                 const idCard = element?.dataset.itemId;
                 this.#backpackItems.delete(idCard);
+                this.#quickActionItems.delete(idCard);
                 await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
                 equippedDomainCardsUUIDs.delete(idCard);
@@ -628,40 +645,6 @@ export class PlayerSheet extends DtgActorSheet {
         this.document.update({"system.experiences": experiences}, {render: false, skipRequester: true, appId: this.id});
     }
 
-    async _onFirstRender(context, options) {
-        await super._onFirstRender(context, options);
-        this._handleDoubleClick ??= this.#handleDoubleClick.bind(this); // keep app as `this`
-        this.element.addEventListener("dblclick", this._handleDoubleClick);
-
-        this._onQtyChange ??= this.#onQtyChange.bind(this);
-        this.element.addEventListener("change", this._onQtyChange);
-        this.#populateInventoryItems();
-    }
-
-    async #handleDoubleClick(event) {
-        //Handles double click on Inventory item-row
-        const row = event.target.closest(".item-row");
-        if(row && !(event.target.tagName === 'BUTTON')){
-            await this.document.items.get(row.dataset.itemId)?.sheet?.render({force: true});
-        }
-    }
-
-    async #onQtyChange(event) {
-        const target = event.target;
-        if (!target.matches(".qty-input")) return;
-
-        const row  = target.closest("[data-item-id]");
-        if (!row) return;
-        const item = this.document.items.get(row.dataset.itemId);
-
-        const raw = target.value;
-        const newQuantity   = Math.max(0, Number.isFinite(+raw) ? Math.trunc(+raw) : 0);
-
-        if (newQuantity === Number(item.system.quantity ?? 0)) return;
-        await item.update({ "system.quantity": newQuantity }, { render: false });
-        await this.render({ parts: ["inventory"] });
-    }
-
     /**
      * @this {PlayerSheet}
      */
@@ -682,9 +665,87 @@ export class PlayerSheet extends DtgActorSheet {
             Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE),
             [this.element]);
     }
+    //#endregion
+
+    //#region generic helper functions
+    get title(){
+        return `${super.title} - ${this.document.name}`;
+    }
+
+    #defineOrder(action) {
+        const rank =
+            action.isAttack ? 0 :
+                action.isBorrowedPower ? 1 : 2;
+
+        const origin = action.originId ?? "";               // strings: A→Z
+        const group  = Number.isFinite(action.group) ? action.group : 9999;
+        const prio   = Number.isFinite(action.priority) ? action.priority : 9999;
+        const name   = (action.name ?? "").toLocaleLowerCase();
+
+        // Return a tuple; JS sort can compare lexicographically via a helper
+        return [rank, origin, group, prio, name];
+    }
+
+    #cmpTuple(a, b) {
+        for (let i = 0; i < a.length; i++) {
+            const A = a[i], B = b[i];
+            if (typeof A === "string" && typeof B === "string") {
+                const c = A.localeCompare(B);
+                if (c) return c;
+            } else if (A < B) return -1;
+            else if (A > B) return 1;
+        }
+        return 0;
+    }
+    //#endregion
+
+    //#region event handlers
+    async #onQtyChange(event) {
+        const target = event.target;
+        if (!target.matches(".qty-input")) return;
+
+        const row  = target.closest("[data-item-id]");
+        if (!row) return;
+        const item = this.document.items.get(row.dataset.itemId);
+
+        const raw = target.value;
+        const newQuantity   = Math.max(0, Number.isFinite(+raw) ? Math.trunc(+raw) : 0);
+
+        if (newQuantity === Number(item.system.quantity ?? 0)) return;
+        await item.update({ "system.quantity": newQuantity }, { render: false });
+        //await this.render({ parts: ["inventory"] });
+    }
+
+    async #handleDoubleClick(event) {
+        //Handles double click on Inventory item-row
+        const row = event.target.closest(".item-row");
+        if(row && !(event.target.tagName === 'BUTTON')){
+            await this.document.items.get(row.dataset.itemId)?.sheet?.render({force: true});
+        }
+    }
+    //#endregion
+
+    //#region backpack Functions
+    async #buildDomForInventoryRow(item, kind, equipped, equipable, itemId, order){
+        const dom = await foundry.applications.handlebars.renderTemplate(
+            CONSTANTS.TEMPLATES.PLAYER_SHEET_BACKPACK_ROW.PATH,
+            {
+                backpackItem: {
+                    kind: kind,
+                    equipped: equipped,
+                    equipable: equipable,
+                    id: itemId,
+                    item: item
+                },
+                order: order
+            });
+        const elementHolder = document.createElement('template');
+        elementHolder.innerHTML = dom.trim();
+        return elementHolder.content.firstElementChild;
+    }
 
     #populateInventoryItems({excludeNew = false} = {}) {
-        const filters = this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
+        const filters = this.#getBackpackFilters();
         const isAll = !Object.values(filters)?.some(Boolean);
         const container = this.#getInventoryContainer();
         if (!container) return;
@@ -721,7 +782,6 @@ export class PlayerSheet extends DtgActorSheet {
         const isAll = !Object.values(filters)?.some(Boolean);
         const sortedRows = [...this.#backpackItems.values()].sort((a, b) => a.order - b.order);
 
-        // A) mark current DOM rows that should be removed (don't remove yet)
         for (const element of Array.from(list.querySelectorAll('.item-row'))) {
             const id = element.dataset.itemId;
             const row = this.#backpackItems.get(id);
@@ -729,19 +789,13 @@ export class PlayerSheet extends DtgActorSheet {
             element.dataset.remove = keep ? 'false' : 'true';
         }
 
-        // B) insert any rows that should be visible but aren't in the DOM yet
         for (const row of sortedRows) {
             const keep = isAll || !!filters?.[row.item.type];
             if (!keep) continue;
             if (row.dom.isConnected) continue;
 
-            // make it start a little transparent so FLIP will fade it in
             row.dom.style.opacity = '0';
 
-            // ensure metadata for order (if your HBS doesn't already set this)
-            //row.dom.dataset.order ??= String(row.order);
-
-            // insert before the first DOM child with a greater order that is NOT being removed
             const before = Array
                 .from(list.children)
                 .find(el => el.matches('.item-row')
@@ -749,15 +803,26 @@ export class PlayerSheet extends DtgActorSheet {
                     && ((+el.dataset.order || 0) > row.order)) ?? null;
 
             list.insertBefore(row.dom, before);
-            // cleanup inline opacity after animation finishes (harmless if left)
             queueMicrotask(() => row.dom.style.removeProperty('opacity'));
         }
     }
 
-    async _onRender(context, options) {
-        super._onRender(context, options);
-        this.#populateInventoryItems({excludeNew: true});
-        await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
+    #getBackpackFilters() {
+        return this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
+    }
+    //#endregion
+
+    //#region Experiences Functions
+    async #buildDomForExperience(index, experience) {
+        const dom = await foundry.applications.handlebars.renderTemplate(
+            CONSTANTS.TEMPLATES.SHEET_EXPERIENCE_ROW.PATH,
+            {
+                index: index,
+                experience: experience
+            });
+        const elementHolder = document.createElement('template');
+        elementHolder.innerHTML = dom.trim();
+        return elementHolder.content.firstElementChild;
     }
 
     #getExperiencesContainer() {
@@ -792,6 +857,109 @@ export class PlayerSheet extends DtgActorSheet {
             queueMicrotask(() => added.style.removeProperty('opacity'));
         }
     }
+    //#endregion
 
+    //#region Quick Actions Functions
+    async #buildAction(action){
+        const dom = await foundry.applications.handlebars.renderTemplate(
+            CONSTANTS.TEMPLATES.PLAYER_SHEET_QUICKACTION_ROW.PATH,
+            {
+                action: action
+            }
+        );
+        const elementHolder = document.createElement("template");
+        elementHolder.innerHTML = dom.trim();
+        return {
+            dom: elementHolder.content.firstElementChild,
+            action: action,
+            order: this.#defineOrder(action),
+        }
+    }
+
+    #setQuickActionsContainer() {
+        this.#quickActionsContainer = this.#getCurrentQuickActionsContainer();
+    }
+
+    #getCurrentQuickActionsContainer() {
+        return this.element.querySelector('div.section-body#actions-body div.actions');;
+    }
+
+    async #animateQuickActions(){
+        await Utils.flipList(this.#quickActionsContainer, this.#flipActionListMutator.bind(this), { filters: this.#getQuickActionFilters() });
+    }
+
+    #flipActionListMutator(list, { filters } = {}) {
+        const isAll = !Object.values(filters)?.some(Boolean);
+        const sortedActions = [ ...this.#quickActionItems.values() ].sort((a, b) => this.#cmpTuple(a.order, b.order));
+
+        for (const element of Array.from(list.querySelectorAll('.action'))) {
+            const elementIdx = sortedActions.findIndex(a => a.dom === element);
+            const row = elementIdx > -1 ? sortedActions[elementIdx] : undefined;
+            const keep = row && (isAll || !!filters?.[row.action.type]);
+            element.dataset.remove = keep ? 'false' : 'true';
+            Utils.log('PlayerSheet', '#flipActionListMutator', element.dataset.remove);
+        }
+
+        for (const row of sortedActions) {
+            if(isAll || !!filters?.[row.action.type]){
+                if(!row.dom.isConnected){
+                    let before = null;
+                    const currIndex = sortedActions.findIndex(a => a === row);
+                    if(currIndex > -1 && currIndex < sortedActions.length-1 ) {
+                        let drift = 1;
+                        while(before === null && (currIndex + drift) < sortedActions.length){
+                            if (sortedActions[currIndex + drift].dom.isConnected) {
+                                before = sortedActions[currIndex + drift].dom;
+                            }
+                            drift++;
+                        }
+                    }
+                    list.insertBefore(row.dom, before);
+                }
+            }
+        }
+    }
+
+    async #applyQuickActionsFilter(filters) {
+        const list = this.#quickActionsContainer;
+        if (!list) return;
+
+        await Utils.flipList(list, this.#flipActionListMutator.bind(this), { filters });
+    }
+
+    static async #filterQuickActionsItems(event) {
+        event.preventDefault();
+        const quickActionFilter = this.#getQuickActionFilters();
+        if(quickActionFilter[event.target.dataset.filter] === true) {
+            quickActionFilter[event.target.dataset.filter] = false;
+        } else {
+            quickActionFilter[event.target.dataset.filter] = true;
+        }
+        event.target.setAttribute('aria-pressed', String(quickActionFilter[event.target.dataset.filter]));
+        event.target.querySelector('i').classList.toggle('bi-check-lg');
+        await this.document.update({[`flags.${CONSTANTS.SYSTEM_ID}.quickActionFilter`]: quickActionFilter}, {render: false});
+
+        await this.#applyQuickActionsFilter(quickActionFilter);
+    }
+
+    #getQuickActionFilters() {
+        return this.document.getFlag(CONSTANTS.SYSTEM_ID, "quickActionFilter") ?? {};
+    }
+
+    #populateQuickActions(){
+        this.#flipActionListMutator(this.#quickActionsContainer, { filters: this.#getQuickActionFilters() });
+    }
+
+    #reconnectContainer(){
+        if (this.#quickActionsContainer && !this.#quickActionsContainer.isConnected) {
+            this.#getCurrentQuickActionsContainer().replaceWith(this.#quickActionsContainer);
+            for (const element of this.#quickActionsContainer.querySelectorAll('.action')) {
+                if (this.#quickActionItems.has(element.id)){
+                    this.#quickActionItems.get(element.id).dom = element;
+                }
+            }
+        }
+    }
+    //#endregion
 
 }

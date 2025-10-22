@@ -927,6 +927,8 @@
   grid-auto-columns: max-content;
   grid-template-rows: repeat(var(--actions-items-q), max-content);
   gap: var(--actions-gap);
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   overflow-x: auto;
   overscroll-behavior-x: contain;
 }

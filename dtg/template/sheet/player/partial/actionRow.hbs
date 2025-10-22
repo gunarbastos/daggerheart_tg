@@ -1,0 +1,9 @@
+<div class="{{#if action.isAttack}}attack {{else}}{{#if action.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action" id="{{action.id}}">
+    <span class="action-name">{{action.name}}</span>
+    {{#if action.isAttack}}
+        <button type="button" class="roll-btn" data-hint="Hit" data-action="rollDuality" data-trait="{{action.trait}}"><i class="bi bi-crosshair"></i></button>
+        <button type="button" class="roll-btn" data-hint="Damage" data-action="rollDamage" data-formula="{{action.damageFormula}}" data-type="{{action.damageType}}"><i class="bi bi-fire"></i></button>
+    {{else}}
+        <button type="button" class="roll-btn" data-action="activatePower"><i class="bi {{#if action.isBorrowedPower}}bi-hurricane{{else}}bi-crosshair{{/if}}"></i></button>
+    {{/if}}
+</div>

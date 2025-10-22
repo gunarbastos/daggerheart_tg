@@ -1,6 +1,6 @@
 <div class="experience experience-row" id="exp-{{index}}" data-order="{{index}}">
-    <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus" inert>
-        <input type="checkbox" class="switch-input">
+    <label class="switch" data-tooltip="When active, rolls will consume hope to give you the listed bonus">
+        <input type="checkbox" class="switch-input" tabindex="-1">
         <span class="switch-track" aria-hidden="true"></span>
     </label>
     {{#> numberField }} class="field-input small-input" name="system.experiences.{{index}}.bonus" value="{{experience.bonus}}" {{/numberField}}

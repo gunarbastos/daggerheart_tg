@@ -13,17 +13,6 @@
         <div class="actions-section">
             {{#> sheetSection name="Actions" buttonsDescription="Filter Action types" buttonsAction="filterActions" buttons=actionFilters id="actions"}}
                 <div class="actions">
-                    {{#each actions as |a|}}
-                        <div class="{{#if a.isAttack}}attack {{else}}{{#if a.isBorrowedPower}}borrowed-power {{else}}other-action {{/if}}{{/if}}action">
-                            <span class="action-name">{{a.name}}</span>
-                            {{#if a.isAttack}}
-                                <button type="button" class="roll-btn" data-hint="Hit" data-action="rollDuality" data-trait="{{a.trait}}"><i class="bi bi-crosshair"></i></button>
-                                <button type="button" class="roll-btn" data-hint="Damage" data-action="rollDamage" data-formula="{{a.damageFormula}}" data-type="{{a.damageType}}"><i class="bi bi-fire"></i></button>
-                            {{else}}
-                                <button type="button" class="roll-btn" data-action="activatePower"><i class="bi {{#if a.isBorrowedPower}}bi-hurricane{{else}}bi-crosshair{{/if}}"></i></button>
-                            {{/if}}
-                        </div>
-                    {{/each}}
                 </div>
             {{/sheetSection}}
         </div>
