@@ -3,9 +3,6 @@
         <div class="info-section">
             {{#> sheetSection name="Experiences" buttons=experienceButtons id="experiences"}}
                 <div class="info">
-                    {{#each experiences as |e|}}
-                        {{> sheetExperienceRow experience=e index=@index }}
-                    {{/each}}
                 </div>
             {{/sheetSection}}
         </div>

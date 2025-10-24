@@ -16,6 +16,13 @@ export class PlayerDocument extends CombatActorDocument {
         };
     }
 
+    async _preCreate(data, options, user){
+        const base = await super._preCreate(data, options, user);
+        if (base === false) return base;
+
+        this.updateSource({"system.experiences": [Utils.getEmptyExperience()]});
+    }
+
     async _preUpdate(changes, options, userId) {
         await super._preUpdate(changes, options, userId);
 

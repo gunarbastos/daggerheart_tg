@@ -54,10 +54,10 @@ export class PlayerSheet extends DtgActorSheet {
     //#endregion
 
     //#region class variables
-    static EMPTY_EXPERIENCE = { description: '', bonus: '' };
-
     #backpackItems = new Map();
+    #experienceItems = new Map();
     #quickActionItems = new Map();
+    #experienceContainer = undefined;
     #quickActionsContainer = undefined;
     //#endregion
 
@@ -169,7 +169,6 @@ export class PlayerSheet extends DtgActorSheet {
                 }
                 break;
             case "quickAccess":
-                part.experiences = [];
                 part.experienceButtons = [
                     {
                         name: "Add",
@@ -225,13 +224,17 @@ export class PlayerSheet extends DtgActorSheet {
                 //borrowed powers
 
                 //experiences
-                part.experiences = [];
-                for(const experience of this.document.system.experiences) {
-                    part.experiences.push(experience);
-                }
-
-                if(part.experiences.length === 0){
-                    part.experiences.push(PlayerSheet.EMPTY_EXPERIENCE);
+                for(const index in this.document.system.experiences) {
+                    const experience = this.document.system.experiences[index];
+                    if (!this.#experienceItems.has(experience.id)) {
+                        this.#experienceItems.set(
+                            experience.id,
+                            {
+                                index: index,
+                                experience: experience,
+                                dom: await this.#buildDomForExperience(index, experience)
+                            });
+                    }
                 }
 
                 break;
@@ -362,8 +365,9 @@ export class PlayerSheet extends DtgActorSheet {
         this.element.addEventListener("change", this._onQtyChange);
         this.#populateInventoryItems();
         this.#setQuickActionsContainer();
-        Utils.log('PlayerSheet', '_onFirstRender');
         this.#populateQuickActions();
+        this.#setExperiencesContainer();
+        this.#populateExperiences();
     }
 
     async _onRender(context, options) {
@@ -371,9 +375,11 @@ export class PlayerSheet extends DtgActorSheet {
         this.#populateInventoryItems({excludeNew: true});
         await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
 
-        this.#reconnectContainer();
+        this.#reconnectQuickActionContainer();
+        this.#reconnectExperiencesContainer();
 
         await this.#animateQuickActions();
+        await this.#animateExperiences();
     }
     //#endregion
 
@@ -630,19 +636,26 @@ export class PlayerSheet extends DtgActorSheet {
 
     static async #deleteExperience(event){
         event.preventDefault();
-        const experiences = this.document.system.experiences.toSpliced(event.target.dataset.index,1);
-        await this.#animateExperiences({deleted: event.target.dataset.index});
+        let experiences = this.document.system.experiences;
+        if (this.document.system.experiences.length > 1) {
+            this.#experienceItems.delete(event.target.parentElement.id);
+            experiences = this.document.system.experiences.filter(element => element.id !== event.target.parentElement.id);
+        } else if ((this.document.system.experiences.length === 1) && this.document.system.experiences[0].id === event.target.parentElement.id){
+            experiences[0].bonus = '';
+            experiences[0].description = '';
+            experiences[0].enabled = false;
+            const dom = this.#experienceItems.get(event.target.parentElement.id).dom;
+            for (const element of dom.querySelectorAll('.field-input')) {
+                element.value = '';
+            }
+        }
         await this.document.update({"system.experiences": experiences}, {render: false});
     }
 
     static async #addExperience(event){
         event.preventDefault();
-        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, PlayerSheet.EMPTY_EXPERIENCE);
-        if(experiences.length === 1){
-            experiences.push(PlayerSheet.EMPTY_EXPERIENCE);
-        }
-        await this.#animateExperiences({inserted: await this.#buildDomForExperience(experiences.length-1, PlayerSheet.EMPTY_EXPERIENCE)});
-        this.document.update({"system.experiences": experiences}, {render: false, skipRequester: true, appId: this.id});
+        const experiences = this.document.system.experiences.toSpliced(this.document.system.experiences.length,0, Utils.getEmptyExperience());
+        this.document.update({"system.experiences": experiences}, {render: false});
     }
 
     /**
@@ -825,36 +838,51 @@ export class PlayerSheet extends DtgActorSheet {
         return elementHolder.content.firstElementChild;
     }
 
-    #getExperiencesContainer() {
+    #getCurrentExperiencesContainer() {
         return this.element.querySelector('div.section-body#experiences-body div.info');
     }
 
-    async #animateExperiences({deleted = false, inserted = false} = {}) {
-        const list = this.#getExperiencesContainer();
-        if (!list) return;
-
-        const opts = {};
-        if(deleted){
-            opts.deletedIndex = deleted;
-        }
-        if(inserted){
-            opts.added = inserted;
-        }
-
-        await Utils.flipList(list, this.#flipExperiencesMutator.bind(this), opts);
+    #setExperiencesContainer() {
+        this.#experienceContainer = this.#getCurrentExperiencesContainer();
     }
 
-    #flipExperiencesMutator(list, { deletedIndex = undefined, added = undefined } = {}) {
-        if(deletedIndex) {
-            for (const element of Array.from(list.querySelectorAll('.experience-row'))) {
-                element.dataset.remove = element.dataset.order === deletedIndex ? 'true' : 'false';
+    #reconnectExperiencesContainer() {
+        if (this.#experienceContainer && !this.#experienceContainer.isConnected) {
+            this.#getCurrentExperiencesContainer().replaceWith(this.#experienceContainer);
+            for (const element of this.#experienceContainer.querySelectorAll('.experience')) {
+                if (this.#experienceItems.has(element.id)){
+                    this.#experienceItems.get(element.id).dom = element;
+                }
             }
         }
+    }
 
-        if (added && added instanceof Node){
-            added.style.opacity = '0';
-            list.insertBefore(added, null);
-            queueMicrotask(() => added.style.removeProperty('opacity'));
+    #populateExperiences(){
+        this.#flipExperiencesMutator(this.#experienceContainer);
+    }
+
+    async #animateExperiences({deleted = false, inserted = false} = {}) {
+        await Utils.flipList(this.#experienceContainer, this.#flipExperiencesMutator.bind(this));
+    }
+
+    #flipExperiencesMutator(list) {
+        const sortedExperiences = [...this.#experienceItems.values()].sort((a, b) => a.index - b.index);
+
+        for (const element of Array.from(list.querySelectorAll('.experience'))) {
+            const elementIdx = sortedExperiences.findIndex(a => a.dom === element);
+            const row = elementIdx > -1 ? sortedExperiences[elementIdx] : undefined;
+            element.dataset.remove = row ? 'false' : 'true';
+        }
+
+        for (const row of sortedExperiences) {
+            if(!row.dom.isConnected){
+                const before = Array
+                    .from(list.children)
+                    .find(el => el.matches('.experience')
+                        && el.dataset.remove !== 'true'
+                        && ((+el.dataset.order || 0) > row.order)) ?? null;
+                list.insertBefore(row.dom, before);
+            }
         }
     }
     //#endregion
@@ -897,7 +925,6 @@ export class PlayerSheet extends DtgActorSheet {
             const row = elementIdx > -1 ? sortedActions[elementIdx] : undefined;
             const keep = row && (isAll || !!filters?.[row.action.type]);
             element.dataset.remove = keep ? 'false' : 'true';
-            Utils.log('PlayerSheet', '#flipActionListMutator', element.dataset.remove);
         }
 
         for (const row of sortedActions) {
@@ -950,7 +977,7 @@ export class PlayerSheet extends DtgActorSheet {
         this.#flipActionListMutator(this.#quickActionsContainer, { filters: this.#getQuickActionFilters() });
     }
 
-    #reconnectContainer(){
+    #reconnectQuickActionContainer(){
         if (this.#quickActionsContainer && !this.#quickActionsContainer.isConnected) {
             this.#getCurrentQuickActionsContainer().replaceWith(this.#quickActionsContainer);
             for (const element of this.#quickActionsContainer.querySelectorAll('.action')) {

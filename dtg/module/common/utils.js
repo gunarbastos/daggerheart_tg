@@ -4,6 +4,15 @@ export class Utils {
 
     static _document_cache = new Map();
 
+    static getEmptyExperience(){
+        return {
+            id: foundry.utils.randomID(),
+            bonus: '',
+            description: '',
+            enabled: false
+        }
+    }
+
     static async flipList(list, mutateFn, payload = {}, { duration = 250, easing = 'ease', fill = 'both' } = {}) {
         //const list = this.#getInventoryContainer();
         if (!list) return Promise.resolve();
