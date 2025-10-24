@@ -19,7 +19,6 @@ export class Mixins {
             }
 
             static get DEFAULT_OPTIONS() {
-                //const options = {
                 return {
                     classes: ['application', game.dtg.constants.SYSTEM_ID],
                     tag: 'div',

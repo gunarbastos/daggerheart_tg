@@ -200,16 +200,19 @@ export class DTGHooks {
     //#region Actor Hooks
     /** @param {Actor} actor */
     static #onActorCreated(actor) {
+        // GET RID OF THIS GUY
         // Optional: add logic for when actors are created
     }
 
     /** @param {Actor} actor */
     static #onActorUpdated(actor) {
+        // GET RID OF THIS GUY
         Utils.invalidateDocument(actor.uuid);
     }
 
     /** @param {Actor} actor */
     static #onActorDeleted(actor) {
+        // GET RID OF THIS GUY
         Utils.invalidateDocument(actor.uuid);
     }
     //#endregion
@@ -251,7 +254,7 @@ export class DTGHooks {
     static async FEAR_MAXIMUMOnChange(value){
         const currFear = await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id);
         if(currFear > value){
-            await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT, value); //game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, value);
+            await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT, value);
         }
 
         if(game.dtg.apps.fearTracker.rendered){
@@ -457,7 +460,6 @@ export class DTGHooks {
             icon: "fas fa-skull",
             toggle: true,
             visible: game.dtg.apps.fearTracker.userCanSee(),
-            //active: game.dtg.apps.fearTracker.rendered,
             active: FearTrackerApp.SETTINGS_NAME.IS_OPENED ? Utils.getGameSetting(FearTrackerApp.SETTINGS_NAME.IS_OPENED) === true : false,
             onChange: (event, active) => {
                 const app = game.dtg.apps.fearTracker;

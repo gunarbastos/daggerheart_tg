@@ -59,8 +59,8 @@ export class FearTrackerApp extends Mixins.DtgApp(foundry.applications.api.Handl
 
         return {
             ...base,
-            current: Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT),//game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id),
-            max: Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_MAXIMUM),//game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_MAXIMUM.id),
+            current: Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT),
+            max: Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_MAXIMUM),
             renderButtons: render,
             icon: toggleIcon,
             hint: toggleHint
@@ -76,18 +76,18 @@ export class FearTrackerApp extends Mixins.DtgApp(foundry.applications.api.Handl
     }
 
     static async #changeValue(delta){
-        const maxFear = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_MAXIMUM);//await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_MAXIMUM.id);
-        let newFear = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT);//await game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id);
+        const maxFear = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_MAXIMUM);
+        let newFear = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT);
         newFear += delta;
         if(newFear < 0 || newFear > maxFear) return;
 
-        await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT, newFear); // game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_CURRENT.id, newFear);
+        await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_CURRENT, newFear);
         await  game.dtg.apps.fearTracker.render({persistConfigs: false, force : true});
     }
 
     static async #togglePlayersVisibility(event){
-        const currValue = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE) ?? CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.default;//game.settings.get(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.id) ?? CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.default;
-        await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE, !currValue); //game.settings.set(CONSTANTS.SYSTEM_ID, CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.id, !currValue);
+        const currValue = Utils.getGameSetting(CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE) ?? CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE.default;
+        await Utils.setGameSetting(CONSTANTS.SETTINGS.FEAR_PLAYERS_CAN_SEE, !currValue);
     }
 
     getRelatedPermissions() {

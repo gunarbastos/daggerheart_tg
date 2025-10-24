@@ -1,6 +1,4 @@
 import {CONSTANTS, Mixins, Utils} from "../../common/index.js";
-//import DragDrop from "../../applications/ux/drag-drop.mjs";
-//import TextEditor from "../ux/text-editor.mjs";
 
 console.log(`Loaded: ${import.meta.url}`);
 

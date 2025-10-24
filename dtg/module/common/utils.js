@@ -14,7 +14,6 @@ export class Utils {
     }
 
     static async flipList(list, mutateFn, payload = {}, { duration = 250, easing = 'ease', fill = 'both' } = {}) {
-        //const list = this.#getInventoryContainer();
         if (!list) return Promise.resolve();
 
         // FIRST: measure current children
@@ -151,7 +150,6 @@ export class Utils {
         const html = await foundry.applications.handlebars.renderTemplate(part.template, ctx);
         const content = document.createElement("div");
         content.innerHTML = html;
-        //content.className = "dtg settings-page";
 
         //Modal dialog that submits via the sheet's own helpers
         const dlg = new foundry.applications.api.DialogV2({

@@ -23,9 +23,7 @@ export class AdversarySheet extends DtgActorSheet {
              actions: {
                  deleteExperience: AdversarySheet.#deleteExperience,
                  addExperience: AdversarySheet.#addExperience,
-                 //setResource: AdversarySheet.#setResource,
              },
-            //form: { handler: PlayerSheet.#onSubmitForm },
             window: { title: 'Adversary Sheet' },
         };
     }

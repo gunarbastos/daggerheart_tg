@@ -223,7 +223,6 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.hp.'))){
-                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.HP, token.actor.system.resources.hp.value);
                     Utils.updateResourcePips(
                         token.actor,
                         CONSTANTS.RESOURCE_TYPES.HP,
@@ -238,7 +237,6 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.armor.'))){
-                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.ARMOR, token.actor.system.resources.armor.value);
                     Utils.updateResourcePips(
                         token.actor,
                         CONSTANTS.RESOURCE_TYPES.ARMOR,
@@ -253,7 +251,6 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.stress.'))){
-                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.STRESS, token.actor.system.resources.stress.value);
                     Utils.updateResourcePips(
                         token.actor,
                         CONSTANTS.RESOURCE_TYPES.STRESS,
@@ -268,7 +265,6 @@ export class DTGCombatTracker extends foundry.applications.sidebar.tabs.CombatTr
                 }
 
                 if(listOfPaths.some(v => typeof v === "string" && v.startsWith('system.resources.hope.')) || listOfPaths.some(v => typeof v === "string" && v.startsWith('system.scars'))){
-                    //DTGCombatTracker.#updatePips(token, CONSTANTS.RESOURCE_TYPES.HOPE, token.actor.system.resources.hope.value);
                     Utils.updateResourcePips(
                         token.actor,
                         CONSTANTS.RESOURCE_TYPES.HOPE,

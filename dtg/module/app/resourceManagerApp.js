@@ -190,7 +190,6 @@ export class ResourceManagerApp extends Mixins.DtgApp(foundry.applications.api.H
         let newValue = Number(event.target.dataset.value);
         if(document.system.resources[event.target.dataset.resource].value === newValue) event.target.dataset.resource !== "hope" ? newValue += 1 : newValue -= 1;
         document.update({[`system.resources.${event.target.dataset.resource}.value`]:newValue}, {render: false, skipRequester: true, appId: this.id}).then((result) => {});
-        //ResourceManagerApp.#updatePips.bind(this)(event.target.dataset.resource, newValue);
         Utils.updateResourcePips(
             document,
             event.target.dataset.resource,

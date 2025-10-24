@@ -98,7 +98,6 @@ _rawConstants = {
     ..._rawConstants,
 
     //Raw Constants
-    //SYSTEM_ID: "dtg",
     CORE_ID: "core",
 
     //sockets

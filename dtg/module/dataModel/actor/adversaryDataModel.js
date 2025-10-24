@@ -18,7 +18,6 @@ export class AdversaryDataModel extends BaseDataModel {
                 hp: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 0, default: 0})),
                 stress: new fields.EmbeddedDataField(ResourceDataModel({min: 0, max: 0, default: 0})),
             }),
-            //experiences: new fields.EmbeddedDataField(ExperienceDataModel),
             experiences: new fields.ArrayField(new fields.EmbeddedDataField(ExperienceDataModel), {initial: []}),
             tier: new fields.NumberField({required: true, integer: true, min: 1, initial: 1, max: 4}),
             type: new fields.StringField({required: false, blank: true, choices: CONSTANTS.CHOICES.ADVERSARY}),

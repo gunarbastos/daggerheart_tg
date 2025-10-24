@@ -299,11 +299,9 @@ export class PlayerSheet extends DtgActorSheet {
             return undefined;
         } else if(item instanceof AncestryDocument){
             await this.document.update({'system.ancestryUUIDs': [item.uuid],}, { render: false })
-            //await this.render({ parts: ["characterInfo"]});
             return undefined;
         } else if(item instanceof CommunityDocument){
             await this.document.update({'system.communityUUIDs': [item.uuid],}, { render: false })
-            //await this.render({ parts: ["characterInfo"]});
             return undefined;
         } else if(item instanceof ClassDocument){
             const paths = {
@@ -313,7 +311,6 @@ export class PlayerSheet extends DtgActorSheet {
             paths["system.playerClassesUUIDs"] = [...Utils.unique(paths["system.playerClassesUUIDs"])];
 
             await this.document.update(paths, { render: false })
-            //await this.render({ parts: ["characterInfo"]});
             return undefined;
         } else if(item instanceof SubclassDocument){
             const paths = {
@@ -337,7 +334,6 @@ export class PlayerSheet extends DtgActorSheet {
                 });
 
                 await this.document.update(paths, { render: false });
-                //await this.render({ parts: ["characterInfo"]});
             } else {
                 ui.notifications.warn('Subclass has no class associated with it.');
                 event.preventDefault();
@@ -557,7 +553,6 @@ export class PlayerSheet extends DtgActorSheet {
             await this.document.deleteEmbeddedDocuments("Item", [id], {render: false});
         } else {
             await item.update({'system.quantity': qtd - 1}, {render: false});
-            //await this.render({ parts: ["inventory"] });
         }
     }
 
@@ -570,7 +565,6 @@ export class PlayerSheet extends DtgActorSheet {
     static async #attachItem(event) {
         event.preventDefault();
         await DtgActorSheet._notYetImplemented(event);
-        //const item = this.document.items.get(event.target.closest("[data-item-id]")?.dataset.itemId);
     }
 
     static async #filterBackpackItems(event) {
@@ -726,7 +720,6 @@ export class PlayerSheet extends DtgActorSheet {
 
         if (newQuantity === Number(item.system.quantity ?? 0)) return;
         await item.update({ "system.quantity": newQuantity }, { render: false });
-        //await this.render({ parts: ["inventory"] });
     }
 
     async #handleDoubleClick(event) {
