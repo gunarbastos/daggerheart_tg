@@ -5,5 +5,5 @@
     </label>
     {{#> numberField }} class="field-input small-input" name="system.experiences.{{index}}.bonus" value="{{experience.bonus}}" {{/numberField}}
     {{#> textField }} class="field-input" name="system.experiences.{{index}}.description" value="{{experience.description}}" {{/textField}}
-    <button type="button" class="btn-action danger preserve-width" data-tooltip="BEWARE! This action is permanent" data-action="deleteExperience" data-index="{{index}}" tabindex="-1"><i class="bi bi-trash-fill"></i></button>
+    {{#> btnDelete action="deleteExperience" skipTab=true }}{{/btnDelete}}
 </div>

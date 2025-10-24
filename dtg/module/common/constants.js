@@ -524,21 +524,41 @@ _rawConstants.DEFAULTS.WEAPON_SLOT = _rawConstants.WEAPON_SLOT.PRIMARY;
 
 //Templates to preload
 _rawConstants.TEMPLATES.ROOT_DIR = `systems/${_rawConstants.SYSTEM_ID}/template`;
-_rawConstants.TEMPLATES.DUALITY_DICE_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/dualityDiceRoll.hbs` };
-_rawConstants.TEMPLATES.RULER = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/canvas/ruler-waypoint-label.hbs` };
-_rawConstants.TEMPLATES.DUALITY_DICE_ROLL_DETAILS =  { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/partials/dualityDiceRollDetails.hbs`, PRELOAD: true, ALIAS: "dualityDiceRollDetails" };
+//#region Fields
 _rawConstants.TEMPLATES.NUMBER_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/numberField.hbs`, PRELOAD: true, ALIAS: "numberField" };
 _rawConstants.TEMPLATES.TEXT_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/textField.hbs`, PRELOAD: true, ALIAS: "textField" };
+_rawConstants.TEMPLATES.HTML_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/htmlField.hbs`, PRELOAD: true, ALIAS: "htmlField" };
+_rawConstants.TEMPLATES.DESCRIPTION_FIELD = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/descriptionField.hbs`, PRELOAD: true, ALIAS: "descriptionField" };
+//#endregion
+//#region Buttons
+_rawConstants.TEMPLATES.BTN_ACTIVATE = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnActivate.hbs`, PRELOAD: true, ALIAS: "btnActivate" };
+_rawConstants.TEMPLATES.BTN_ATTACH = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnAttach.hbs`, PRELOAD: true, ALIAS: "btnAttach" };
+_rawConstants.TEMPLATES.BTN_CONSUME = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnConsume.hbs`, PRELOAD: true, ALIAS: "btnConsume" };
+_rawConstants.TEMPLATES.BTN_DELETE = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnDelete.hbs`, PRELOAD: true, ALIAS: "btnDelete" };
+_rawConstants.TEMPLATES.BTN_EQUIP = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnEquip.hbs`, PRELOAD: true, ALIAS: "btnEquip" };
+_rawConstants.TEMPLATES.BTN_OPEN = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnOpen.hbs`, PRELOAD: true, ALIAS: "btnOpen" };
+//#endregion
+//#region Chat Messages
+_rawConstants.TEMPLATES.DUALITY_DICE_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/dualityDiceRoll.hbs` };
+_rawConstants.TEMPLATES.DUALITY_DICE_ROLL_DETAILS =  { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/partials/dualityDiceRollDetails.hbs`, PRELOAD: true, ALIAS: "dualityDiceRollDetails" };
+//#endregion
+//#region UI
+_rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
+_rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
+_rawConstants.TEMPLATES.RULER = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/canvas/ruler-waypoint-label.hbs` };
+//#endregion
+//#region All Apps
 _rawConstants.TEMPLATES.RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "resourceRow" };
+//#endregion
+//#region Sheets
 _rawConstants.TEMPLATES.SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "sheetResourceRow" };
 _rawConstants.TEMPLATES.SHEET_EXPERIENCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/experienceRow.hbs`, PRELOAD: true, ALIAS: "sheetExperienceRow" };
 _rawConstants.TEMPLATES.PLAYER_SHEET_TRAIT = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/trait.hbs`, PRELOAD: true, ALIAS: "playerSheetTrait" };
 _rawConstants.TEMPLATES.PLAYER_SHEET_BACKPACK_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/backpackRow.hbs`};
 _rawConstants.TEMPLATES.PLAYER_SHEET_QUICKACTION_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/actionRow.hbs`, PRELOAD: true, ALIAS: "playerSheetActionRow" };
-_rawConstants.TEMPLATES.COMBAT_TRACKER_ADVERSARY_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/adversary.hbs`, PRELOAD: true, ALIAS: "CTAdversary" };
-_rawConstants.TEMPLATES.COMBAT_TRACKER_PLAYER_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/app/dtgCombatTracker/partial/player.hbs`, PRELOAD: true, ALIAS: "CTPlayer" };
 _rawConstants.TEMPLATES.SHEET_THRESHOLDS = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/thresholds.hbs`, PRELOAD: true, ALIAS: "sheetThresholds" }
 _rawConstants.TEMPLATES.SHEET_SECTION = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/section.hbs`, PRELOAD: true, ALIAS: "sheetSection" }
+//#endregion
 
 //Asset dirs
 _rawConstants.ASSETS.ROOT_DIR = `systems/${_rawConstants.SYSTEM_ID}/asset`;

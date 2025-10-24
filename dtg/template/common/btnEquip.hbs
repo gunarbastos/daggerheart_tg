@@ -1,0 +1,6 @@
+<button type="button"
+        class="btn-action bi{{#if equipped}} bi-person-fill{{else}} bi-backpack3-fill{{/if}}"
+        data-action="{{#if equipped}}{{actionUnequip}}{{else}}{{actionEquip}}{{/if}}"
+        aria-pressed="{{equipped}}"
+        data-tooltip="{{#if equipped}}Unequip{{else}}Equip{{/if}} Item"
+        {{#if skipTab}}tabindex="-1"{{/if}}></button>

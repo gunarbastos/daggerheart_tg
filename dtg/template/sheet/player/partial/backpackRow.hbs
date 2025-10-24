@@ -13,36 +13,19 @@
     </div>
 
     <div class="item-actions">
-        <button type="button"
-                class="btn-action bi bi-pencil-fill"
-                data-action="openItem" title="Open"></button>
+        {{> btnOpen action="openItem" }}
         {{#if backpackItem.equipable}}
-            <button type="button"
-                    class="btn-action bi{{#if backpackItem.equipped}} bi-person-fill{{else}} bi-backpack3-fill{{/if}}"
-                    data-action="{{#if backpackItem.equipped}}unequipItem{{else}}equipItem{{/if}}"
-                    aria-pressed="{{backpackItem.equipped}}" title="Equip/Unequip"></button>
+            {{> btnEquip equipped=backpackItem.equipped actionEquip="equipItem" actionUnequip="unequipItem" }}
         {{/if}}
         {{#if backpackItem.item.system.activatable}}
-            <button type="button"
-                    class="btn-action bi bi-lightning-fill"
-                    data-action="activateItem"
-                    title="Activate"></button>
+            {{> btnActivate action="" }}
         {{/if}}
         {{#if backpackItem.item.system.consumable}}
-            <button type="button"
-                    class="btn-action bi bi-flask-florence-fill"
-                    data-action="consumeItem"
-                    title="Consume"></button>
+            {{> btnConsume action="consumeItem" }}
         {{/if}}
         {{#if backpackItem.item.system.attachable}}
-            <button type="button"
-                    class="btn-action bi bi-link-45deg"
-                    data-action="attachItem"
-                    title="Attach"></button>
+            {{> btnAttach action="attachItem" }}
         {{/if}}
-        <button type="button"
-                class="btn-action danger bi bi-trash-fill"
-                data-action="deleteItem"
-                title="Remove"></button>
+        {{> btnDelete action="deleteItem" }}
     </div>
 </div>

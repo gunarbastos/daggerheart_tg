@@ -1,5 +1,3 @@
 <section class="dtg-part part-roleplay" data-part-id="roleplay" data-drop-scope="roleplay" aria-label="Roleplay">
-    {{#> sheetSection name="Description"}}
-        {{formInput systemFields.description value=system.description enriched=descriptionHTML classes="field-editor" compact=false toggled=false}}
-    {{/sheetSection}}
+    {{> descriptionField name=systemFields.description description=system.description }}
 </section>
