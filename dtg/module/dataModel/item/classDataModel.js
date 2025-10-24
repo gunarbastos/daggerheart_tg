@@ -29,11 +29,6 @@ export class ClassDataModel extends BaseDataModel {
         return this.#domains;
     }
 
-    /*#subclasses = null;
-    get subclasses() {
-        if(!this.#subclasses) { this.#subclasses = this._buildCacheMap(this.subclassesUUIDs); }
-        return this.#subclasses;
-    }*/
     get subclasses() {
         return game.items.filter(doc => doc instanceof game.dtg.documents.SubclassDocument && doc.system.classUUID === this.uuid);
     }
