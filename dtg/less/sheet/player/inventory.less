@@ -3,14 +3,45 @@
   grid-template-rows: auto auto 1fr;
   gap: 10px;
 
-  .inv-backpack { }
+  .inv-backpack {
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0 0 8px 8px;
+
+    --side-offset: 8px;   // adjust to your header height
+    --border-w: 1px;
+
+    background:
+            linear-gradient(var(--color-border), var(--color-border))
+            left 0 bottom / var(--border-w) calc(100% - var(--side-offset)) no-repeat,
+            linear-gradient(var(--color-border), var(--color-border))
+            right 0 bottom / var(--border-w) calc(100% - var(--side-offset)) no-repeat;
+  }
+
 
   .item-list {
+    --number-of-items: 6;
+    --row-height: 46px;
+    --row-gap: 6px;
+    --hgt: max(
+            0px,
+            calc(
+                    (var(--number-of-items) * var(--row-height)) +
+                    ((var(--number-of-items) - 1) * var(--row-gap))
+            )
+    );
+
     list-style: none;
-    margin: 0;
+    margin: 0 0 0 0.8em;
     padding: 0;
     display: grid;
-    gap: 6px;
+    gap: var(--row-gap);
+    grid-auto-rows: var(--row-height);
+    height: var(--hgt);
+    max-height: var(--hgt);
+    overflow-y: auto;
+
+    scrollbar-gutter: stable;
 
     .empty { padding: 6px 0; }
   }
@@ -24,36 +55,11 @@
     border: 1px solid var(--color-border, #8882);
     border-radius: 8px;
 
-    --h: auto;                 // natural height injected from JS
-    // Animate collapse + fade + slight slide
-    max-height: var(--h);
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-            opacity    180ms ease,
-            transform  240ms ease,
-            margin     240ms ease,
-            padding    240ms ease,
-            max-height 240ms ease;
-    overflow: hidden;          // required so max-height hides content
-
     &:hover {
       border-color: var(--color-form-label-hover) 1px solid;
     }
     &:focus-within {
       border-color: var(--color-form-label-hover) 1px solid;
-    }
-
-    &.is-collapsed {
-      max-height: 0;             // collapses the row’s space
-      opacity: 0;                // fade out
-      transform: translateY(-6px); // subtle slide up
-      margin-top: 0;             // optional: remove outer gaps while hidden
-      margin-bottom: 0;
-      padding-top: 0;            // optional: remove inner padding while hidden
-      padding-bottom: 0;
-      pointer-events: none;      // ignore clicks while hidden
-
     }
 
     .qty-ctrl {
@@ -167,12 +173,4 @@
     }
   }
 
-}
-
-// Respect OS “reduced motion”
-@media (prefers-reduced-motion: reduce) {
-  .item-row,
-  .item-row.is-collapsed {
-    transition: none !important;
-  }
 }

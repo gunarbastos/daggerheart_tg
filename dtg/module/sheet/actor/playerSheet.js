@@ -57,6 +57,7 @@ export class PlayerSheet extends DtgActorSheet {
     #backpackItems = new Map();
     #experienceItems = new Map();
     #quickActionItems = new Map();
+    #backpackContainer = undefined;
     #experienceContainer = undefined;
     #quickActionsContainer = undefined;
     //#endregion
@@ -105,14 +106,14 @@ export class PlayerSheet extends DtgActorSheet {
                             itemId,
                             {
                                 item: item,
-                                dom: await this.#buildDomForInventoryRow(item, kind, equipped, equipable, itemId, currSize),
+                                dom: await this.#buildDomForBackpackRow(item, kind, equipped, equipable, itemId, currSize),
                                 order: currSize,
                                 isNew: true,
                             });
                     } else {
                         const backpackItem = this.#backpackItems.get(item.id);
                         backpackItem.isNew = false;
-                        backpackItem.dom.replaceChildren(...(await this.#buildDomForInventoryRow(item, kind, equipped, equipable, itemId, backpackItem.order)).children);
+                        backpackItem.dom.replaceChildren(...(await this.#buildDomForBackpackRow(item, kind, equipped, equipable, itemId, backpackItem.order)).children);
                     }
 
                     if(item instanceof DomainCardDocument) continue;
@@ -359,21 +360,25 @@ export class PlayerSheet extends DtgActorSheet {
 
         this._onQtyChange ??= this.#onQtyChange.bind(this);
         this.element.addEventListener("change", this._onQtyChange);
-        this.#populateInventoryItems();
+
+        this.#setBackpackContainer();
+        this.#populateBackpackItems();
+
         this.#setQuickActionsContainer();
         this.#populateQuickActions();
+
         this.#setExperiencesContainer();
         this.#populateExperiences();
     }
 
     async _onRender(context, options) {
         super._onRender(context, options);
-        this.#populateInventoryItems({excludeNew: true});
-        await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
 
+        this.#reconnectBackpackContainer();
         this.#reconnectQuickActionContainer();
         this.#reconnectExperiencesContainer();
 
+        await this.#animateBackpack();
         await this.#animateQuickActions();
         await this.#animateExperiences();
     }
@@ -609,14 +614,12 @@ export class PlayerSheet extends DtgActorSheet {
                 const idEmbed = element?.dataset.itemId;
                 this.#backpackItems.delete(idEmbed);
                 this.#quickActionItems.delete(idEmbed);
-                await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
                 await this.document.deleteEmbeddedDocuments("Item", [idEmbed], {render: false});
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
                 const idCard = element?.dataset.itemId;
                 this.#backpackItems.delete(idCard);
                 this.#quickActionItems.delete(idCard);
-                await this.#applyBackpackFilter(this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {});
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
                 equippedDomainCardsUUIDs.delete(idCard);
                 const domainCardsUUIDs = this.document.system.domainCardsUUIDs;
@@ -671,6 +674,21 @@ export class PlayerSheet extends DtgActorSheet {
             'setResource',
             Utils.getGameSetting(CONSTANTS.SETTINGS.MEDIUM_ICONS_STYLE),
             [this.element]);
+    }
+
+    static async #filterQuickActionsItems(event) {
+        event.preventDefault();
+        const quickActionFilter = this.#getQuickActionFilters();
+        if(quickActionFilter[event.target.dataset.filter] === true) {
+            quickActionFilter[event.target.dataset.filter] = false;
+        } else {
+            quickActionFilter[event.target.dataset.filter] = true;
+        }
+        event.target.setAttribute('aria-pressed', String(quickActionFilter[event.target.dataset.filter]));
+        event.target.querySelector('i').classList.toggle('bi-check-lg');
+        await this.document.update({[`flags.${CONSTANTS.SYSTEM_ID}.quickActionFilter`]: quickActionFilter}, {render: false});
+
+        await this.#applyQuickActionsFilter(quickActionFilter);
     }
     //#endregion
 
@@ -732,7 +750,7 @@ export class PlayerSheet extends DtgActorSheet {
     //#endregion
 
     //#region backpack Functions
-    async #buildDomForInventoryRow(item, kind, equipped, equipable, itemId, order){
+    async #buildDomForBackpackRow(item, kind, equipped, equipable, itemId, order){
         const dom = await foundry.applications.handlebars.renderTemplate(
             CONSTANTS.TEMPLATES.PLAYER_SHEET_BACKPACK_ROW.PATH,
             {
@@ -750,38 +768,20 @@ export class PlayerSheet extends DtgActorSheet {
         return elementHolder.content.firstElementChild;
     }
 
-    #populateInventoryItems({excludeNew = false} = {}) {
-        const filters = this.#getBackpackFilters();
-        const isAll = !Object.values(filters)?.some(Boolean);
-        const container = this.#getInventoryContainer();
-        if (!container) return;
-
-        // container starts empty (we render just the shell), so just insert what should be visible
-        for (const row of [...this.#backpackItems.values()].sort((a, b) => a.order - b.order)) {
-            if (row.isNew && excludeNew) continue;
-            if (isAll || filters?.[row.item.type]) {
-                if (!row.dom.isConnected) this.#insertBackpackRow(container, row);
-            }
-        }
+    #populateBackpackItems() {
+        this.#flipBackpackMutator(this.#backpackContainer, { filters: this.#getBackpackFilters() });
     }
 
-    #getInventoryContainer() {
+    #getCurrentBackpackContainer() {
         return this.element.querySelector('div.item-list');
     }
 
-    #insertBackpackRow(container, row) {
-        // find the first attached sibling with higher order
-        const kids = Array.from(container.children).filter(el => el.matches('.item-row'));
-        const before = kids.find(el => (+el.dataset.order || 0) > row.order) ?? null;
-
-        container.insertBefore(row.dom, before);
+    #setBackpackContainer() {
+        this.#backpackContainer = this.#getCurrentBackpackContainer()
     }
 
     async #applyBackpackFilter(filters) {
-        const list = this.#getInventoryContainer();
-        if (!list) return;
-
-        await Utils.flipList(list, this.#flipBackpackMutator.bind(this), { filters });
+        await Utils.flipList(this.#backpackContainer, this.#flipBackpackMutator.bind(this), { filters });
     }
 
     #flipBackpackMutator(list, { filters }) {
@@ -796,25 +796,38 @@ export class PlayerSheet extends DtgActorSheet {
         }
 
         for (const row of sortedRows) {
-            const keep = isAll || !!filters?.[row.item.type];
-            if (!keep) continue;
-            if (row.dom.isConnected) continue;
+            if ((isAll || !!filters?.[row.item.type]) && !row.dom.isConnected) {
+                row.dom.style.opacity = '0';
 
-            row.dom.style.opacity = '0';
+                const before = Array
+                    .from(list.children)
+                    .find(el => el.matches('.item-row')
+                        && el.dataset.remove !== 'true'
+                        && ((+el.dataset.order || 0) > row.order)) ?? null;
 
-            const before = Array
-                .from(list.children)
-                .find(el => el.matches('.item-row')
-                    && el.dataset.remove !== 'true'
-                    && ((+el.dataset.order || 0) > row.order)) ?? null;
-
-            list.insertBefore(row.dom, before);
-            queueMicrotask(() => row.dom.style.removeProperty('opacity'));
+                list.insertBefore(row.dom, before);
+                queueMicrotask(() => row.dom.style.removeProperty('opacity'));
+            }
         }
     }
 
     #getBackpackFilters() {
         return this.document.getFlag(CONSTANTS.SYSTEM_ID, "itemFilter") ?? {};
+    }
+
+    #reconnectBackpackContainer() {
+        if (this.#backpackContainer && !this.#backpackContainer.isConnected) {
+            this.#getCurrentBackpackContainer().replaceWith(this.#backpackContainer);
+            for (const element of this.#backpackContainer.querySelectorAll('.item-row')) {
+                if (this.#quickActionItems.has(element.dataset.ItemId)){
+                    this.#quickActionItems.get(element.dataset.ItemId).dom = element;
+                }
+            }
+        }
+    }
+
+    async #animateBackpack() {
+        await Utils.flipList(this.#backpackContainer, this.#flipBackpackMutator.bind(this), { filters: this.#getBackpackFilters() });
     }
     //#endregion
 
@@ -945,21 +958,6 @@ export class PlayerSheet extends DtgActorSheet {
         if (!list) return;
 
         await Utils.flipList(list, this.#flipActionListMutator.bind(this), { filters });
-    }
-
-    static async #filterQuickActionsItems(event) {
-        event.preventDefault();
-        const quickActionFilter = this.#getQuickActionFilters();
-        if(quickActionFilter[event.target.dataset.filter] === true) {
-            quickActionFilter[event.target.dataset.filter] = false;
-        } else {
-            quickActionFilter[event.target.dataset.filter] = true;
-        }
-        event.target.setAttribute('aria-pressed', String(quickActionFilter[event.target.dataset.filter]));
-        event.target.querySelector('i').classList.toggle('bi-check-lg');
-        await this.document.update({[`flags.${CONSTANTS.SYSTEM_ID}.quickActionFilter`]: quickActionFilter}, {render: false});
-
-        await this.#applyQuickActionsFilter(quickActionFilter);
     }
 
     #getQuickActionFilters() {
