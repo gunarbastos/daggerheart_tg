@@ -77,6 +77,15 @@ export class PlayerSheet extends DtgActorSheet {
 
         switch(partId) {
             case "inventory":
+                const cardsUUIDSet = new Set(this.document.system.domainCardsUUIDs);
+                for (const [key, value] of this.#backpackItems) {
+                    if (value instanceof DomainCardDocument) {
+                        if (!cardsUUIDSet.has(key)) this.#backpackItems.delete(key);
+                    } else {
+                        if (!this.document.items.has(key)) this.#backpackItems.delete(key);
+                    }
+                }
+
                 const cards = this.document.system.domainCards;
 
                 const itemTypes = [];
@@ -108,11 +117,9 @@ export class PlayerSheet extends DtgActorSheet {
                                 item: item,
                                 dom: await this.#buildDomForBackpackRow(item, kind, equipped, equipable, itemId, currSize),
                                 order: currSize,
-                                isNew: true,
                             });
                     } else {
                         const backpackItem = this.#backpackItems.get(item.id);
-                        backpackItem.isNew = false;
                         backpackItem.dom.replaceChildren(...(await this.#buildDomForBackpackRow(item, kind, equipped, equipable, itemId, backpackItem.order)).children);
                     }
 
@@ -170,6 +177,14 @@ export class PlayerSheet extends DtgActorSheet {
                 }
                 break;
             case "quickAccess":
+                //#region Quick Actions
+                for (const key of this.#quickActionItems.keys()) {
+                   if (!this.document.items.has(key) /* add here later with && the other sources of quick Actions, like spells, Ancestries, etc */) {
+                       this.#quickActionItems.delete(key);
+                   }
+                }
+
+
                 part.experienceButtons = [
                     {
                         name: "Add",
@@ -223,8 +238,15 @@ export class PlayerSheet extends DtgActorSheet {
                 //Features
 
                 //borrowed powers
+                //endregion
 
-                //experiences
+                //#region experiences
+                for (const key of this.#experienceItems.keys()) {
+                    if (!this.document.system.experiences.some(element => element.id === key)){
+                        this.#experienceItems.delete(key);
+                    }
+                }
+
                 for(const index in this.document.system.experiences) {
                     const experience = this.document.system.experiences[index];
                     if (!this.#experienceItems.has(experience.id)) {
@@ -235,8 +257,12 @@ export class PlayerSheet extends DtgActorSheet {
                                 experience: experience,
                                 dom: await this.#buildDomForExperience(index, experience)
                             });
+                    } else {
+                        const experienceItem = this.#experienceItems.get(experience.id);
+                        experienceItem.dom.replaceChildren(...(await this.#buildDomForExperience(index, experience)).children);
                     }
                 }
+                //endregion
 
                 break;
             case "characterInfo":
@@ -378,9 +404,9 @@ export class PlayerSheet extends DtgActorSheet {
         this.#reconnectQuickActionContainer();
         this.#reconnectExperiencesContainer();
 
-        await this.#animateBackpack();
-        await this.#animateQuickActions();
-        await this.#animateExperiences();
+        this.#animateBackpack().then(r => null);
+        this.#animateQuickActions().then(r => null);
+        this.#animateExperiences().then(r => null);
     }
     //#endregion
 
@@ -612,14 +638,10 @@ export class PlayerSheet extends DtgActorSheet {
         switch(element.dataset.itemKind){
             case "embed":
                 const idEmbed = element?.dataset.itemId;
-                this.#backpackItems.delete(idEmbed);
-                this.#quickActionItems.delete(idEmbed);
                 await this.document.deleteEmbeddedDocuments("Item", [idEmbed], {render: false});
                 break;
             case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
                 const idCard = element?.dataset.itemId;
-                this.#backpackItems.delete(idCard);
-                this.#quickActionItems.delete(idCard);
                 const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
                 equippedDomainCardsUUIDs.delete(idCard);
                 const domainCardsUUIDs = this.document.system.domainCardsUUIDs;
@@ -635,7 +657,6 @@ export class PlayerSheet extends DtgActorSheet {
         event.preventDefault();
         let experiences = this.document.system.experiences;
         if (this.document.system.experiences.length > 1) {
-            this.#experienceItems.delete(event.target.parentElement.id);
             experiences = this.document.system.experiences.filter(element => element.id !== event.target.parentElement.id);
         } else if ((this.document.system.experiences.length === 1) && this.document.system.experiences[0].id === event.target.parentElement.id){
             experiences[0].bonus = '';
