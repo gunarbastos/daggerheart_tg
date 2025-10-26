@@ -1,31 +1,10 @@
-<div class="item-row" data-item-id="{{backpackItem.id}}" data-item-type="{{backpackItem.item.type}}" data-item-kind="{{backpackItem.kind}}" data-order="{{order}}">
-    <div class="item-main">
-        <span class="item-name" data-action="openItem">{{backpackItem.item.name}}</span>
-        <span class="item-type">{{backpackItem.item.type}}</span>
-    </div>
-
-    <div class="item-meta">
-        {{#if (or (eq backpackItem.item.system.quantity 0) backpackItem.item.system.quantity)}}
-            <div class="qty-ctrl">
-                {{#> numberField }} class="field-input" value="{{backpackItem.item.system.quantity}}" {{/numberField}}
-            </div>
-        {{/if}}
-    </div>
-
-    <div class="item-actions">
-        {{> btnOpen action="openItem" }}
-        {{#if backpackItem.equipable}}
-            {{> btnEquip equipped=backpackItem.equipped actionEquip="equipItem" actionUnequip="unequipItem" }}
-        {{/if}}
-        {{#if backpackItem.item.system.activatable}}
-            {{> btnActivate action="" }}
-        {{/if}}
-        {{#if backpackItem.item.system.consumable}}
-            {{> btnConsume action="consumeItem" }}
-        {{/if}}
-        {{#if backpackItem.item.system.attachable}}
-            {{> btnAttach action="attachItem" }}
-        {{/if}}
-        {{> btnDelete action="deleteItem" }}
-    </div>
-</div>
+{{> sheetDocumentRow
+        id=backpackItem.id
+        name=backpackItem.item.name
+        tag=backpackItem.item.type
+        quantity=backpackItem.item.system.quantity
+        isEquipable=backpackItem.equipable equipped=backpackItem.equipped equipAction="equipItem" unequipAction="unequipItem"
+        isActivatable=backpackItem.item.system.activatable activateAction="activateItem"
+        isConsumable=backpackItem.item.system.consumable consumeAction="consumeItem"
+        isAttachable=backpackItem.item.system.attachable attachAction="attachItem"
+        deleteAction="deleteItem" }}

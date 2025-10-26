@@ -536,42 +536,34 @@ export class PlayerSheet extends DtgActorSheet {
     }
 
     static async #equipItem(event) {
-        ui.notifications.info('Not fully implemented yet. Need to check slots & such');
         event.preventDefault();
-        const element = event.target.closest("[data-item-id]");
-        let item = undefined;
-        switch(element.dataset.itemKind){
-            case "embed":
-                item = this.document.items.get(element?.dataset.itemId);
-                await item.update({[`flags.${CONSTANTS.SYSTEM_ID}.equipped`]: true}, {render: false});
-                break;
-            case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
-                equippedDomainCardsUUIDs.add(element?.dataset.itemId);
-                await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs]}, { render: false });
-                break;
-            default:
-                ui.notifications.error('Item type not set on #equipItem.')
+        const itemId = event.target.closest("[data-item-id]").dataset.itemId;
+        const mapItem = this.#backpackItems.get(itemId);
+        if (mapItem.item instanceof DomainCardDocument) {
+            const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
+            equippedDomainCardsUUIDs.add(itemId);
+            await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs]}, { render: false });
+        } else if (mapItem.item.parent?.id === this.document.id) {
+            const item = this.document.items.get(itemId);
+            await item.update({[`flags.${CONSTANTS.SYSTEM_ID}.equipped`]: true}, {render: false});
+        } else {
+            ui.notifications.error('Item type not set on #equipItem.')
         }
     }
 
     static async #unequipItem(event) {
         event.preventDefault();
-        const element = event.target.closest("[data-item-id]");
-        let item = undefined;
-        switch(element.dataset.itemKind){
-            case "embed":
-                item = this.document.items.get(element?.dataset.itemId);
-                await item.update({[`flags.${CONSTANTS.SYSTEM_ID}.equipped`]: false}, {render: false});
-                break;
-            case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                item = Utils.fromUuidSync(element?.dataset.itemId);
-                const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
-                equippedDomainCardsUUIDs.delete(element?.dataset.itemId);
-                await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs]}, { render: false });
-                break;
-            default:
-                ui.notifications.error('Item type not set on #equipItem.')
+        const itemId = event.target.closest("[data-item-id]").dataset.itemId;
+        const mapItem = this.#backpackItems.get(itemId);
+        if (mapItem.item instanceof DomainCardDocument) {
+            const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
+            equippedDomainCardsUUIDs.delete(itemId);
+            await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs]}, { render: false });
+        } else if (mapItem.item.parent?.id === this.document.id) {
+            const item = this.document.items.get(itemId);
+            await item.update({[`flags.${CONSTANTS.SYSTEM_ID}.equipped`]: false}, {render: false});
+        } else {
+            ui.notifications.error('Item type not set on #unequipItem.')
         }
     }
 
@@ -589,13 +581,12 @@ export class PlayerSheet extends DtgActorSheet {
 
     static async #activateItem(event) {
         event.preventDefault();
-        await DtgActorSheet._notYetImplemented(event);
-        const item = this.document.items.get(event.target.closest("[data-item-id]")?.dataset.itemId);
+        Utils.actionNotYetImplemented(event);
     }
 
     static async #attachItem(event) {
         event.preventDefault();
-        await DtgActorSheet._notYetImplemented(event);
+        Utils.actionNotYetImplemented(event);
     }
 
     static async #filterBackpackItems(event) {
@@ -615,16 +606,18 @@ export class PlayerSheet extends DtgActorSheet {
 
     static async #openItem(event) {
         event.preventDefault();
-        const element = event.target.closest("[data-item-id]");
+        const itemId = event.target.closest("[data-item-id]").dataset.itemId;
+        const mapItem = this.#backpackItems.get(itemId);
         let item = undefined;
-        switch(element.dataset.itemKind){
-            case "embed":
-                item = this.document.items.get(element?.dataset.itemId);
-                break;
-            case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                item = Utils.fromUuidSync(element?.dataset.itemId);
-                break;
+        if (mapItem.item instanceof DomainCardDocument) {
+            item = Utils.fromUuidSync(itemId);
+        } else if (mapItem.item.parent?.id === this.document.id) {
+            item = this.document.items.get(itemId);
+        } else {
+            ui.notifications.error('Item type not set on #openItem.');
+            return null;
         }
+
         if(item) {
             await item.sheet?.render({force: true});
         } else {
@@ -634,22 +627,18 @@ export class PlayerSheet extends DtgActorSheet {
 
     static async #deleteItem(event) {
         event.preventDefault();
-        const element = event.target.closest("[data-item-id]");
-        switch(element.dataset.itemKind){
-            case "embed":
-                const idEmbed = element?.dataset.itemId;
-                await this.document.deleteEmbeddedDocuments("Item", [idEmbed], {render: false});
-                break;
-            case CONSTANTS.ITEM_TYPES.DOMAIN_CARD:
-                const idCard = element?.dataset.itemId;
-                const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
-                equippedDomainCardsUUIDs.delete(idCard);
-                const domainCardsUUIDs = this.document.system.domainCardsUUIDs;
-                domainCardsUUIDs.delete(idCard);
-                await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs], 'system.domainCardsUUIDs': [...domainCardsUUIDs]}, { render: false });
-                break;
-            default:
-                ui.notifications.error('Item type not set on #equipItem.')
+        const itemId = event.target.closest("[data-item-id]").dataset.itemId;
+        const mapItem = this.#backpackItems.get(itemId);
+        if (mapItem.item instanceof DomainCardDocument) {
+            const equippedDomainCardsUUIDs = this.document.system.equippedDomainCardsUUIDs;
+            equippedDomainCardsUUIDs.delete(itemId);
+            const domainCardsUUIDs = this.document.system.domainCardsUUIDs;
+            domainCardsUUIDs.delete(itemId);
+            await this.document.update({'system.equippedDomainCardsUUIDs': [...equippedDomainCardsUUIDs], 'system.domainCardsUUIDs': [...domainCardsUUIDs]}, { render: false });
+        } else if (mapItem.item.parent?.id === this.document.id) {
+            await this.document.deleteEmbeddedDocuments("Item", [itemId], {render: false});
+        } else {
+            ui.notifications.error('Item type not set on #.')
         }
     }
 

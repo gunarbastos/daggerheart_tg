@@ -536,6 +536,9 @@ _rawConstants.TEMPLATES.BTN_CONSUME = { PATH: `${_rawConstants.TEMPLATES.ROOT_DI
 _rawConstants.TEMPLATES.BTN_DELETE = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnDelete.hbs`, PRELOAD: true, ALIAS: "btnDelete" };
 _rawConstants.TEMPLATES.BTN_EQUIP = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnEquip.hbs`, PRELOAD: true, ALIAS: "btnEquip" };
 _rawConstants.TEMPLATES.BTN_OPEN = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnOpen.hbs`, PRELOAD: true, ALIAS: "btnOpen" };
+_rawConstants.TEMPLATES.BTN_HIT_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnHitRoll.hbs`, PRELOAD: true, ALIAS: "btnHitRoll" };
+_rawConstants.TEMPLATES.BTN_DMG_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnDmgRoll.hbs`, PRELOAD: true, ALIAS: "btnDmgRoll" };
+_rawConstants.TEMPLATES.BTN_SETTINGS = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/btnSettings.hbs`, PRELOAD: true, ALIAS: "btnSettings" };
 //#endregion
 //#region Chat Messages
 _rawConstants.TEMPLATES.DUALITY_DICE_ROLL = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/chat/dualityDiceRoll.hbs` };
@@ -550,6 +553,7 @@ _rawConstants.TEMPLATES.RULER = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/can
 _rawConstants.TEMPLATES.RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "resourceRow" };
 //#endregion
 //#region Sheets
+_rawConstants.TEMPLATES.SHEET_DOCUMENT_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/documentRow.hbs`, PRELOAD: true, ALIAS: "sheetDocumentRow" };
 _rawConstants.TEMPLATES.SHEET_RESOURCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/resourceRow.hbs`, PRELOAD: true, ALIAS: "sheetResourceRow" };
 _rawConstants.TEMPLATES.SHEET_EXPERIENCE_ROW = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/common/experienceRow.hbs`, PRELOAD: true, ALIAS: "sheetExperienceRow" };
 _rawConstants.TEMPLATES.PLAYER_SHEET_TRAIT = { PATH: `${_rawConstants.TEMPLATES.ROOT_DIR}/sheet/player/partial/trait.hbs`, PRELOAD: true, ALIAS: "playerSheetTrait" };

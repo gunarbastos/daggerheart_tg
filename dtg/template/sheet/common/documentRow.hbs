@@ -1,0 +1,37 @@
+<div class="item-row" data-item-id="{{id}}" data-order="{{order}}">
+    <div class="item-main">
+        <span class="item-name" data-action="openItem">{{name}}</span>
+        {{#if tag }}<span class="item-type">{{tag}}</span>{{/if}}
+    </div>
+
+    <div class="item-meta">
+        {{#if (or (eq quantity 0) quantity)}}
+            <div class="qty-ctrl">
+                {{#> numberField }} class="field-input qty-input" value="{{quantity}}" {{/numberField}}
+            </div>
+        {{/if}}
+    </div>
+
+    <div class="item-actions">
+        {{> btnOpen action="openItem" }}
+        {{#if isEquipable}}
+            {{> btnEquip equipped=equipped actionEquip=equipAction actionUnequip=unequipAction }}
+        {{/if}}
+        {{#if isActivatable}}
+            {{> btnActivate action=activateAction }}
+        {{/if}}
+        {{#if isConsumable}}
+            {{> btnConsume action=consumeAction }}
+        {{/if}}
+        {{#if isAttachable}}
+            {{> btnAttach action=attachAction }}
+        {{/if}}
+        {{#if hasHitRoll}}
+            {{> btnHitRoll action=hitAction }}
+        {{/if}}
+        {{#if hasDamageRoll}}
+            {{> btnDmgRoll action=damageAction }}
+        {{/if}}
+        {{> btnDelete action=deleteAction }}
+    </div>
+</div>
