@@ -1,3 +1,18 @@
+.dtg .btn-settings {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+.dtg .btn-settings i {
+  font-size: 1rem;
+}
+.dtg .btn-settings:hover {
+  background: var(--button-hover-background-color, transparent);
+}
 .dtg form,
 .dtg .sheet-body {
   flex: 1 1 auto;
@@ -37,21 +52,6 @@
 }
 .dtg .btn-action.danger:hover {
   background: #c44a;
-}
-.dtg .btn-settings {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-}
-.dtg .btn-settings i {
-  font-size: 1rem;
-}
-.dtg .btn-settings:hover {
-  background: var(--button-hover-background-color, transparent);
 }
 .dtg .btn-link {
   cursor: pointer;
@@ -188,6 +188,91 @@
   background: rgb(from var(--color-warm-1, #8882) r g b / 0.25);
   border: 1px solid var(--color-warm-1, #8882);
   margin: 2px;
+}
+.dtg .experience {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-right: 0.2em;
+}
+.dtg .experience .typable {
+  border-bottom: 1px solid var(--color-border, #8882);
+}
+.dtg .experience .bonus {
+  width: 40px;
+  flex: none;
+}
+.dtg .item-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 8px;
+}
+.dtg .item-row:hover {
+  border-color: var(--color-form-label-hover) 1px solid;
+}
+.dtg .item-row:focus-within {
+  border-color: var(--color-form-label-hover) 1px solid;
+}
+.dtg .item-row .qty-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.dtg .item-row .qty-ctrl .field-input {
+  width: 56px;
+  padding: 3px 6px;
+  text-align: center;
+}
+.dtg .item-row.is-dragover {
+  outline: 2px dashed var(--color-border, #aaa);
+}
+.dtg .item-row .item-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.dtg .item-row .item-main .item-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.dtg .item-row .item-main .item-type {
+  opacity: 0.6;
+  font-size: 12px;
+  border: 1px solid var(--color-border, #8882);
+  border-radius: 6px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+.dtg .item-row .item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dtg .item-row .item-meta .qty {
+  font-variant-numeric: tabular-nums;
+}
+.dtg .item-row .item-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+.dtg .item-row .item-actions .btn-action {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+.dtg .item-row .item-actions .btn-action[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 999px var(--color-accent-ghost, #8881);
 }
 .dtg .switch {
   display: inline-flex;
@@ -774,78 +859,6 @@
 .dtg.dtg-Player .part-inventory .item-list .empty {
   padding: 6px 0;
 }
-.dtg.dtg-Player .part-inventory .item-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 8px;
-}
-.dtg.dtg-Player .part-inventory .item-row:hover {
-  border-color: var(--color-form-label-hover) 1px solid;
-}
-.dtg.dtg-Player .part-inventory .item-row:focus-within {
-  border-color: var(--color-form-label-hover) 1px solid;
-}
-.dtg.dtg-Player .part-inventory .item-row .qty-ctrl {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.dtg.dtg-Player .part-inventory .item-row .qty-ctrl .field-input {
-  width: 56px;
-  padding: 3px 6px;
-  text-align: center;
-}
-.dtg.dtg-Player .part-inventory .item-row.is-dragover {
-  outline: 2px dashed var(--color-border, #aaa);
-}
-.dtg.dtg-Player .part-inventory .item-row .item-main {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-main .item-name {
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-main .item-type {
-  opacity: 0.6;
-  font-size: 12px;
-  border: 1px solid var(--color-border, #8882);
-  border-radius: 6px;
-  padding: 1px 6px;
-  white-space: nowrap;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-meta .qty {
-  font-variant-numeric: tabular-nums;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-actions {
-  display: inline-flex;
-  gap: 6px;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-actions .btn-action {
-  width: 26px;
-  height: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-}
-.dtg.dtg-Player .part-inventory .item-row .item-actions .btn-action[aria-pressed="true"] {
-  box-shadow: inset 0 0 0 999px var(--color-accent-ghost, #8881);
-}
 .dtg.dtg-Player .part-inventory .inv-currency {
   display: flex;
   justify-content: center;
@@ -962,19 +975,6 @@
   overflow-y: auto;
   overscroll-behavior-y: contain;
   height: calc((var(--actions-item-h) + var(--actions-gap) - var(--actions-drift-per-item)) * var(--actions-items-q));
-}
-.dtg.dtg-Player .part-quick-access .panel-body .info .experience {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  margin-right: 0.2em;
-}
-.dtg.dtg-Player .part-quick-access .panel-body .info .experience .typable {
-  border-bottom: 1px solid var(--color-border, #8882);
-}
-.dtg.dtg-Player .part-quick-access .panel-body .info .experience .bonus {
-  width: 40px;
-  flex: none;
 }
 .dtg.dtg-Player .part-resources {
   position: relative;
